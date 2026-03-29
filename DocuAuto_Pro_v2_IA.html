@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DocuAuto Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+<style>
+:root {
+  --ink:       #0D1B2A;
+  --ink2:      #3D5166;
+  --ink3:      #8096A7;
+  --paper:     #F7F5F0;
+  --white:     #FFFFFF;
+  --gold:      #C9942A;
+  --gold-lt:   #F0D898;
+  --blue:      #1A4B7C;
+  --blue-lt:   #E8F0F8;
+  --green:     #1A6B47;
+  --green-lt:  #E6F4EE;
+  --red:       #B71C1C;
+  --red-lt:    #FEE8E8;
+  --border:    #E2DDD6;
+  --shadow:    0 1px 3px rgba(13,27,42,.08), 0 4px 16px rgba(13,27,42,.06);
+  --shadow-lg: 0 8px 32px rgba(13,27,42,.12);
+  --r:         10px;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-serif:'DM Serif Display', serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ═══ DEMO BANNER ═══ */
+.demo-banner {
+  background: linear-gradient(90deg, var(--gold) 0%, #E8A820 100%);
+  color: white;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 5px 12px;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+}
+.demo-banner span { opacity: .85; font-weight: 400; }
+
+/* ═══ HEADER ═══ */
+header {
+  background: var(--ink);
+  padding: 14px 16px 12px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content:'';
+  position:absolute; top:-30px; right:-20px;
+  width:120px; height:120px;
+  background: radial-gradient(circle, rgba(201,148,42,.25) 0%, transparent 70%);
+  pointer-events:none;
+}
+.header-inner { display:flex; align-items:center; gap:11px; position:relative; }
+.logo-mark {
+  width:34px; height:34px; border-radius:8px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--gold) 0%, #E8A820 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-serif); font-size:18px; color:white; line-height:1;
+}
+.header-text h1 {
+  font-family: var(--font-serif); font-size:16px; color:white;
+  letter-spacing:-.2px; line-height:1.1;
+}
+.header-text p { font-size:10.5px; color: rgba(255,255,255,.5); margin-top:2px; }
+.demo-pill {
+  margin-left:auto; background:rgba(201,148,42,.2); color:var(--gold-lt);
+  font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:99px;
+  letter-spacing:.5px; text-transform:uppercase; border:1px solid rgba(201,148,42,.3);
+}
+
+/* ═══ TABS ═══ */
+.nav {
+  display:flex; background:var(--white); border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.nav-tab {
+  flex:1; padding:9px 2px 8px; text-align:center;
+  font-size:10px; font-weight:600; color:var(--ink3);
+  cursor:pointer; letter-spacing:.2px;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all .2s; user-select:none;
+}
+.nav-tab .tab-icon { font-size:14px; display:block; margin-bottom:2px; }
+.nav-tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+.nav-tab:hover:not(.active) { color:var(--ink2); background:var(--paper); }
+
+/* ═══ SCROLL AREA ═══ */
+.scroll-area {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.scroll-area::-webkit-scrollbar { width:4px; }
+.scroll-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+
+/* ═══ PANELS ═══ */
+.panel { display:none; padding:16px; animation:fadeIn .2s ease; }
+.panel.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+/* ═══ TYPOGRAPHY ═══ */
+.section-eyebrow {
+  font-size:9.5px; font-weight:700; color:var(--ink3);
+  text-transform:uppercase; letter-spacing:.8px;
+  margin:18px 0 8px;
+}
+.section-eyebrow:first-child { margin-top:0; }
+
+/* ═══ FORM ═══ */
+.field { margin-bottom:10px; }
+label {
+  display:block; font-size:11.5px; font-weight:600;
+  color:var(--ink2); margin-bottom:4px;
+}
+input, select, textarea {
+  width:100%; padding:8px 11px;
+  border:1.5px solid var(--border); border-radius:var(--r);
+  font-size:12px; font-family:var(--font-sans); color:var(--ink);
+  background:var(--white); outline:none;
+  transition:border-color .15s, box-shadow .15s;
+  -webkit-appearance:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,75,124,.10);
+}
+input::placeholder, textarea::placeholder { color:var(--ink3); }
+textarea { resize:vertical; min-height:64px; line-height:1.5; }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238096A7' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:30px; cursor:pointer; }
+
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+/* ═══ DOC TYPE SELECTOR ═══ */
+.doctype-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;
+}
+.doctype-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:11px 8px 10px;
+  text-align:center; cursor:pointer;
+  transition:all .2s; user-select:none;
+}
+.doctype-card:hover { border-color:var(--blue); background:var(--blue-lt); }
+.doctype-card.selected {
+  border-color:var(--blue); background:var(--blue-lt);
+  box-shadow:0 0 0 3px rgba(26,75,124,.10);
+}
+.doctype-card .dc-icon { font-size:22px; margin-bottom:5px; }
+.doctype-card .dc-name {
+  font-size:10.5px; font-weight:700; color:var(--ink);
+  line-height:1.3;
+}
+.doctype-card.selected .dc-name { color:var(--blue); }
+
+/* ═══ PREVIEW PANE ═══ */
+.preview-box {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:12px 14px;
+  margin-top:14px; display:none;
+  font-size:11.5px; line-height:1.6; color:var(--ink2);
+  max-height:180px; overflow-y:auto;
+  box-shadow:var(--shadow);
+}
+.preview-box.visible { display:block; animation:fadeIn .25s ease; }
+.preview-box .prev-title {
+  font-family:var(--font-serif); font-size:14px; color:var(--ink);
+  margin-bottom:6px; text-align:center;
+}
+.preview-box .prev-divider {
+  border:none; border-top:1px solid var(--border); margin:8px 0;
+}
+.preview-box .prev-section { font-weight:700; color:var(--blue); margin-top:8px; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+.preview-box p { margin-bottom:4px; }
+
+/* ═══ PROGRESS ═══ */
+.gen-progress {
+  display:none; margin-top:14px;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:12px 14px;
+}
+.gen-progress.visible { display:block; }
+.gp-label { font-size:11.5px; font-weight:600; color:var(--ink); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.progress-track { background:var(--paper); border-radius:99px; height:5px; overflow:hidden; }
+.progress-fill {
+  height:100%; border-radius:99px; width:0%;
+  background:linear-gradient(90deg, var(--blue) 0%, #3B82F6 100%);
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+.gp-steps { margin-top:10px; display:flex; flex-direction:column; gap:5px; }
+.gp-step {
+  display:flex; align-items:center; gap:7px;
+  font-size:11px; color:var(--ink3);
+  transition:color .3s;
+}
+.gp-step.done { color:var(--green); }
+.gp-step.active { color:var(--ink); font-weight:600; }
+.gp-step .step-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--border); flex-shrink:0;
+  transition:background .3s;
+}
+.gp-step.done .step-dot { background:var(--green); }
+.gp-step.active .step-dot { background:var(--blue); box-shadow:0 0 0 3px rgba(26,75,124,.2); }
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  width:100%; padding:10px 16px; border:none; border-radius:var(--r);
+  font-size:13px; font-weight:600; font-family:var(--font-sans);
+  cursor:pointer; transition:all .2s; letter-spacing:-.1px;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+}
+.btn + .btn { margin-top:7px; }
+
+.btn-primary {
+  background:var(--ink); color:white;
+}
+.btn-primary:hover:not(:disabled) {
+  background:var(--blue); transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(26,75,124,.3);
+}
+.btn-primary:active:not(:disabled) { transform:none; }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+
+.btn-ghost {
+  background:transparent; color:var(--ink2);
+  border:1.5px solid var(--border);
+}
+.btn-ghost:hover { background:var(--white); border-color:var(--ink3); }
+
+.btn-gold {
+  background:linear-gradient(135deg, var(--gold) 0%, #E8A820 100%);
+  color:white;
+}
+.btn-gold:hover { box-shadow:0 4px 12px rgba(201,148,42,.35); transform:translateY(-1px); }
+
+.btn-danger { background:var(--red-lt); color:var(--red); border:1.5px solid #F5A5A5; }
+.btn-danger:hover { background:#fdd; }
+
+.btn-sm {
+  width:auto; padding:6px 12px; font-size:11.5px; border-radius:7px;
+}
+
+/* ═══ STATUS ═══ */
+.status {
+  border-radius:var(--r); font-size:12px; padding:10px 12px;
+  margin-top:10px; display:none; line-height:1.4;
+  animation:fadeIn .2s ease;
+}
+.status.success { background:var(--green-lt); color:var(--green); border:1px solid #A8D5BB; display:flex; align-items:flex-start; gap:8px; }
+.status.error   { background:var(--red-lt);   color:var(--red);   border:1px solid #F5A5A5; display:flex; align-items:flex-start; gap:8px; }
+.status.info    { background:var(--blue-lt);   color:var(--blue);  border:1px solid #B3D1F5; display:flex; align-items:flex-start; gap:8px; }
+
+/* ═══ API KEY CONFIG ═══ */
+.api-config-bar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 8px 16px; display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+.api-config-bar .api-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0;
+  transition: background .3s;
+}
+.api-config-bar .api-dot.ok { background: var(--green); }
+.api-config-bar .api-dot.err { background: var(--red); }
+.api-key-input-wrap { flex: 1; position: relative; }
+.api-key-input-wrap input {
+  padding-right: 32px; font-size: 11px; font-family: monospace;
+  border-color: var(--border); color: var(--ink3);
+}
+.api-key-input-wrap input.has-key { color: var(--ink); border-color: var(--green); }
+.api-key-input-wrap input.has-error { border-color: var(--red); }
+.api-toggle-vis {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 12px;
+  color: var(--ink3); padding: 2px;
+}
+.ai-badge {
+  font-size: 9px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white; padding: 2px 6px; border-radius: 99px; letter-spacing: .3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ═══ CLAUSE LIST ═══ */
+.clause-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:10px 12px; margin-bottom:7px;
+  display:flex; gap:10px; cursor:pointer;
+  transition:border-color .2s, background .2s;
+}
+.clause-card:hover { border-color:var(--ink3); }
+.clause-card.checked { border-color:var(--blue); background:var(--blue-lt); }
+.clause-card input[type=checkbox] { margin-top:1px; accent-color:var(--blue); flex-shrink:0; cursor:pointer; }
+.clause-label { font-weight:700; font-size:11.5px; color:var(--ink); margin-bottom:2px; }
+.clause-desc  { font-size:11px; color:var(--ink3); line-height:1.4; }
+.clause-card.checked .clause-label { color:var(--blue); }
+
+/* ═══ TEMPLATE CARDS ═══ */
+.tpl-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:12px; margin-bottom:8px;
+  display:flex; align-items:center; gap:12px; cursor:pointer;
+  transition:all .2s;
+}
+.tpl-card:hover { border-color:var(--blue); box-shadow:var(--shadow); }
+.tpl-card.selected { border-color:var(--blue); background:var(--blue-lt); }
+.tpl-icon-wrap {
+  width:40px; height:40px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; background:var(--paper);
+}
+.tpl-card.selected .tpl-icon-wrap { background:rgba(26,75,124,.12); }
+.tpl-info .tpl-name { font-weight:700; font-size:12.5px; color:var(--ink); }
+.tpl-info .tpl-desc { font-size:11px; color:var(--ink3); margin-top:1px; }
+.tpl-card.selected .tpl-info .tpl-name { color:var(--blue); }
+
+/* ═══ HISTORY ITEMS ═══ */
+.hist-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:11px 13px; margin-bottom:7px;
+  cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:10px;
+}
+.hist-card:hover { border-color:var(--blue); box-shadow:var(--shadow); transform:translateX(2px); }
+.hist-icon { font-size:20px; flex-shrink:0; }
+.hist-info .hist-name { font-weight:700; font-size:12px; color:var(--ink); }
+.hist-info .hist-meta { font-size:10.5px; color:var(--ink3); margin-top:2px; }
+.hist-arrow { margin-left:auto; color:var(--ink3); font-size:14px; }
+.empty-state {
+  text-align:center; padding:32px 16px; color:var(--ink3);
+}
+.empty-state .es-icon { font-size:36px; margin-bottom:10px; }
+.empty-state p { font-size:12px; line-height:1.5; }
+
+/* ═══ FOOTER AREA ═══ */
+.panel-footer {
+  flex-shrink:0; padding:12px 16px;
+  background:var(--white); border-top:1px solid var(--border);
+}
+
+/* ═══ SPINNER ═══ */
+@keyframes spin { to{transform:rotate(360deg)} }
+.spinner {
+  width:14px; height:14px; border-radius:50%;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:white;
+  animation:spin .7s linear infinite;
+  flex-shrink:0;
+}
+
+/* ═══ BADGE ═══ */
+.badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:18px; height:18px; border-radius:99px; padding:0 5px;
+  font-size:9.5px; font-weight:700;
+  background:var(--blue); color:white;
+  margin-left:5px;
+}
+
+/* ═══ DIVIDER ═══ */
+.divider { border:none; border-top:1px solid var(--border); margin:14px 0; }
+
+/* ═══ OUTPUT PREVIEW (demo) ═══ */
+.output-area {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:16px 18px; margin-top:12px;
+  font-size:12px; line-height:1.7; color:var(--ink);
+  box-shadow:var(--shadow);
+  white-space:pre-wrap;
+  display:none; animation:fadeIn .3s ease;
+  max-height:260px; overflow-y:auto;
+}
+.output-area.visible { display:block; }
+.output-area .out-title {
+  font-family:var(--font-serif); font-size:16px;
+  text-align:center; color:var(--ink); margin-bottom:4px; display:block;
+}
+.output-area .out-meta {
+  text-align:center; color:var(--ink3); font-size:10.5px;
+  margin-bottom:12px; display:block;
+}
+.output-area .out-section {
+  font-weight:700; font-size:10.5px; color:var(--blue);
+  text-transform:uppercase; letter-spacing:.5px;
+  margin-top:12px; margin-bottom:4px; display:block;
+}
+.output-actions {
+  display:flex; gap:7px; margin-top:8px;
+}
+.output-actions .btn { flex:1; }
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  🖥 Modo demostración activo — <span>en Word real el documento se inserta directamente</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">D</div>
+    <div class="header-text">
+      <h1>DocuAuto Pro</h1>
+      <p>Documentos corporativos en segundos</p>
+    </div>
+    <div class="demo-pill">DEMO</div>
+  </div>
+</header>
+
+<!-- API KEY BAR -->
+<div class="api-config-bar">
+  <div class="api-dot" id="api-dot"></div>
+  <div class="api-key-input-wrap">
+    <input type="password" id="api-key-input" placeholder="OpenAI API Key (sk-…)" autocomplete="off" oninput="onApiKeyChange(this.value)" />
+    <button class="api-toggle-vis" onclick="toggleApiKeyVis()" title="Mostrar/ocultar">👁</button>
+  </div>
+  <span class="ai-badge">✦ IA</span>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-tab active" onclick="switchTab('nuevo',this)">
+    <span class="tab-icon">✦</span>Nuevo
+  </div>
+  <div class="nav-tab" onclick="switchTab('plantillas',this)">
+    <span class="tab-icon">📋</span>Plantillas
+  </div>
+  <div class="nav-tab" onclick="switchTab('clausulas',this)">
+    <span class="tab-icon">⚖️</span>Cláusulas
+  </div>
+  <div class="nav-tab" onclick="switchTab('historial',this)">
+    <span class="tab-icon">🕐</span>Historial
+  </div>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll-area" id="scroll-area">
+
+  <!-- ══════════ TAB: NUEVO ══════════ -->
+  <div id="panel-nuevo" class="panel active">
+
+    <div class="section-eyebrow">Tipo de documento</div>
+    <div class="doctype-grid" id="doctype-grid">
+      <div class="doctype-card selected" data-type="contrato_servicios" onclick="selectDoctype(this)">
+        <div class="dc-icon">📝</div>
+        <div class="dc-name">Contrato Servicios</div>
+      </div>
+      <div class="doctype-card" data-type="nda" onclick="selectDoctype(this)">
+        <div class="dc-icon">🔒</div>
+        <div class="dc-name">NDA</div>
+      </div>
+      <div class="doctype-card" data-type="oferta_laboral" onclick="selectDoctype(this)">
+        <div class="dc-icon">👔</div>
+        <div class="dc-name">Oferta Laboral</div>
+      </div>
+      <div class="doctype-card" data-type="propuesta_comercial" onclick="selectDoctype(this)">
+        <div class="dc-icon">💼</div>
+        <div class="dc-name">Propuesta Comercial</div>
+      </div>
+      <div class="doctype-card" data-type="acta_reunion" onclick="selectDoctype(this)">
+        <div class="dc-icon">📋</div>
+        <div class="dc-name">Acta Reunión</div>
+      </div>
+      <div class="doctype-card" data-type="carta_presentacion" onclick="selectDoctype(this)">
+        <div class="dc-icon">✉️</div>
+        <div class="dc-name">Carta Presentación</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow" id="fields-eyebrow" style="display:none">Datos del documento</div>
+    <div id="dynamic-fields"></div>
+
+    <!-- Preview -->
+    <div id="preview-box" class="preview-box"></div>
+
+    <!-- Progress -->
+    <div id="gen-progress" class="gen-progress">
+      <div class="gp-label">
+        <div class="spinner" style="border-color:rgba(26,75,124,.2);border-top-color:var(--blue)"></div>
+        <span id="gp-label-text">Generando documento…</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="gp-steps" id="gp-steps"></div>
+    </div>
+
+    <!-- Output (demo) -->
+    <div id="output-area" class="output-area"></div>
+    <div class="output-actions" id="output-actions" style="display:none">
+      <button class="btn btn-ghost btn-sm" onclick="copyOutput()">📋 Copiar texto</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetForm()">↩ Nuevo</button>
+    </div>
+
+    <div id="status-nuevo" class="status"></div>
+  </div>
+
+  <!-- ══════════ TAB: PLANTILLAS ══════════ -->
+  <div id="panel-plantillas" class="panel">
+    <div class="section-eyebrow">Plantillas disponibles</div>
+
+    <div id="tpl-list">
+      <div class="tpl-card selected" data-type="contrato_servicios" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">📝</div>
+        <div class="tpl-info">
+          <div class="tpl-name">Contrato de Servicios</div>
+          <div class="tpl-desc">Objeto, duración, honorarios y firmas</div>
+        </div>
+      </div>
+      <div class="tpl-card" data-type="nda" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">🔒</div>
+        <div class="tpl-info">
+          <div class="tpl-name">NDA — Confidencialidad</div>
+          <div class="tpl-desc">Acuerdo de no divulgación bilateral</div>
+        </div>
+      </div>
+      <div class="tpl-card" data-type="oferta_laboral" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">👔</div>
+        <div class="tpl-info">
+          <div class="tpl-name">Carta de Oferta Laboral</div>
+          <div class="tpl-desc">Condiciones, salario y fecha de incorporación</div>
+        </div>
+      </div>
+      <div class="tpl-card" data-type="propuesta_comercial" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">💼</div>
+        <div class="tpl-info">
+          <div class="tpl-name">Propuesta Comercial</div>
+          <div class="tpl-desc">Alcance, inversión y siguientes pasos</div>
+        </div>
+      </div>
+      <div class="tpl-card" data-type="acta_reunion" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">📋</div>
+        <div class="tpl-info">
+          <div class="tpl-name">Acta de Reunión</div>
+          <div class="tpl-desc">Asistentes, puntos tratados y acuerdos</div>
+        </div>
+      </div>
+      <div class="tpl-card" data-type="carta_presentacion" onclick="selectTpl(this)">
+        <div class="tpl-icon-wrap">✉️</div>
+        <div class="tpl-info">
+          <div class="tpl-name">Carta de Presentación</div>
+          <div class="tpl-desc">Empresa, servicios y llamada a la acción</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+    <button class="btn btn-primary" onclick="useTpl()">↗ Usar esta plantilla</button>
+    <button class="btn btn-ghost" onclick="addCustomTpl()">＋ Crear plantilla personalizada</button>
+    <div id="status-plantillas" class="status"></div>
+  </div>
+
+  <!-- ══════════ TAB: CLÁUSULAS ══════════ -->
+  <div id="panel-clausulas" class="panel">
+    <div class="section-eyebrow">Cláusulas estándar</div>
+    <div id="clause-list"></div>
+    <hr class="divider"/>
+    <div id="status-clausulas" class="status"></div>
+  </div>
+
+  <!-- ══════════ TAB: HISTORIAL ══════════ -->
+  <div id="panel-historial" class="panel">
+    <div class="section-eyebrow">Documentos recientes</div>
+    <div id="hist-list"></div>
+    <hr class="divider"/>
+    <button class="btn btn-danger" onclick="clearHist()">🗑 Borrar historial</button>
+  </div>
+
+</div><!-- /scroll-area -->
+
+<!-- FOOTER: generate button -->
+<div class="panel-footer" id="footer-generar">
+  <button class="btn btn-primary" id="btn-generar" onclick="generarDocumento()" disabled>
+    📄 Generar documento
+  </button>
+</div>
+
+<!-- FOOTER: insert clauses -->
+<div class="panel-footer" id="footer-clausulas" style="display:none">
+  <button class="btn btn-primary" onclick="insertarClausulas()">
+    ⚖️ Insertar cláusulas seleccionadas
+  </button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// ENVIRONMENT DETECTION
+// ═══════════════════════════════════════════════════
+let IS_WORD = false;
+let selectedType = 'contrato_servicios';
+
+if (typeof Office !== 'undefined') {
+  Office.onReady(info => {
+    IS_WORD = info.host === Office.HostType.Word;
+    if (IS_WORD) {
+      document.querySelector('.demo-banner').style.display = 'none';
+      document.querySelector('.demo-pill').style.display = 'none';
+    }
+    init();
+  });
+}
+// Non-Office init called at end of script after all vars are defined
+
+function init() {
+  renderClauseList();
+  renderHistorial();
+  // Auto-select first doctype
+  selectDoctype(document.querySelector('.doctype-card'));
+  // Restore saved API key
+  const saved = getApiKey();
+  if (saved) {
+    const inp = document.getElementById('api-key-input');
+    inp.value = saved;
+    updateApiDot(saved);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+
+  // Footer logic
+  document.getElementById('footer-generar').style.display = (name === 'nuevo') ? 'block' : 'none';
+  document.getElementById('footer-clausulas').style.display = (name === 'clausulas') ? 'block' : 'none';
+
+  document.getElementById('scroll-area').scrollTop = 0;
+
+  if (name === 'historial') renderHistorial();
+}
+
+// ═══════════════════════════════════════════════════
+// DOCTYPE SELECTION
+// ═══════════════════════════════════════════════════
+
+function selectDoctype(el) {
+  document.querySelectorAll('.doctype-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedType = el.dataset.type;
+  renderFields(selectedType);
+  hideOutput();
+  setStatus('nuevo','','');
+  document.getElementById('btn-generar').disabled = false;
+  document.getElementById('fields-eyebrow').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════
+// FIELD DEFINITIONS
+// ═══════════════════════════════════════════════════
+var FIELDS = {
+  contrato_servicios: [
+    { group: 'Partes' },
+    { id:'empresa',    label:'Empresa contratante', ph:'Acme S.L.' },
+    { id:'proveedor',  label:'Proveedor / Empresa',  ph:'Tech Solutions S.A.' },
+    { group: 'Servicio' },
+    { id:'servicio',   label:'Descripción del servicio', type:'textarea', ph:'Desarrollo de plataforma web a medida…' },
+    { row: [
+      { id:'monto',    label:'Importe (€)', ph:'5.000' },
+      { id:'pago',     label:'Condición de pago', type:'select',
+        opts:['50% adelanto / 50% entrega','100% inicio','Mensual','Por hitos'] }
+    ]},
+    { row: [
+      { id:'fecha_ini', label:'Inicio', type:'date' },
+      { id:'fecha_fin', label:'Fin',    type:'date' }
+    ]},
+    { id:'jurisdiccion', label:'Jurisdicción', ph:'Madrid, España' },
+  ],
+  nda: [
+    { group: 'Partes' },
+    { id:'parte_a', label:'Parte A (divulgador)', ph:'Empresa ABC S.L.' },
+    { id:'parte_b', label:'Parte B (receptor)',   ph:'Consultor XYZ' },
+    { group: 'Condiciones' },
+    { id:'objeto',    label:'Propósito / objeto', type:'textarea', ph:'Evaluación de colaboración en proyecto de transformación digital…' },
+    { row: [
+      { id:'duracion',  label:'Duración (meses)', ph:'24', type:'number' },
+      { id:'fecha_nda', label:'Fecha firma', type:'date' }
+    ]},
+  ],
+  oferta_laboral: [
+    { group: 'Candidato' },
+    { id:'candidato', label:'Nombre del candidato', ph:'María García López' },
+    { row: [
+      { id:'puesto', label:'Puesto ofertado', ph:'Senior Developer' },
+      { id:'dpto',   label:'Departamento',   ph:'Tecnología' }
+    ]},
+    { group: 'Condiciones' },
+    { row: [
+      { id:'salario',       label:'Salario bruto anual (€)', ph:'45.000' },
+      { id:'incorporacion', label:'Incorporación', type:'date' }
+    ]},
+    { id:'jornada', label:'Tipo de jornada', type:'select',
+      opts:['Presencial completa','Remota completa','Híbrida 3+2','Media jornada'] },
+    { id:'beneficios', label:'Beneficios adicionales', type:'textarea', ph:'Seguro médico, ticket restaurante, formación…' },
+  ],
+  propuesta_comercial: [
+    { group: 'Cliente' },
+    { id:'cliente',  label:'Empresa cliente',     ph:'Corporación XYZ S.A.' },
+    { id:'contacto', label:'Persona de contacto', ph:'Juan Pérez, Director de Operaciones' },
+    { group: 'Propuesta' },
+    { id:'proyecto', label:'Nombre del proyecto', ph:'Transformación Digital 2025' },
+    { id:'alcance',  label:'Alcance / descripción', type:'textarea', ph:'Implementación de plataforma de gestión de pedidos con integración ERP…' },
+    { row: [
+      { id:'valor',   label:'Valor total (€)', ph:'18.000' },
+      { id:'validez', label:'Validez (días)',  ph:'30', type:'number' }
+    ]},
+  ],
+  acta_reunion: [
+    { group: 'Reunión' },
+    { id:'asunto',    label:'Asunto / título', ph:'Revisión resultados Q2' },
+    { row: [
+      { id:'fecha_acta', label:'Fecha',  type:'date' },
+      { id:'lugar',      label:'Lugar / plataforma', ph:'Sala juntas / Teams' }
+    ]},
+    { group: 'Contenido' },
+    { id:'asistentes', label:'Asistentes (uno por línea)', type:'textarea',
+      ph:'Ana Martínez – Dir. Comercial\nLuis Torres – Product Manager' },
+    { id:'puntos',   label:'Puntos tratados', type:'textarea',
+      ph:'1. Revisión de métricas\n2. Propuestas Q3' },
+    { id:'acuerdos', label:'Acuerdos y acciones', type:'textarea',
+      ph:'— Presentar informe el viernes\n— Convocar reunión con cliente' },
+  ],
+  carta_presentacion: [
+    { group: 'Destinatario' },
+    { id:'destinatario', label:'Empresa destinataria', ph:'Grupo Empresarial ABC' },
+    { id:'contacto_cp',  label:'Persona de contacto', ph:'Director de Compras' },
+    { group: 'Emisor' },
+    { id:'emisor',       label:'Nombre de tu empresa', ph:'Innovatech Solutions S.L.' },
+    { id:'servicios',    label:'Servicios / productos ofrecidos', type:'textarea',
+      ph:'Consultoría tecnológica, desarrollo de software y formación…' },
+    { id:'cta',          label:'Llamada a la acción', ph:'Reunión de 30 min esta semana' },
+  ],
+};
+
+function renderFields(type) {
+  const container = document.getElementById('dynamic-fields');
+  container.innerHTML = '';
+  const defs = FIELDS[type] || [];
+
+  defs.forEach(def => {
+    if (def.group) {
+      const g = document.createElement('div');
+      g.className = 'section-eyebrow'; g.style.marginTop = '14px';
+      g.textContent = def.group;
+      container.appendChild(g); return;
+    }
+    if (def.row) {
+      const row = document.createElement('div');
+      row.className = 'row-2';
+      def.row.forEach(f => row.appendChild(buildField(f)));
+      container.appendChild(row); return;
+    }
+    container.appendChild(buildField(def));
+  });
+}
+
+function buildField(f) {
+  const div = document.createElement('div'); div.className = 'field';
+  const lbl = document.createElement('label'); lbl.htmlFor = f.id; lbl.textContent = f.label;
+  div.appendChild(lbl);
+  let el;
+  if (f.type === 'textarea') {
+    el = document.createElement('textarea'); el.rows = 3; el.placeholder = f.ph || '';
+  } else if (f.type === 'select') {
+    el = document.createElement('select');
+    f.opts.forEach(o => { const opt = document.createElement('option'); opt.textContent = o; el.appendChild(opt); });
+  } else {
+    el = document.createElement('input'); el.type = f.type || 'text';
+    if (f.ph) el.placeholder = f.ph;
+  }
+  el.id = f.id; el.name = f.id;
+  div.appendChild(el);
+  return div;
+}
+
+function getFormData() {
+  const defs = FIELDS[selectedType] || [];
+  const data = { tipo: selectedType };
+  const collect = f => { const el = document.getElementById(f.id); if (el) data[f.id] = el.value.trim(); };
+  defs.forEach(d => { if (d.id) collect(d); if (d.row) d.row.forEach(collect); });
+  return data;
+}
+
+// ═══════════════════════════════════════════════════
+// GENERATE DOCUMENT
+// ═══════════════════════════════════════════════════
+var GEN_STEPS = [
+  'Procesando datos del formulario',
+  'Enviando solicitud a GPT-4o…',
+  'Redactando contenido con IA',
+  'Aplicando formato y estructura',
+  'Finalizando documento…',
+];
+
+// ═══════════════════════════════════════════════════
+// API KEY MANAGEMENT
+// ═══════════════════════════════════════════════════
+function onApiKeyChange(val) {
+  const trimmed = val.trim();
+  try { localStorage.setItem('dap_openai_key', trimmed); } catch(e) {}
+  updateApiDot(trimmed);
+  // Enable/disable generate button based on doctype selection + key
+  const hasKey = trimmed.startsWith('sk-');
+  const hasType = !!selectedType;
+  document.getElementById('btn-generar').disabled = !(hasType);
+}
+
+function updateApiDot(key) {
+  const dot = document.getElementById('api-dot');
+  const input = document.getElementById('api-key-input');
+  if (!key) {
+    dot.className = 'api-dot';
+    input.classList.remove('has-key','has-error');
+  } else if (key.startsWith('sk-')) {
+    dot.className = 'api-dot ok';
+    input.classList.add('has-key');
+    input.classList.remove('has-error');
+  } else {
+    dot.className = 'api-dot err';
+    input.classList.add('has-error');
+    input.classList.remove('has-key');
+  }
+}
+
+function toggleApiKeyVis() {
+  const inp = document.getElementById('api-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function getApiKey() {
+  try { return localStorage.getItem('dap_openai_key') || ''; } catch(e) { return ''; }
+}
+
+// ═══════════════════════════════════════════════════
+// OPENAI API CALL
+// ═══════════════════════════════════════════════════
+var TYPE_NAMES_ES = {
+  contrato_servicios: 'Contrato de Prestación de Servicios',
+  nda: 'Acuerdo de Confidencialidad (NDA)',
+  oferta_laboral: 'Carta de Oferta Laboral',
+  propuesta_comercial: 'Propuesta Comercial',
+  acta_reunion: 'Acta de Reunión',
+  carta_presentacion: 'Carta de Presentación',
+};
+
+function buildPrompt(data) {
+  const tipo = TYPE_NAMES_ES[data.tipo] || data.tipo;
+  const campos = Object.entries(data)
+    .filter(([k]) => k !== 'tipo')
+    .map(([k, v]) => v ? `- ${k}: ${v}` : null)
+    .filter(Boolean)
+    .join('\n');
+
+  return `Eres un experto jurídico y redactor corporativo español. Genera un documento profesional de tipo "${tipo}" usando los datos proporcionados.
+
+DATOS DEL DOCUMENTO:
+${campos}
+
+INSTRUCCIONES:
+- Redacta en español formal y jurídico
+- El documento debe ser completo, profesional y listo para usar
+- Incluye todas las secciones estándar de este tipo de documento
+- Usa un tono formal pero claro
+- Devuelve SOLO el texto del documento, sin explicaciones ni comentarios previos
+- Estructura: TÍTULO, metadatos (ref y fecha), secciones numeradas con subtítulos en mayúsculas, y bloque de firmas al final
+- Usa la siguiente estructura JSON exacta para que pueda procesarlo:
+
+{
+  "titulo": "TÍTULO EN MAYÚSCULAS",
+  "meta": "Referencia: REF-XXXXXX  ·  Fecha: DD de mes de YYYY",
+  "secciones": [
+    { "titulo": "1. NOMBRE SECCIÓN", "cuerpo": "Texto de la sección..." },
+    { "titulo": "2. OTRA SECCIÓN", "cuerpo": "Texto..." }
+  ],
+  "firmas": "Bloque de firmas con espacios para rubricas"
+}
+
+Devuelve SOLO el JSON, sin markdown ni texto adicional.`;
+}
+
+async function callOpenAI(prompt, apiKey, onStep) {
+  onStep(1); // "Enviando a GPT..."
+
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: 'Eres un experto redactor de documentos corporativos y legales en español. Respondes SIEMPRE con JSON válido, sin markdown, sin backticks.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.4,
+      max_tokens: 2000,
+    })
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    const msg = err?.error?.message || `Error ${resp.status}`;
+    throw new Error(msg);
+  }
+
+  onStep(2); // "Redactando con IA..."
+  const data = await resp.json();
+  const text = data.choices?.[0]?.message?.content || '';
+
+  // Parse JSON response
+  let parsed;
+  try {
+    const clean = text.replace(/```json|```/g, '').trim();
+    parsed = JSON.parse(clean);
+  } catch(e) {
+    // Fallback: wrap raw text as single section
+    parsed = {
+      titulo: TYPE_NAMES_ES[selectedType] || 'DOCUMENTO',
+      meta: `Fecha: ${hoy()}`,
+      secciones: [{ titulo: '', cuerpo: text }],
+      firmas: '',
+    };
+  }
+
+  return parsed;
+}
+
+async function generarDocumento() {
+  const data = getFormData();
+  const apiKey = getApiKey();
+  const useAI = apiKey.startsWith('sk-');
+
+  // Show progress
+  const prog = document.getElementById('gen-progress');
+  prog.classList.add('visible');
+  document.getElementById('btn-generar').disabled = true;
+  document.getElementById('btn-generar').innerHTML = '<div class="spinner"></div> Generando…';
+  setStatus('nuevo','','');
+  hideOutput();
+
+  // Update step labels based on mode
+  const steps = useAI ? GEN_STEPS : [
+    'Procesando datos del formulario',
+    'Construyendo estructura del documento',
+    'Aplicando formato y estilos',
+    'Insertando cláusulas y firmas',
+    'Finalizando…',
+  ];
+
+  // Render steps
+  const stepsEl = document.getElementById('gp-steps');
+  stepsEl.innerHTML = steps.map((s,i) =>
+    `<div class="gp-step" id="step-${i}"><div class="step-dot"></div>${s}</div>`
+  ).join('');
+
+  // Helper to mark a step done
+  function markStep(i) {
+    const prev = document.getElementById('step-'+(i-1));
+    if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+    const cur = document.getElementById('step-'+i);
+    if (cur) { cur.classList.add('active'); }
+    setProgress((i+1) / steps.length * 60);
+  }
+
+  let content;
+
+  try {
+    // Step 0: process form
+    markStep(0);
+    await sleep(300);
+
+    if (useAI) {
+      // Step 1: send to GPT
+      markStep(1);
+      const prompt = buildPrompt(data);
+
+      // Step 2 will be marked inside callOpenAI
+      content = await callOpenAI(prompt, apiKey, (stepIdx) => {
+        markStep(stepIdx);
+        setProgress(stepIdx / steps.length * 70);
+      });
+
+      // Step 3: format
+      markStep(3);
+      await sleep(300);
+
+    } else {
+      // Static fallback (no API key)
+      for (let i = 1; i < steps.length - 1; i++) {
+        markStep(i);
+        setProgress((i+1) / steps.length * 100);
+        await sleep(350);
+      }
+      content = buildContent(data);
+    }
+
+    // Step 4: finalize
+    markStep(4);
+    setProgress(100);
+    await sleep(300);
+
+    // Mark all done
+    steps.forEach((_,i) => {
+      const el = document.getElementById('step-'+i);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); }
+    });
+
+  } catch(err) {
+    prog.classList.remove('visible');
+    document.getElementById('btn-generar').disabled = false;
+    document.getElementById('btn-generar').innerHTML = '📄 Generar documento';
+    showError('Error IA: ' + err.message);
+    return;
+  }
+
+  if (IS_WORD) {
+    // ── Real Word insertion ──
+    try {
+      await Word.run(async ctx => {
+        const body = ctx.document.body;
+        body.clear();
+
+        const t = body.insertParagraph(content.titulo, Word.InsertLocation.start);
+        t.styleBuiltIn = Word.Style.heading1;
+        t.alignment = Word.Alignment.centered;
+        t.font.color = '#0F4C81';
+
+        const meta = body.insertParagraph(content.meta, Word.InsertLocation.end);
+        meta.alignment = Word.Alignment.centered;
+        meta.font.color = '#6B7C93'; meta.font.size = 10;
+
+        body.insertParagraph('', Word.InsertLocation.end);
+
+        content.secciones.forEach(sec => {
+          if (sec.titulo) {
+            const h = body.insertParagraph(sec.titulo, Word.InsertLocation.end);
+            h.styleBuiltIn = Word.Style.heading2;
+            h.font.color = '#0F4C81';
+          }
+          if (sec.cuerpo) {
+            body.insertParagraph(sec.cuerpo, Word.InsertLocation.end).font.size = 11;
+          }
+          body.insertParagraph('', Word.InsertLocation.end);
+        });
+
+        body.insertParagraph(content.firmas, Word.InsertLocation.end).font.size = 11;
+        await ctx.sync();
+      });
+
+      showDoneWord();
+    } catch(e) {
+      showError('Error al insertar en Word: ' + e.message);
+    }
+  } else {
+    // ── Demo: render text preview ──
+    renderOutputPreview(content);
+    showDoneDemo();
+  }
+
+  guardarHistorial(data);
+  prog.classList.remove('visible');
+  document.getElementById('btn-generar').disabled = false;
+  document.getElementById('btn-generar').innerHTML = '📄 Generar documento';
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function showDoneWord() {
+  setStatus('nuevo','success','✅ Documento generado e insertado en Word correctamente.');
+}
+function showDoneDemo() {
+  const apiKey = getApiKey();
+  const useAI = apiKey.startsWith('sk-');
+  if (useAI) {
+    setStatus('nuevo','success','✦ Documento generado con GPT-4o. Copia el texto o ábrelo en Word.');
+  } else {
+    setStatus('nuevo','info','🖥 Vista previa generada (plantilla estática). Añade tu API Key de OpenAI para usar IA.');
+  }
+}
+function showError(msg) {
+  setStatus('nuevo','error','❌ ' + msg);
+}
+function hideOutput() {
+  document.getElementById('output-area').classList.remove('visible');
+  document.getElementById('output-actions').style.display = 'none';
+}
+
+function renderOutputPreview(content) {
+  const out = document.getElementById('output-area');
+  let html = `<span class="out-title">${content.titulo}</span>`;
+  html += `<span class="out-meta">${content.meta}</span>`;
+  html += `<hr style="border:none;border-top:1px solid var(--border);margin:8px 0"/>`;
+  content.secciones.forEach(s => {
+    if (s.titulo) html += `<span class="out-section">${s.titulo}</span>`;
+    if (s.cuerpo) html += `<p style="margin-bottom:6px;white-space:pre-wrap">${escHtml(s.cuerpo)}</p>`;
+  });
+  html += `<p style="margin-top:10px;white-space:pre-wrap;color:var(--ink3)">${escHtml(content.firmas)}</p>`;
+  out.innerHTML = html;
+  out.classList.add('visible');
+  document.getElementById('output-actions').style.display = 'flex';
+}
+
+function escHtml(t) {
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyOutput() {
+  const out = document.getElementById('output-area');
+  navigator.clipboard.writeText(out.innerText).then(() => {
+    setStatus('nuevo','success','✅ Texto copiado al portapapeles.');
+  });
+}
+
+function resetForm() {
+  hideOutput();
+  setStatus('nuevo','','');
+  document.querySelectorAll('#dynamic-fields input, #dynamic-fields textarea, #dynamic-fields select').forEach(el => {
+    if (el.type === 'checkbox') el.checked = false;
+    else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════════
+// CONTENT BUILDER
+// ═══════════════════════════════════════════════════
+function hoy() {
+  return new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+}
+function nRef() { return 'REF-' + Date.now().toString().slice(-6); }
+
+function buildContent(d) {
+  const ref = nRef();
+  switch (d.tipo) {
+    case 'contrato_servicios': return {
+      titulo: 'CONTRATO DE PRESTACIÓN DE SERVICIOS',
+      meta: `Referencia: ${ref}  ·  Fecha: ${hoy()}`,
+      secciones: [
+        { titulo:'1. PARTES CONTRATANTES', cuerpo: `La empresa ${d.empresa||'[Empresa]'} (en adelante, "Cliente") y ${d.proveedor||'[Proveedor]'} (en adelante, "Proveedor") acuerdan celebrar el presente contrato de prestación de servicios.` },
+        { titulo:'2. OBJETO DEL CONTRATO', cuerpo: d.servicio||'[Descripción del servicio]' },
+        { titulo:'3. DURACIÓN', cuerpo: `El presente contrato tendrá vigencia desde el ${d.fecha_ini||'__/__/____'} hasta el ${d.fecha_fin||'__/__/____'}, prorrogable por acuerdo escrito de ambas partes con al menos 30 días de antelación.` },
+        { titulo:'4. HONORARIOS Y PAGO', cuerpo: `El importe total acordado asciende a ${d.monto||'[importe]'} EUR (más IVA aplicable).\n\nCondición de pago: ${d.pago||'A acordar'}. El pago se efectuará mediante transferencia bancaria en el plazo de 30 días desde la recepción de la factura correspondiente.` },
+        { titulo:'5. CONFIDENCIALIDAD', cuerpo: 'Ambas partes se comprometen a mantener la más estricta confidencialidad sobre la información técnica, comercial y estratégica compartida durante la vigencia del presente contrato y los tres años posteriores.' },
+        { titulo:'6. JURISDICCIÓN', cuerpo: `Para cualquier controversia derivada del presente contrato, las partes se someten a los Juzgados y Tribunales de ${d.jurisdiccion||'Madrid, España'}, con renuncia expresa a cualquier otro fuero.` },
+      ],
+      firmas: `\n\nEn ${d.jurisdiccion||'Madrid'}, a ${hoy()}\n\n\n______________________________          ______________________________\n${d.empresa||'CLIENTE'}                    ${d.proveedor||'PROVEEDOR'}`
+    };
+    case 'nda': return {
+      titulo: 'ACUERDO DE CONFIDENCIALIDAD (NDA)',
+      meta: `Referencia: ${ref}  ·  Fecha: ${d.fecha_nda||hoy()}`,
+      secciones: [
+        { titulo:'1. PARTES', cuerpo: `${d.parte_a||'Parte A'} (en adelante, "Parte Divulgadora") y ${d.parte_b||'Parte B'} (en adelante, "Parte Receptora") acuerdan el presente Acuerdo de Confidencialidad.` },
+        { titulo:'2. OBJETO', cuerpo: d.objeto||'[Propósito del acuerdo]' },
+        { titulo:'3. INFORMACIÓN CONFIDENCIAL', cuerpo: 'Se considerará confidencial toda información técnica, comercial, financiera o estratégica divulgada por la Parte Divulgadora, independientemente del soporte o medio utilizado (verbal, escrito, digital o físico).' },
+        { titulo:'4. OBLIGACIONES Y VIGENCIA', cuerpo: `La Parte Receptora se obliga a: (a) mantener la información en estricto secreto; (b) utilizarla únicamente para el propósito descrito; (c) no divulgarla a terceros sin autorización previa y escrita.\n\nEstas obligaciones tendrán vigencia durante ${d.duracion||'24'} meses desde la fecha de firma.` },
+        { titulo:'5. EXCEPCIONES', cuerpo: 'Quedan excluidas del deber de confidencialidad: (a) información que sea de dominio público; (b) información conocida con anterioridad por la Parte Receptora; (c) información que deba ser revelada por imperativo legal o judicial.' },
+      ],
+      firmas: `\n\nFirmado en ${hoy()}\n\n\n______________________________          ______________________________\n${d.parte_a||'PARTE A'}                    ${d.parte_b||'PARTE B'}`
+    };
+    case 'oferta_laboral': return {
+      titulo: 'CARTA DE OFERTA LABORAL',
+      meta: `Referencia: ${ref}  ·  ${hoy()}`,
+      secciones: [
+        { cuerpo: `Estimado/a ${d.candidato||'[Candidato/a]'},\n\nNos complace comunicarle que, tras el proceso de selección realizado, hemos decidido hacerle la siguiente oferta para incorporarse a nuestro equipo.` },
+        { titulo:'CONDICIONES DE LA OFERTA',
+          cuerpo: `Puesto: ${d.puesto||'—'}\nDepartamento: ${d.dpto||'—'}\nModalidad: ${d.jornada||'—'}\nFecha de incorporación: ${d.incorporacion||'A convenir'}\nSalario bruto anual: ${d.salario||'—'} €` },
+        { titulo:'BENEFICIOS ADICIONALES', cuerpo: d.beneficios||'A definir.' },
+        { titulo:'ACEPTACIÓN', cuerpo: 'Le rogamos confirme su aceptación firmando y devolviendo una copia de este documento en un plazo máximo de 5 días hábiles. De no recibir respuesta, esta oferta quedará sin efecto.' },
+      ],
+      firmas: `\n\nAtentamente,\n\nDirección de Personas y Cultura\n\n\n______________________________          ______________________________\nEMPRESA                             ${d.candidato||'CANDIDATO/A'}`
+    };
+    case 'propuesta_comercial': return {
+      titulo: 'PROPUESTA COMERCIAL',
+      meta: `${d.proyecto||'Proyecto'}  ·  Ref: ${ref}  ·  ${hoy()}`,
+      secciones: [
+        { cuerpo: `Estimado/a ${d.contacto||''},\n\nAdjuntamos a continuación nuestra propuesta para ${d.cliente||''} en relación al proyecto "${d.proyecto||''}". Ha sido elaborada específicamente para sus necesidades tras el análisis de los requerimientos compartidos.` },
+        { titulo:'ALCANCE DEL PROYECTO', cuerpo: d.alcance||'' },
+        { titulo:'INVERSIÓN',
+          cuerpo: `Importe total: ${d.valor||''} EUR + IVA\nValidez de la oferta: ${d.validez||'30'} días naturales\nCondición de pago: 50% inicio / 50% entrega` },
+        { titulo:'SIGUIENTES PASOS',
+          cuerpo: '1. Revisión y aprobación de la propuesta\n2. Firma del acuerdo de servicios\n3. Reunión de kickoff\n4. Inicio de ejecución' },
+      ],
+      firmas: `\n\n${hoy()}\n\n______________________________\nEquipo Comercial\n${d.emisor||''}`
+    };
+    case 'acta_reunion': return {
+      titulo: 'ACTA DE REUNIÓN',
+      meta: `${d.asunto||''}  ·  ${d.fecha_acta||hoy()}  ·  ${d.lugar||''}`,
+      secciones: [
+        { titulo:'ASISTENTES', cuerpo: d.asistentes||'' },
+        { titulo:'ORDEN DEL DÍA Y PUNTOS TRATADOS', cuerpo: d.puntos||'' },
+        { titulo:'ACUERDOS Y PRÓXIMAS ACCIONES', cuerpo: d.acuerdos||'' },
+        { titulo:'PRÓXIMA CONVOCATORIA', cuerpo: 'Fecha y hora por confirmar. Se notificará con 48 horas de antelación.' },
+      ],
+      firmas: `\n\nActa elaborada el ${hoy()}`
+    };
+    case 'carta_presentacion': return {
+      titulo: 'CARTA DE PRESENTACIÓN',
+      meta: `${d.emisor||''}  ·  ${hoy()}`,
+      secciones: [
+        { cuerpo: `Estimado/a ${d.contacto_cp||''},\n\nMi nombre es [Nombre] y me dirijo a usted en nombre de ${d.emisor||'nuestra empresa'} para presentarles nuestros servicios y explorar posibles sinergias con ${d.destinatario||''}.` },
+        { titulo:'QUIÉNES SOMOS', cuerpo: `${d.emisor||''} es una empresa especializada en ${d.servicios||'[servicios]'}. Llevamos años ayudando a empresas como la suya a mejorar su competitividad y eficiencia.` },
+        { titulo:'PROPUESTA DE VALOR', cuerpo: d.servicios||'' },
+        { titulo:'PRÓXIMOS PASOS', cuerpo: `Nos encantaría poder concretar ${d.cta||'una reunión de 30 minutos'} para explorar cómo podemos ayudar a ${d.destinatario||'su empresa'} a alcanzar sus objetivos.` },
+      ],
+      firmas: `\n\nAtentamente,\n\n[Nombre y apellidos]\n${d.emisor||''}`
+    };
+    default: return { titulo:'DOCUMENTO', meta:'', secciones:[], firmas:'' };
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// CLÁUSULAS
+// ═══════════════════════════════════════════════════
+var CLAUSES = [
+  {
+    id:'cl_conf', name:'🔒 Confidencialidad',
+    desc:'Obligación de secreto por ambas partes durante y tras el contrato (3 años).',
+    text:'CLÁUSULA DE CONFIDENCIALIDAD\n\nAmbas partes acuerdan mantener estricta confidencialidad sobre la información técnica, comercial y estratégica intercambiada durante la relación contractual y los tres años posteriores a su finalización, sin que puedan divulgarla a terceros sin consentimiento previo y escrito de la otra parte.'
+  },
+  {
+    id:'cl_pi', name:'💡 Propiedad intelectual',
+    desc:'Los trabajos producidos son propiedad exclusiva del cliente.',
+    text:'CLÁUSULA DE PROPIEDAD INTELECTUAL\n\nTodo trabajo, código fuente, diseño, documentación o material creado en ejecución del presente contrato es propiedad exclusiva del cliente desde el momento de su creación, quien tendrá plenos derechos de explotación. El proveedor cede irrevocablemente todos los derechos de propiedad intelectual derivados.'
+  },
+  {
+    id:'cl_disp', name:'⚖️ Resolución de disputas',
+    desc:'Mediación extrajudicial obligatoria antes de procedimiento legal.',
+    text:'CLÁUSULA DE RESOLUCIÓN DE DISPUTAS\n\nAnte cualquier controversia derivada del presente contrato, las partes se comprometen a intentar resolver la cuestión mediante mediación extrajudicial voluntaria, con un plazo máximo de 30 días. Solo si la mediación fracasa podrán iniciar procedimientos legales.'
+  },
+  {
+    id:'cl_resp', name:'🛡 Limitación de responsabilidad',
+    desc:'La responsabilidad total del proveedor no excederá el importe del contrato.',
+    text:'CLÁUSULA DE LIMITACIÓN DE RESPONSABILIDAD\n\nEn ningún caso la responsabilidad total y acumulada del proveedor frente al cliente, por cualquier causa, excederá el importe total facturado en los 12 meses previos al hecho causante. Queda expresamente excluida la responsabilidad por daños indirectos, lucro cesante o pérdida de negocio.'
+  },
+  {
+    id:'cl_fm', name:'🌪 Fuerza mayor',
+    desc:'Exclusión de responsabilidad por circunstancias fuera del control razonable.',
+    text:'CLÁUSULA DE FUERZA MAYOR\n\nNinguna parte será responsable por incumplimiento o retraso causado por circunstancias ajenas a su control razonable, incluyendo desastres naturales, pandemias, conflictos armados, ciberataques de terceros o decisiones de autoridades públicas. La parte afectada notificará a la otra en el plazo de 48 horas.'
+  },
+  {
+    id:'cl_nc', name:'🚫 No competencia (12 meses)',
+    desc:'El proveedor no puede trabajar con competidores directos durante 12 meses.',
+    text:'CLÁUSULA DE NO COMPETENCIA\n\nEl proveedor se compromete a no colaborar directamente ni a través de terceros con empresas que sean competidoras directas del cliente durante la vigencia del contrato y los 12 meses posteriores a su finalización. Esta obligación aplica a proyectos sustancialmente similares al objeto del presente contrato.'
+  },
+  {
+    id:'cl_gdpr', name:'🔐 Protección de datos (GDPR)',
+    desc:'Tratamiento de datos personales conforme al RGPD europeo.',
+    text:'CLÁUSULA DE PROTECCIÓN DE DATOS\n\nEn cumplimiento del Reglamento (UE) 2016/679 (RGPD), cualquier dato personal que sea tratado en el marco del presente contrato se procesará exclusivamente para las finalidades previstas, con las medidas de seguridad apropiadas y sin cesión a terceros sin autorización. Ambas partes actuarán como responsables de su respectivo tratamiento.'
+  },
+];
+
+function renderClauseList() {
+  const el = document.getElementById('clause-list');
+  el.innerHTML = CLAUSES.map(c => `
+    <div class="clause-card" id="card-${c.id}" onclick="toggleClause('${c.id}')">
+      <input type="checkbox" id="${c.id}"/>
+      <div>
+        <div class="clause-label">${c.name}</div>
+        <div class="clause-desc">${c.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleClause(id) {
+  const cb = document.getElementById(id);
+  cb.checked = !cb.checked;
+  document.getElementById('card-'+id).classList.toggle('checked', cb.checked);
+}
+
+async function insertarClausulas() {
+  const sel = CLAUSES.filter(c => document.getElementById(c.id)?.checked);
+  if (!sel.length) { setStatus('clausulas','error','Selecciona al menos una cláusula.'); return; }
+
+  if (IS_WORD) {
+    try {
+      await Word.run(async ctx => {
+        const body = ctx.document.body;
+        const h = body.insertParagraph('CLÁUSULAS ADICIONALES', Word.InsertLocation.end);
+        h.styleBuiltIn = Word.Style.heading2;
+        sel.forEach(c => {
+          body.insertParagraph(c.text, Word.InsertLocation.end).font.size = 11;
+          body.insertParagraph('', Word.InsertLocation.end);
+        });
+        await ctx.sync();
+      });
+      setStatus('clausulas','success',`✅ ${sel.length} cláusula(s) insertada(s) en el documento.`);
+    } catch(e) { setStatus('clausulas','error','❌ ' + e.message); }
+  } else {
+    setStatus('clausulas','success',`✅ Demo: ${sel.length} cláusula(s) seleccionadas. En Word real se insertarían al final del documento activo.`);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// PLANTILLAS
+// ═══════════════════════════════════════════════════
+let selectedTpl = 'contrato_servicios';
+function selectTpl(el) {
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTpl = el.dataset.type;
+}
+function useTpl() {
+  // Find & select the matching doctype card
+  const card = document.querySelector(`.doctype-card[data-type="${selectedTpl}"]`);
+  if (card) { selectDoctype(card); }
+  switchTab('nuevo', document.querySelector('.nav-tab'));
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+  setStatus('plantillas','success','✅ Plantilla cargada.');
+}
+function addCustomTpl() {
+  alert('La creación de plantillas personalizadas está disponible en la versión Enterprise.\n\nContacta: info@docuautopro.com');
+}
+
+// ═══════════════════════════════════════════════════
+// HISTORIAL
+// ═══════════════════════════════════════════════════
+var TYPE_NAMES = {
+  contrato_servicios:'Contrato de Servicios', nda:'NDA', oferta_laboral:'Oferta Laboral',
+  propuesta_comercial:'Propuesta Comercial', acta_reunion:'Acta de Reunión', carta_presentacion:'Carta de Presentación'
+};
+var TYPE_ICONS = {
+  contrato_servicios:'📝', nda:'🔒', oferta_laboral:'👔',
+  propuesta_comercial:'💼', acta_reunion:'📋', carta_presentacion:'✉️'
+};
+
+function guardarHistorial(data) {
+  try {
+    const h = JSON.parse(localStorage.getItem('dap_hist')||'[]');
+    h.unshift({ tipo:data.tipo, ts:Date.now(), data });
+    localStorage.setItem('dap_hist', JSON.stringify(h.slice(0,20)));
+  } catch(e) {}
+}
+
+function renderHistorial() {
+  const el = document.getElementById('hist-list');
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem('dap_hist')||'[]'); } catch(e){}
+  if (!h.length) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">📂</div><p>Aún no has generado<br>ningún documento.</p></div>`;
+    return;
+  }
+  el.innerHTML = h.map((item,i) => `
+    <div class="hist-card" onclick="recargarHist(${i})">
+      <div class="hist-icon">${TYPE_ICONS[item.tipo]||'📄'}</div>
+      <div class="hist-info">
+        <div class="hist-name">${TYPE_NAMES[item.tipo]||item.tipo}</div>
+        <div class="hist-meta">${new Date(item.ts).toLocaleString('es-ES')}</div>
+      </div>
+      <div class="hist-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+function recargarHist(i) {
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem('dap_hist')||'[]'); } catch(e){}
+  const item = h[i]; if (!item) return;
+  const d = item.data;
+
+  // Select doctype
+  const card = document.querySelector(`.doctype-card[data-type="${d.tipo}"]`);
+  if (card) selectDoctype(card);
+
+  // Fill fields
+  Object.keys(d).forEach(k => {
+    const el = document.getElementById(k);
+    if (el && k !== 'tipo') el.value = d[k];
+  });
+
+  switchTab('nuevo', document.querySelectorAll('.nav-tab')[0]);
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+}
+
+function clearHist() {
+  if (!confirm('¿Borrar todo el historial?')) return;
+  localStorage.removeItem('dap_hist');
+  renderHistorial();
+}
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function setStatus(panel, type, msg) {
+  const el = document.getElementById('status-'+panel);
+  if (!el) return;
+  if (!type) { el.className = 'status'; el.innerHTML = ''; return; }
+  el.className = 'status ' + type;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+}
+
+// ── Bootstrap (all vars now defined) ──
+if (typeof Office === 'undefined') {
+  init();
+}
+</script>
+</body>
+</html>
