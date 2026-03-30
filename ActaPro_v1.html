@@ -1,1085 +1,1246 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ActaPro — Generador d'Actes</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
-<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>龙门出口 · Dragon Gate Export Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:       #F5F3EE;
-  --white:    #FFFFFF;
-  --ink:      #1A1A1A;
-  --ink2:     #4A4A4A;
-  --ink3:     #9A9A9A;
-  --accent:   #1C4B3A;
-  --accent2:  #2D7A5F;
-  --accent-lt:#E6F2EE;
-  --gold:     #C8962A;
-  --gold-lt:  #FDF4E3;
-  --red:      #C0392B;
-  --red-lt:   #FDEDEC;
-  --border:   #E2DDD6;
-  --shadow:   0 2px 8px rgba(26,26,26,.07);
-  --r:        8px;
-  --serif:    'Instrument Serif', serif;
-  --sans:     'DM Sans', sans-serif;
+:root{
+  --bg:#f5f0e8;--bg2:#ede6d6;--bg3:#e4d9c4;
+  --ink:#1a1008;--ink2:#3d2b0f;--ink3:#6b4c1e;
+  --paper:#faf6ee;--paper2:#fff8ef;
+  --red:#c0392b;--red2:#e74c3c;--redl:rgba(192,57,43,0.1);
+  --gold:#b8860b;--gold2:#d4a017;--goldl:rgba(184,134,11,0.12);
+  --jade:#1a6b4a;--jade2:#27ae60;--jadel:rgba(26,107,74,0.1);
+  --sky:#1a5276;--sky2:#2980b9;--skyl:rgba(26,82,118,0.1);
+  --border:#d4c4a0;--border2:#c4aa7a;
+  --shadow:0 4px 24px rgba(26,16,8,0.12);
+  --shadow2:0 2px 8px rgba(26,16,8,0.08);
+  --ff-serif:'Noto Serif SC',serif;
+  --ff-sans:'Noto Sans SC',sans-serif;
+  --ff-mono:'DM Mono',monospace;
+  --r:8px;--r-sm:5px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:13px;}
+body{font-family:var(--ff-sans);background:var(--bg);color:var(--ink);min-height:100vh;position:relative;}
+
+/* GRAIN TEXTURE */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:1;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden}
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--ink);
-  font-size: 12.5px;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+/* WATERMARK */
+body::before{
+  content:'龙';position:fixed;right:-20px;bottom:40px;
+  font-family:var(--ff-serif);font-size:200px;color:rgba(192,57,43,0.04);
+  pointer-events:none;z-index:0;line-height:1;
 }
 
-/* ── HEADER ── */
-header {
-  background: var(--accent);
-  padding: 13px 15px 11px;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
+/* HEADER */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);
+  border-bottom:2px solid var(--gold);
 }
-header::after {
-  content:'';
-  position:absolute;
-  bottom:-20px; right:-20px;
-  width:100px; height:100px;
-  background: radial-gradient(circle, rgba(200,150,42,.3) 0%, transparent 70%);
-  pointer-events:none;
-}
-.header-inner { display:flex; align-items:center; gap:10px; position:relative; }
-.logo {
-  width:32px; height:32px; border-radius:6px;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.2);
-  display:flex; align-items:center; justify-content:center;
-  font-family: var(--serif); font-size:17px; color:white; flex-shrink:0;
-}
-.header-text h1 {
-  font-family: var(--serif); font-size:15px; color:white;
-  font-weight:400; letter-spacing:-.1px;
-}
-.header-text p { font-size:10px; color:rgba(255,255,255,.5); margin-top:1px; }
-.api-dot {
-  margin-left:auto; width:7px; height:7px; border-radius:50%;
-  background: rgba(255,255,255,.2); flex-shrink:0;
-  transition:background .3s;
-}
-.api-dot.ok  { background: #4ade80; box-shadow:0 0 6px rgba(74,222,128,.5); }
-.api-dot.err { background: #f87171; }
-
-/* ── API BAR ── */
-.api-bar {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 7px 14px;
-  display: flex; align-items:center; gap:7px;
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:54px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-seal{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--red),#8b0000);
+  border:2px solid var(--gold2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-serif);font-size:16px;font-weight:700;color:var(--gold2);
+  box-shadow:0 0 0 1px rgba(212,160,23,0.3),0 4px 12px rgba(0,0,0,0.4);
   flex-shrink:0;
 }
-.api-bar label { font-size:10.5px; font-weight:600; color:var(--ink3); white-space:nowrap; }
-.api-wrap { flex:1; position:relative; }
-.api-wrap input {
-  width:100%; padding:5px 28px 5px 9px;
-  border:1.5px solid var(--border); border-radius:6px;
-  font-size:10.5px; font-family:monospace; color:var(--ink3);
-  background:var(--bg); outline:none;
-  transition:border-color .2s;
-}
-.api-wrap input.ok  { border-color:#4ade80; color:var(--ink); }
-.api-wrap input.err { border-color:#f87171; }
-.api-wrap input:focus { border-color:var(--accent2); }
-.api-eye {
-  position:absolute; right:7px; top:50%; transform:translateY(-50%);
-  background:none; border:none; cursor:pointer; font-size:11px;
-  color:var(--ink3); padding:0;
-}
+.logo-words{line-height:1.1;}
+.logo-cn{font-family:var(--ff-serif);font-size:14px;font-weight:700;color:var(--gold2);letter-spacing:2px;}
+.logo-en{font-size:9.5px;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+.lang-toggle{display:flex;gap:0;background:rgba(255,255,255,0.08);border-radius:20px;border:1px solid rgba(255,255,255,0.15);overflow:hidden;}
+.lang-btn{padding:5px 13px;border:none;background:transparent;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--ff-sans);}
+.lang-btn.on{background:linear-gradient(135deg,var(--red),#8b1a1a);color:var(--gold2);}
 
-/* ── TABS ── */
-.tabs {
-  display:flex; background:var(--white);
-  border-bottom:1px solid var(--border); flex-shrink:0;
+/* NAV */
+.nav{
+  display:flex;background:var(--bg3);
+  border-bottom:1px solid var(--border2);
+  overflow-x:auto;scrollbar-width:none;
+  position:relative;z-index:1;
 }
-.tab {
-  flex:1; padding:8px 4px 7px; text-align:center;
-  font-size:10px; font-weight:600; color:var(--ink3);
-  cursor:pointer; border-bottom:2px solid transparent;
-  margin-bottom:-1px; transition:all .2s;
-  letter-spacing:.2px; user-select:none;
+.nav::-webkit-scrollbar{display:none;}
+.nav-item{
+  flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;
+  padding:8px 4px 7px;cursor:pointer;
+  color:var(--ink3);transition:all .2s;gap:2px;
+  border-bottom:2px solid transparent;
+  position:relative;font-size:9px;
 }
-.tab .ti { font-size:13px; display:block; margin-bottom:2px; }
-.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-.tab:hover:not(.active) { color:var(--ink2); background:var(--bg); }
+.nav-item.on{color:var(--red);border-bottom-color:var(--red);background:var(--bg2);}
+.nav-item:hover:not(.on){color:var(--ink2);background:var(--bg2);}
+.ni{font-size:16px;line-height:1;}
+.nl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;}
+.n-badge{position:absolute;top:4px;right:calc(50% - 18px);background:var(--red);color:#fff;width:14px;height:14px;border-radius:50%;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;}
 
-/* ── SCROLL ── */
-.scroll {
-  flex:1; overflow-y:auto; overflow-x:hidden;
-  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
-}
-.scroll::-webkit-scrollbar { width:3px; }
-.scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+/* PANEL */
+.content{position:relative;z-index:1;}
+.panel{display:none;padding:12px;animation:slideIn .2s ease;}
+.panel.on{display:block;}
+@keyframes slideIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── PANELS ── */
-.panel { display:none; padding:14px; animation:fadeIn .2s ease; }
-.panel.active { display:block; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
-
-/* ── FORM ── */
-.eyebrow {
-  font-size:9px; font-weight:700; color:var(--ink3);
-  text-transform:uppercase; letter-spacing:1px;
-  margin:14px 0 7px;
+/* CARDS */
+.card{
+  background:var(--paper);border:1px solid var(--border);
+  border-radius:var(--r);padding:13px;margin-bottom:10px;
+  box-shadow:var(--shadow2);position:relative;overflow:hidden;
 }
-.eyebrow:first-child { margin-top:0; }
+.card-accent{position:absolute;top:0;left:0;width:3px;height:100%;background:var(--red);}
+.card-accent.gold{background:var(--gold);}
+.card-accent.jade{background:var(--jade);}
+.card-accent.sky{background:var(--sky);}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+.card-ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.card-ic.r{background:var(--redl);color:var(--red);}
+.card-ic.g{background:var(--goldl);color:var(--gold);}
+.card-ic.j{background:var(--jadel);color:var(--jade);}
+.card-ic.s{background:var(--skyl);color:var(--sky);}
+.card-tit{font-family:var(--ff-serif);font-size:12.5px;font-weight:700;color:var(--ink2);}
 
-.field { margin-bottom:8px; }
-label {
-  display:block; font-size:11px; font-weight:600;
-  color:var(--ink2); margin-bottom:3px;
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,var(--ink) 0%,#2d1a08 60%,#1a0a0a 100%);
+  border-radius:var(--r);padding:18px 16px;margin-bottom:10px;
+  position:relative;overflow:hidden;border:1px solid var(--border2);
 }
-input, select, textarea {
-  width:100%; padding:7px 10px;
-  border:1.5px solid var(--border); border-radius:var(--r);
-  font-size:11.5px; font-family:var(--sans); color:var(--ink);
-  background:var(--white); outline:none;
-  transition:border-color .15s, box-shadow .15s;
+.hero-bg{position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:90px;line-height:1;opacity:0.07;font-family:var(--ff-serif);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(212,160,23,0.15);border:1px solid rgba(212,160,23,0.3);color:var(--gold2);padding:3px 10px;border-radius:20px;font-size:9.5px;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;}
+.hero-title{font-family:var(--ff-serif);font-size:18px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:4px;}
+.hero-title em{color:var(--gold2);font-style:normal;}
+.hero-sub{font-size:10.5px;color:rgba(255,255,255,0.45);line-height:1.6;}
+.hero-stats{display:flex;gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;}
+.hs-box{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,0.08);}
+.hs-box:last-child{border-right:none;}
+.hs-num{font-family:var(--ff-mono);font-size:16px;font-weight:500;}
+.hs-box:nth-child(1) .hs-num{color:var(--red2);}
+.hs-box:nth-child(2) .hs-num{color:var(--gold2);}
+.hs-box:nth-child(3) .hs-num{color:#5dade2;}
+.hs-lbl{font-size:9px;color:rgba(255,255,255,0.35);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* FEAT GRID */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.feat{
+  background:var(--paper);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 10px;cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.feat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--redl),transparent);opacity:0;transition:opacity .2s;}
+.feat:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow);}
+.feat:hover::before{opacity:1;}
+.feat-ic{font-size:22px;margin-bottom:5px;}
+.feat-t{font-family:var(--ff-serif);font-size:11.5px;font-weight:700;color:var(--ink2);}
+.feat-s{font-size:9.5px;color:var(--ink3);margin-top:2px;}
+
+/* FORM */
+.field{margin-bottom:8px;}
+label{display:block;font-size:9.5px;font-weight:700;color:var(--ink3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.6px;}
+input,select,textarea{
+  width:100%;padding:7px 10px;
+  background:var(--paper2);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--ink);
+  font-size:12px;font-family:var(--ff-sans);
+  transition:border-color .2s,box-shadow .2s;
   -webkit-appearance:none;
 }
-input:focus, select:focus, textarea:focus {
-  border-color:var(--accent2);
-  box-shadow:0 0 0 3px rgba(45,122,95,.1);
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(184,134,11,0.12);
+  background:#fff;
 }
-input::placeholder, textarea::placeholder { color:var(--ink3); }
-textarea { resize:vertical; min-height:60px; line-height:1.5; }
-select {
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239A9A9A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 9px center;
-  padding-right:28px; cursor:pointer;
-}
-.row2 { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
+input::placeholder,textarea::placeholder{color:var(--border2);}
+select option{background:#fff;color:var(--ink);}
+textarea{min-height:52px;resize:vertical;line-height:1.5;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
 
-/* ── ASSISTENTS ── */
-.assistents-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
-.assistent-row {
-  display:flex; gap:5px; align-items:center;
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:6px 8px;
-}
-.assistent-row input {
-  border:none; padding:0; font-size:11.5px;
-  background:transparent; box-shadow:none;
-  margin:0;
-}
-.assistent-row input:focus { box-shadow:none; border:none; }
-.assistent-row .sep { color:var(--border); font-size:14px; flex-shrink:0; }
-.btn-remove {
-  background:none; border:none; cursor:pointer;
-  color:var(--ink3); font-size:14px; padding:0 2px;
-  flex-shrink:0; line-height:1;
-  transition:color .2s;
-}
-.btn-remove:hover { color:var(--red); }
-.btn-add-row {
-  background:none; border:1.5px dashed var(--border);
-  border-radius:var(--r); width:100%; padding:6px;
-  font-size:11px; color:var(--ink3); cursor:pointer;
-  font-family:var(--sans); font-weight:600;
-  transition:all .2s;
-}
-.btn-add-row:hover { border-color:var(--accent2); color:var(--accent); background:var(--accent-lt); }
+/* TAGS */
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.tag{padding:3px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:10px;cursor:pointer;color:var(--ink3);transition:all .15s;}
+.tag:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.tag.g:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
+.tag.j:hover{background:var(--jade);color:#fff;border-color:var(--jade);}
 
-/* ── ACCIONS ── */
-.accions-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
-.accio-row {
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:8px 10px; position:relative;
-}
-.accio-row .row3 { margin-bottom:0; }
-.accio-row input { font-size:11px; padding:5px 8px; }
-.accio-num {
-  position:absolute; top:-8px; left:8px;
-  background:var(--accent); color:white;
-  font-size:9px; font-weight:700; padding:1px 6px;
-  border-radius:99px; letter-spacing:.3px;
-}
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--ff-sans);transition:all .2s;width:100%;}
+.btn-primary{background:linear-gradient(135deg,var(--red),#8b1a1a);color:#fff;box-shadow:0 3px 10px rgba(192,57,43,0.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(192,57,43,0.45);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#8b6914);color:#fff;box-shadow:0 3px 10px rgba(184,134,11,0.25);}
+.btn-gold:hover{transform:translateY(-1px);}
+.btn-jade{background:linear-gradient(135deg,var(--jade),#0e4d2e);color:#fff;}
+.btn-jade:hover{transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--ink2);border:1.5px solid var(--border2);}
+.btn-outline:hover{border-color:var(--red);color:var(--red);}
+.btn-sm{padding:6px 11px;font-size:11px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
 
-/* ── PROGRESS ── */
-.progress-wrap {
-  display:none; margin-top:12px;
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:12px;
-}
-.progress-wrap.visible { display:block; }
-.progress-label {
-  font-size:11px; font-weight:600; color:var(--ink);
-  display:flex; align-items:center; gap:7px; margin-bottom:8px;
-}
-.progress-track { background:var(--bg); border-radius:99px; height:4px; overflow:hidden; }
-.progress-fill {
-  height:100%; border-radius:99px; width:0%;
-  background:linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
-  transition:width .4s cubic-bezier(.4,0,.2,1);
-}
-.steps { margin-top:9px; display:flex; flex-direction:column; gap:4px; }
-.step {
-  display:flex; align-items:center; gap:6px;
-  font-size:10.5px; color:var(--ink3); transition:color .3s;
-}
-.step.done   { color:var(--accent2); }
-.step.active { color:var(--ink); font-weight:600; }
-.step-dot {
-  width:5px; height:5px; border-radius:50%;
-  background:var(--border); flex-shrink:0; transition:background .3s;
-}
-.step.done .step-dot   { background:var(--accent2); }
-.step.active .step-dot { background:var(--accent); box-shadow:0 0 0 3px rgba(28,75,58,.15); }
+/* DIVIDER */
+.div{height:1px;background:var(--border);margin:9px 0;}
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* ── OUTPUT ── */
-.output-box {
-  display:none; margin-top:12px;
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:12px 14px;
-  font-size:11px; line-height:1.65; color:var(--ink2);
-  max-height:220px; overflow-y:auto;
-  box-shadow:var(--shadow);
-}
-.output-box.visible { display:block; animation:fadeIn .25s ease; }
-.out-title {
-  display:block; font-family:var(--serif); font-size:15px;
-  color:var(--ink); text-align:center; margin-bottom:3px;
-}
-.out-meta {
-  display:block; font-size:10px; color:var(--ink3);
-  text-align:center; margin-bottom:8px;
-}
-.out-section {
-  display:block; font-size:10px; font-weight:700;
-  color:var(--accent); text-transform:uppercase;
-  letter-spacing:.5px; margin:10px 0 3px;
-}
-.out-actions { display:none; gap:6px; margin-top:8px; }
-.out-actions.visible { display:flex; }
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:9.5px;font-weight:700;white-space:nowrap;}
+.br{background:rgba(192,57,43,0.1);color:var(--red);border:1px solid rgba(192,57,43,0.2);}
+.bg{background:rgba(184,134,11,0.1);color:var(--gold);border:1px solid rgba(184,134,11,0.2);}
+.bj{background:rgba(26,107,74,0.1);color:var(--jade);border:1px solid rgba(26,107,74,0.2);}
+.bs{background:rgba(26,82,118,0.1);color:var(--sky);border:1px solid rgba(26,82,118,0.2);}
+.bn{background:var(--bg3);color:var(--ink3);border:1px solid var(--border);}
 
-/* ── BUTTONS ── */
-.btn {
-  width:100%; padding:10px 14px; border:none; border-radius:var(--r);
-  font-size:12.5px; font-weight:600; font-family:var(--sans);
-  cursor:pointer; transition:all .2s;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  letter-spacing:-.1px;
-}
-.btn + .btn { margin-top:6px; }
-.btn-primary {
-  background:var(--accent); color:white;
-}
-.btn-primary:hover:not(:disabled) {
-  background:var(--accent2); transform:translateY(-1px);
-  box-shadow:0 4px 12px rgba(28,75,58,.25);
-}
-.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
-.btn-ghost {
-  background:transparent; color:var(--ink2);
-  border:1.5px solid var(--border); width:auto; flex:1;
-}
-.btn-ghost:hover { background:var(--white); border-color:var(--ink3); }
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{background:var(--bg3);color:var(--ink3);padding:6px 8px;text-align:left;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border2);}
+.tbl td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--bg2);}
 
-/* ── STATUS ── */
-.status {
-  border-radius:var(--r); font-size:11.5px; padding:9px 11px;
-  margin-top:8px; display:none; line-height:1.4;
-  animation:fadeIn .2s ease;
-}
-.status.success { background:var(--accent-lt); color:var(--accent); border:1px solid #A8D5BB; display:flex; align-items:flex-start; gap:7px; }
-.status.error   { background:var(--red-lt);    color:var(--red);    border:1px solid #F5C6C2; display:flex; align-items:flex-start; gap:7px; }
-.status.info    { background:var(--gold-lt);   color:#8B6914;       border:1px solid #F0D898; display:flex; align-items:flex-start; gap:7px; }
+/* HS RESULT */
+.hs-result{background:linear-gradient(135deg,var(--goldl),var(--redl));border:1px solid var(--border2);border-radius:var(--r);padding:12px;margin-top:9px;display:none;animation:slideIn .2s;}
+.hs-code-big{font-family:var(--ff-mono);font-size:24px;font-weight:500;color:var(--gold);}
+.hs-desc{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.5;}
+.hs-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
 
-/* ── SPINNER ── */
-.spinner {
-  width:13px; height:13px; border-radius:50%; flex-shrink:0;
-  border:2px solid rgba(255,255,255,.3);
-  border-top-color:white;
-  animation:spin .7s linear infinite;
-}
-@keyframes spin { to{transform:rotate(360deg)} }
+/* CHECKLIST */
+.chklist{list-style:none;}
+.chk{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.chk:last-child{border-bottom:none;}
+.chk:hover{background:var(--bg2);}
+.chk-b{width:17px;height:17px;border:1.5px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;font-size:10px;}
+.chk.ok .chk-b{background:var(--jade);border-color:var(--jade);color:#fff;}
+.chk-t{font-size:11.5px;color:var(--ink2);line-height:1.4;}
+.chk.ok .chk-t{text-decoration:line-through;color:var(--ink3);}
+.prog-w{background:var(--bg3);border-radius:20px;height:5px;overflow:hidden;margin-top:5px;border:1px solid var(--border);}
+.prog-b{height:100%;background:linear-gradient(90deg,var(--jade),var(--jade2));border-radius:20px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.prog-lbl{font-size:9.5px;color:var(--ink3);margin-bottom:3px;display:flex;justify-content:space-between;}
 
-/* ── FOOTER ── */
-.footer {
-  padding:10px 14px; background:var(--white);
-  border-top:1px solid var(--border); flex-shrink:0;
-}
+/* INCOTERM */
+.inco-tip{background:var(--skyl);border:1px solid rgba(26,82,118,0.2);border-radius:var(--r-sm);padding:8px;margin-top:5px;font-size:10.5px;color:var(--sky);line-height:1.5;display:none;}
 
-/* ── HISTORIAL ── */
-.hist-card {
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:10px 12px; margin-bottom:6px;
-  display:flex; align-items:center; gap:10px; cursor:pointer;
-  transition:all .2s;
-}
-.hist-card:hover { border-color:var(--accent2); box-shadow:var(--shadow); }
-.hist-icon { font-size:20px; flex-shrink:0; }
-.hist-name { font-size:11.5px; font-weight:600; color:var(--ink); }
-.hist-meta { font-size:10px; color:var(--ink3); margin-top:1px; }
-.hist-arrow { margin-left:auto; color:var(--ink3); font-size:16px; }
-.empty-state { text-align:center; padding:30px 20px; color:var(--ink3); }
-.empty-state .es-icon { font-size:32px; margin-bottom:8px; }
-.empty-state p { font-size:11.5px; line-height:1.5; }
+/* TRACKER */
+.tracker{padding:2px 0;}
+.trk{display:flex;align-items:flex-start;gap:9px;padding:5px 0;position:relative;}
+.trk:not(:last-child)::after{content:'';position:absolute;left:12px;top:30px;bottom:-5px;width:1px;background:var(--border);}
+.trk-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;border:1.5px solid var(--border);background:var(--bg3);color:var(--ink3);z-index:1;position:relative;}
+.trk-dot.done{background:var(--jadel);border-color:var(--jade);color:var(--jade);}
+.trk-dot.active{background:var(--redl);border-color:var(--red);color:var(--red);animation:pulse 2s infinite;}
+.trk-dot.wait{opacity:.4;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,0.35);}50%{box-shadow:0 0 0 7px rgba(192,57,43,0);}}
+.trk-tl{font-size:11.5px;font-weight:600;color:var(--ink);}
+.trk-ts{font-size:10px;color:var(--ink3);margin-top:1px;}
+.trk.wait .trk-tl,.trk.wait .trk-ts{color:var(--ink3);}
 
-/* ── TIPUS TAG ── */
-.tipus-grid {
-  display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px;
-}
-.tipus-card {
-  background:var(--white); border:1.5px solid var(--border);
-  border-radius:var(--r); padding:10px 8px; text-align:center;
-  cursor:pointer; transition:all .2s; user-select:none;
-}
-.tipus-card:hover { border-color:var(--accent2); background:var(--accent-lt); }
-.tipus-card.sel {
-  border-color:var(--accent); background:var(--accent-lt);
-  box-shadow:0 0 0 3px rgba(28,75,58,.1);
-}
-.tipus-card .ti { font-size:20px; margin-bottom:4px; }
-.tipus-card .tn { font-size:10px; font-weight:700; color:var(--ink); line-height:1.3; }
-.tipus-card.sel .tn { color:var(--accent); }
+/* RATE */
+.rate-box{background:linear-gradient(135deg,var(--ink),var(--ink2));border-radius:var(--r);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.rate-big{font-family:var(--ff-mono);font-size:22px;font-weight:500;color:var(--gold2);}
+.rate-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.rate-grid{text-align:right;font-family:var(--ff-mono);font-size:9.5px;color:rgba(255,255,255,0.35);line-height:1.7;}
 
-hr.div { border:none; border-top:1px solid var(--border); margin:12px 0; }
+/* CBM */
+.cbm-out{background:linear-gradient(135deg,var(--ink),#1a2a38);border-radius:var(--r);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.cbm-val{font-family:var(--ff-mono);font-size:20px;font-weight:500;color:#5dade2;}
+.cbm-sub{font-size:9.5px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.cbm-detail{text-align:right;font-family:var(--ff-mono);font-size:9.5px;color:rgba(255,255,255,0.4);line-height:1.7;}
+
+/* ALERT */
+.alrt{padding:8px 11px;border-radius:var(--r-sm);font-size:10.5px;display:flex;gap:6px;align-items:flex-start;line-height:1.5;margin-top:8px;}
+.aw{background:rgba(184,134,11,0.07);border:1px solid rgba(184,134,11,0.2);color:var(--ink2);}
+.ar{background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.2);color:var(--ink2);}
+.ai{background:rgba(26,82,118,0.07);border:1px solid rgba(26,82,118,0.2);color:var(--ink2);}
+.ag{background:rgba(26,107,74,0.07);border:1px solid rgba(26,107,74,0.2);color:var(--ink2);}
+
+/* PRODUCT ROW */
+.prow{display:grid;grid-template-columns:2fr 1fr 1fr 22px;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+.prow:last-child{border-bottom:none;}
+.pdel{width:22px;height:22px;background:var(--redl);border:none;border-radius:50%;color:var(--red);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.pdel:hover{background:var(--red);color:#fff;}
+
+/* SUMMARY BAR */
+.sum-bar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px;display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+.sum-total{font-family:var(--ff-mono);font-size:13px;font-weight:600;color:var(--gold);}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(26,16,8,0.75);z-index:200;display:none;align-items:center;justify-content:center;padding:14px;}
+.modal-ov.show{display:flex;}
+.modal{background:var(--paper);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:400px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideIn .25s ease;}
+.modal-h{padding:13px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);border-radius:9px 9px 0 0;}
+.modal-h-title{font-family:var(--ff-serif);font-size:13px;font-weight:700;color:var(--gold2);}
+.modal-x{width:25px;height:25px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:rgba(255,255,255,0.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:14px;}
+.modal-ft{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:7px;}
+
+/* DOC PREVIEW */
+.doc-prev{background:#fff;color:#1a1008;border-radius:6px;padding:14px;font-size:10.5px;line-height:1.6;font-family:'Times New Roman',Georgia,serif;border:1px solid #ddd;}
+.doc-tit{text-align:center;font-size:14px;font-weight:700;margin-bottom:5px;border-bottom:2px solid #c0392b;padding-bottom:5px;color:#1a1008;}
+.doc-sub{text-align:center;font-size:10px;color:#666;margin-bottom:8px;}
+.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px;}
+.doc-ml{font-weight:700;color:#555;font-size:9.5px;}
+.doc-mv{font-size:10px;}
+.doc-t{width:100%;border-collapse:collapse;font-size:9.5px;margin:6px 0;}
+.doc-t th{background:#c0392b;color:#fff;padding:3px 5px;text-align:left;font-size:9px;}
+.doc-t td{padding:3px 5px;border-bottom:1px solid #eee;}
+.doc-tot{text-align:right;font-size:11px;font-weight:700;margin-top:6px;color:#c0392b;}
+.doc-sig{margin-top:10px;font-size:9.5px;border-top:1px solid #eee;padding-top:8px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);border:1px solid var(--gold);color:var(--gold2);padding:8px 18px;border-radius:20px;font-size:11.5px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:var(--ff-sans);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* EXCHANGE QUICK BTNS */
+.fx-quick{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.fxq{padding:4px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--ff-mono);transition:all .15s;color:var(--ink3);}
+.fxq:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+/* PAYMENT TERMS TABLE */
+.pt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.pt-row:last-child{border-bottom:none;}
+.pt-label{color:var(--ink3);font-size:10px;font-weight:700;}
+.pt-val{font-family:var(--ff-mono);color:var(--ink2);font-size:11px;}
+
+/* LC / PAYMENT SECTION */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.pay-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
+.pay-box:hover{border-color:var(--gold);background:var(--goldl);}
+.pay-box.on{border-color:var(--red);background:var(--redl);}
+.pay-ic{font-size:18px;margin-bottom:4px;}
+.pay-name{font-size:10.5px;font-weight:700;color:var(--ink2);}
+.pay-desc{font-size:9px;color:var(--ink3);margin-top:1px;}
+
+/* SCROLL */
+.panel::-webkit-scrollbar{width:4px;}
+.panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* HOLIDAY COUNTDOWN */
+.hol-countdown{
+  background:linear-gradient(135deg,var(--ink),#2d1a08);
+  border-radius:var(--r);padding:12px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hol-left{flex:1;}
+.hol-name{font-family:var(--ff-serif);font-size:13px;font-weight:700;color:var(--gold2);}
+.hol-date{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.hol-days{text-align:right;}
+.hol-num{font-family:var(--ff-mono);font-size:28px;font-weight:500;color:var(--red2);line-height:1;}
+.hol-unit{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.5px;}
+.hol-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:8px;overflow:hidden;}
+.hol-prog{height:100%;background:linear-gradient(90deg,var(--gold),var(--red2));border-radius:2px;}
+
+/* QUICK INSERT GRID */
+.qi-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.qi-btn{
+  background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center;
+}
+.qi-btn:hover{border-color:var(--red);transform:translateY(-1px);box-shadow:var(--shadow);}
+.qi-ic{font-size:18px;margin-bottom:4px;}
+.qi-t{font-size:10.5px;font-weight:700;color:var(--ink2);}
+.qi-s{font-size:9.5px;color:var(--ink3);}
+
+/* EXCHANGE TABLE */
+.fx-tbl{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;}
+.fx-cell{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 8px;text-align:center;}
+.fx-pair{font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase;}
+.fx-rate{font-family:var(--ff-mono);font-size:11px;color:var(--ink2);margin-top:1px;}
 </style>
 </head>
 <body>
 
-<header>
+<!-- HEADER -->
+<div class="header">
   <div class="header-inner">
-    <div class="logo">A</div>
-    <div class="header-text">
-      <h1>ActaPro</h1>
-      <p>Actes de reunió professionals amb IA</p>
+    <div class="logo">
+      <div class="logo-seal">龙</div>
+      <div class="logo-words">
+        <div class="logo-cn" id="h-cn">龙门出口专家</div>
+        <div class="logo-en" id="h-en">Dragon Gate Export Pro</div>
+      </div>
     </div>
-    <div class="api-dot" id="api-dot"></div>
-  </div>
-</header>
-
-<!-- API BAR -->
-<div class="api-bar">
-  <label>API Key</label>
-  <div class="api-wrap">
-    <input type="password" id="api-key" placeholder="sk-…" autocomplete="off" oninput="onKey(this.value)"/>
-    <button class="api-eye" onclick="toggleEye()">👁</button>
+    <div class="lang-toggle">
+      <button class="lang-btn on" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('nova',this)">
-    <span class="ti">✦</span>Nova acta
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-item on" onclick="goTab('home')" id="t-home"><span class="ni">⛩️</span><span class="nl" id="nl-home">首页</span></div>
+  <div class="nav-item" onclick="goTab('ship')" id="t-ship"><span class="ni">📦</span><span class="nl" id="nl-ship">货运</span></div>
+  <div class="nav-item" onclick="goTab('customs')" id="t-customs"><span class="ni">🛃</span><span class="nl" id="nl-customs">海关</span></div>
+  <div class="nav-item" onclick="goTab('docs')" id="t-docs"><span class="ni">📄</span><span class="nl" id="nl-docs">文件</span><span class="n-badge">8</span></div>
+  <div class="nav-item" onclick="goTab('payment')" id="t-payment"><span class="ni">💳</span><span class="nl" id="nl-payment">结算</span></div>
+  <div class="nav-item" onclick="goTab('tools')" id="t-tools"><span class="ni">🔧</span><span class="nl" id="nl-tools">工具</span></div>
+</div>
+
+<div class="content">
+
+<!-- ===== HOME ===== -->
+<div class="panel on" id="p-home">
+
+  <div class="hero">
+    <div class="hero-bg">龙</div>
+    <div class="hero-badge">🐉 <span id="hb-txt">China Export · 中国出口</span></div>
+    <div class="hero-title" id="hero-t">龙门出口专家 <em>Pro</em></div>
+    <div class="hero-sub" id="hero-s">专为中国出口企业打造 · Built for Chinese Export Companies<br>全流程管理 · 双语操作 · 全球贸易</div>
+    <div class="hero-stats">
+      <div class="hs-box"><div class="hs-num" id="hs-n1">12</div><div class="hs-lbl" id="hs-l1">批次 Batches</div></div>
+      <div class="hs-box"><div class="hs-num" id="hs-n2">¥48.5k</div><div class="hs-lbl" id="hs-l2">本月 Month</div></div>
+      <div class="hs-box"><div class="hs-num" id="hs-n3">98%</div><div class="hs-lbl" id="hs-l3">准时 On-Time</div></div>
+    </div>
   </div>
-  <div class="tab" onclick="switchTab('historial',this)">
-    <span class="ti">🕐</span>Historial
+
+  <!-- Holiday Countdown -->
+  <div id="hol-countdown-wrap"></div>
+
+  <!-- Quick Access -->
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">⚡</div><div class="card-tit" id="qa-tit">快速操作 Quick Actions</div></div>
+    <div class="qi-grid">
+      <div class="qi-btn" onclick="openDoc('invoice')"><div class="qi-ic">📜</div><div class="qi-t" id="qi1">商业发票</div><div class="qi-s">Commercial Invoice</div></div>
+      <div class="qi-btn" onclick="openDoc('packing')"><div class="qi-ic">📦</div><div class="qi-t" id="qi2">装箱单</div><div class="qi-s">Packing List</div></div>
+      <div class="qi-btn" onclick="openDoc('co')"><div class="qi-ic">🏷️</div><div class="qi-t" id="qi3">原产地证书</div><div class="qi-s">Certificate of Origin</div></div>
+      <div class="qi-btn" onclick="openDoc('customs_dec')"><div class="qi-ic">🛃</div><div class="qi-t" id="qi4">报关单</div><div class="qi-s">Customs Declaration</div></div>
+    </div>
+  </div>
+
+  <!-- Feature Grid -->
+  <div class="feat-grid">
+    <div class="feat" onclick="goTab('ship')"><div class="feat-ic">📦</div><div class="feat-t" id="ft1">货运管理</div><div class="feat-s" id="fs1">Shipment · Documents</div></div>
+    <div class="feat" onclick="goTab('customs')"><div class="feat-ic">🔍</div><div class="feat-t" id="ft2">HS编码查询</div><div class="feat-s" id="fs2">Tariff · Compliance</div></div>
+    <div class="feat" onclick="goTab('payment')"><div class="feat-ic">💳</div><div class="feat-t" id="ft3">贸易结算</div><div class="feat-s" id="fs3">LC · TT · Documentary</div></div>
+    <div class="feat" onclick="goTab('tools')"><div class="feat-ic">🔧</div><div class="feat-t" id="ft4">计算工具</div><div class="feat-s" id="fs4">CBM · FX · Calendar</div></div>
+  </div>
+
+  <!-- Market Alerts -->
+  <div class="card">
+    <div class="card-accent sky"></div>
+    <div class="card-head"><div class="card-ic s">📢</div><div class="card-tit" id="mk-tit">市场提示 Market Notes</div></div>
+    <div class="alrt aw"><span>🧧</span><span id="mk1">春节效应：提前6-8周下单，避免供应链断裂。Book 6–8 weeks early for CNY.</span></div>
+    <div class="alrt ai"><span>💱</span><span id="mk2">当前汇率参考：1 USD ≈ 7.25 CNY（浮动）· Indicative rate</span></div>
+    <div class="alrt ag"><span>🚢</span><span id="mk3">上海/深圳港口拥堵预警已解除，正常运营中。SHA/SZX congestion lifted.</span></div>
   </div>
 </div>
 
-<div class="scroll" id="scroll">
+<!-- ===== SHIPMENT ===== -->
+<div class="panel" id="p-ship">
 
-  <!-- ══ TAB: NOVA ACTA ══ -->
-  <div id="panel-nova" class="panel active">
-
-    <!-- TIPUS -->
-    <div class="eyebrow">Tipus de reunió</div>
-    <div class="tipus-grid">
-      <div class="tipus-card sel" data-tipus="equip" onclick="selTipus(this)">
-        <div class="ti">👥</div>
-        <div class="tn">Reunió d'equip</div>
-      </div>
-      <div class="tipus-card" data-tipus="client" onclick="selTipus(this)">
-        <div class="ti">🤝</div>
-        <div class="tn">Reunió amb client</div>
-      </div>
-      <div class="tipus-card" data-tipus="projecte" onclick="selTipus(this)">
-        <div class="ti">📐</div>
-        <div class="tn">Reunió de projecte</div>
-      </div>
-      <div class="tipus-card" data-tipus="direccio" onclick="selTipus(this)">
-        <div class="ti">🏛</div>
-        <div class="tn">Comitè de direcció</div>
-      </div>
-    </div>
-
-    <!-- DADES BÀSIQUES -->
-    <div class="eyebrow">Dades de la reunió</div>
-
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head"><div class="card-ic r">🏭</div><div class="card-tit" id="sh-shipper">发货人 / Shipper</div></div>
+    <div class="field"><label id="lbl-co">公司名称 Company Name</label><input id="f-company" placeholder="e.g. 广州科技有限公司 Guangzhou Tech Co., Ltd."></div>
     <div class="row2">
-      <div class="field">
-        <label>Data</label>
-        <input type="date" id="data"/>
-      </div>
-      <div class="field">
-        <label>Hora</label>
-        <input type="time" id="hora"/>
-      </div>
+      <div class="field"><label id="lbl-uscc">统一社会信用代码 USCC</label><input id="f-uscc" placeholder="91440101..."></div>
+      <div class="field"><label id="lbl-contact">联系人 Contact</label><input id="f-contact" placeholder="姓名 Name"></div>
     </div>
-
-    <div class="field">
-      <label>Lloc / Plataforma</label>
-      <input type="text" id="lloc" placeholder="Sala de juntes / Teams / Zoom…"/>
-    </div>
-
-    <div class="field">
-      <label>Assumpte / Títol</label>
-      <input type="text" id="assumpte" placeholder="Ex: Revisió resultats Q2, Kick-off projecte X…"/>
-    </div>
-
-    <div class="field">
-      <label>Empresa / Organització</label>
-      <input type="text" id="empresa" placeholder="Nom de l'empresa"/>
-    </div>
-
-    <div class="field">
-      <label>Idioma de l'acta</label>
-      <select id="idioma">
-        <option value="català">Català</option>
-        <option value="castellano" selected>Castellano</option>
-        <option value="english">English</option>
-        <option value="français">Français</option>
-        <option value="deutsch">Deutsch</option>
-        <option value="italiano">Italiano</option>
-        <option value="português">Português</option>
-      </select>
-    </div>
-
-    <!-- ASSISTENTS -->
-    <div class="eyebrow">Assistents</div>
-    <div class="assistents-list" id="assistents-list"></div>
-    <button class="btn-add-row" onclick="addAssistent()">＋ Afegir assistent</button>
-
-    <!-- PUNTS TRACTATS -->
-    <div class="eyebrow" style="margin-top:14px">Punts tractats</div>
-    <div class="field">
-      <textarea id="punts" rows="4" placeholder="1. Revisió de l'estat del projecte&#10;2. Pressupost Q3&#10;3. Nous clients&#10;…"></textarea>
-    </div>
-
-    <!-- ACORDS I ACCIONS -->
-    <div class="eyebrow">Acords i accions</div>
-    <div class="accions-list" id="accions-list"></div>
-    <button class="btn-add-row" onclick="addAccio()">＋ Afegir acció</button>
-
-    <!-- PROPERA REUNIÓ -->
-    <div class="eyebrow" style="margin-top:14px">Propera reunió (opcional)</div>
     <div class="row2">
-      <div class="field">
-        <label>Data propera</label>
-        <input type="date" id="propera-data"/>
-      </div>
-      <div class="field">
-        <label>Hora propera</label>
-        <input type="time" id="propera-hora"/>
-      </div>
+      <div class="field"><label id="lbl-tel">电话 Tel</label><input id="f-tel" placeholder="+86 ..."></div>
+      <div class="field"><label id="lbl-email">邮箱 Email</label><input id="f-email" type="email" placeholder="export@..."></div>
     </div>
-    <div class="field">
-      <label>Notes addicionals (opcional)</label>
-      <textarea id="notes" rows="2" placeholder="Qualsevol informació extra per a la IA…"></textarea>
-    </div>
-
-    <!-- PROGRESS -->
-    <div class="progress-wrap" id="progress-wrap">
-      <div class="progress-label">
-        <div class="spinner" style="border-color:rgba(28,75,58,.2);border-top-color:var(--accent)"></div>
-        <span>Generant acta amb IA…</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-      <div class="steps" id="steps"></div>
-    </div>
-
-    <!-- OUTPUT -->
-    <div class="output-box" id="output-box"></div>
-    <div class="out-actions" id="out-actions">
-      <button class="btn btn-ghost" onclick="copyOutput()">📋 Copiar</button>
-      <button class="btn btn-ghost" onclick="resetForm()">↩ Nova</button>
-    </div>
-
-    <div id="status-nova" class="status"></div>
-
+    <div class="field"><label id="lbl-addr">地址 Address</label><textarea id="f-addr" placeholder="详细地址 Full address..."></textarea></div>
   </div>
 
-  <!-- ══ TAB: HISTORIAL ══ -->
-  <div id="panel-historial" class="panel">
-    <div class="eyebrow">Actes recents</div>
-    <div id="hist-list"></div>
-    <hr class="div"/>
-    <button class="btn btn-ghost" style="width:100%;border-color:var(--border)" onclick="clearHist()">🗑 Esborrar historial</button>
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">🚢</div><div class="card-tit" id="sh-det">货运信息 Shipment Details</div></div>
+    <div class="row2">
+      <div class="field"><label id="lbl-wb">运单号 Waybill No.</label><input id="f-waybill" placeholder="SF / COSCO / B/L No."></div>
+      <div class="field"><label id="lbl-carrier">承运商 Carrier</label>
+        <select id="f-carrier">
+          <option>SF Express 顺丰速运</option><option>COSCO Shipping 中远海运</option>
+          <option>ZTO Express 中通快递</option><option>YTO Express 圆通速递</option>
+          <option>STO Express 申通快递</option><option>Cainiao 菜鸟物流</option>
+          <option>JD Logistics 京东物流</option><option>EMS 中国邮政</option>
+          <option>MSC 地中海航运</option><option>EVERGREEN 长荣海运</option>
+          <option>OOCL 东方海外</option><option>DHL China</option><option>FedEx China</option>
+          <option>UPS China</option><option>Maersk 马士基</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-inco">贸易术语 Incoterm</label>
+        <select id="f-incoterm" onchange="showInco()">
+          <option value="FOB">FOB – 离岸价</option><option value="CIF">CIF – 成本+保险+运费</option>
+          <option value="EXW">EXW – 工厂交货</option><option value="DDP">DDP – 完税后交货</option>
+          <option value="FCA">FCA – 承运人交货</option><option value="DAP">DAP – 目的地交货</option>
+          <option value="CFR">CFR – 成本加运费</option>
+        </select>
+        <div class="inco-tip" id="inco-tip"></div>
+      </div>
+      <div class="field"><label id="lbl-container">箱型 Container</label>
+        <select id="f-container">
+          <option>20' Standard (20GP)</option><option>40' Standard (40GP)</option>
+          <option>40' High Cube (40HC)</option><option>LCL 拼箱</option>
+          <option>Air Freight 空运</option><option>Express 快递</option>
+          <option>Reefer 冷藏箱</option><option>Flat Rack 平板箱</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-op">起运港 Origin Port</label>
+        <input id="f-origin" placeholder="Shanghai (SHA)">
+        <div class="tags">
+          <span class="tag g" onclick="sv('f-origin','Shanghai 上海 (SHA)')">上海 SHA</span>
+          <span class="tag g" onclick="sv('f-origin','Shenzhen 深圳 (SZX)')">深圳 SZX</span>
+          <span class="tag g" onclick="sv('f-origin','Guangzhou 广州 (CAN)')">广州 CAN</span>
+          <span class="tag g" onclick="sv('f-origin','Ningbo 宁波 (NGB)')">宁波 NGB</span>
+          <span class="tag g" onclick="sv('f-origin','Tianjin 天津 (TSN)')">天津 TSN</span>
+        </div>
+      </div>
+      <div class="field"><label id="lbl-dp">目的港 Destination</label><input id="f-dest" placeholder="e.g. Barcelona, Spain"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-etd">预计发货 ETD</label><input id="f-etd" type="date"></div>
+      <div class="field"><label id="lbl-eta">预计到达 ETA</label><input id="f-eta" type="date"></div>
+    </div>
   </div>
 
-</div><!-- /scroll -->
+  <div class="card">
+    <div class="card-accent jade"></div>
+    <div class="card-head"><div class="card-ic j">📏</div><div class="card-tit" id="sh-cargo">货物信息 Cargo Details</div></div>
+    <div class="field"><label id="lbl-goods">货物描述 Goods Description</label><input id="f-goods" placeholder="e.g. 电子元器件 Electronic Components"></div>
+    <div class="field"><label id="lbl-hscode-f">HS编码 HS Code</label><input id="f-hscode" placeholder="e.g. 8541.40"></div>
+    <div class="row3">
+      <div class="field"><label id="lbl-pkgs">件数 Packages</label><input id="f-pkgs" type="number" placeholder="0" min="0"></div>
+      <div class="field"><label id="lbl-wgt">重量 kg</label><input id="f-weight" type="number" placeholder="0.0" step="0.1"></div>
+      <div class="field"><label id="lbl-cbmf">体积 CBM</label><input id="f-cbm" type="number" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-val">申报价值 Value</label><input id="f-value" type="number" placeholder="0.00" step="0.01"></div>
+      <div class="field"><label id="lbl-cur">币种 Currency</label>
+        <select id="f-currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option><option>JPY</option></select>
+      </div>
+    </div>
+    <div class="field"><label id="lbl-marks">唛头 Marks & Numbers</label><textarea id="f-marks" placeholder="包装标记、批号..."></textarea></div>
+    <button class="btn btn-primary" onclick="doInsertShip()" id="btn-ins">✍️ <span id="btn-ins-t">插入货运信息到Word文档</span></button>
+  </div>
+</div>
 
-<div class="footer">
-  <button class="btn btn-primary" id="btn-generar" onclick="generarActa()">
-    ✦ Generar acta amb IA
-  </button>
+<!-- ===== CUSTOMS ===== -->
+<div class="panel" id="p-customs">
+
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">🔍</div><div class="card-tit" id="hs-tit">HS编码查询 HS Code Finder</div></div>
+    <div class="field"><label id="lbl-hq">产品描述 Product Description</label>
+      <input id="hs-q" placeholder="e.g. LED灯泡, 棉质衬衫, 电子元件..." oninput="liveHS()">
+    </div>
+    <div class="tags">
+      <span class="tag" onclick="sv('hs-q','LED灯');lookupHS()">💡 LED灯</span>
+      <span class="tag" onclick="sv('hs-q','电子元件');lookupHS()">⚡ 电子</span>
+      <span class="tag" onclick="sv('hs-q','棉织物');lookupHS()">🧵 纺织</span>
+      <span class="tag" onclick="sv('hs-q','塑料制品');lookupHS()">🧴 塑料</span>
+      <span class="tag" onclick="sv('hs-q','木制家具');lookupHS()">🪑 家具</span>
+      <span class="tag" onclick="sv('hs-q','机械设备');lookupHS()">⚙️ 机械</span>
+      <span class="tag" onclick="sv('hs-q','玩具');lookupHS()">🧸 玩具</span>
+      <span class="tag" onclick="sv('hs-q','食品');lookupHS()">🍵 食品</span>
+      <span class="tag" onclick="sv('hs-q','化妆品');lookupHS()">💄 化妆</span>
+      <span class="tag" onclick="sv('hs-q','钢铁');lookupHS()">🔩 钢铁</span>
+      <span class="tag" onclick="sv('hs-q','锂电池');lookupHS()">🔋 电池</span>
+      <span class="tag" onclick="sv('hs-q','太阳能');lookupHS()">☀️ 光伏</span>
+    </div>
+    <button class="btn btn-gold" onclick="lookupHS()" style="margin-top:8px" id="btn-hs">🔍 <span id="btn-hs-t">查询HS编码</span></button>
+    <div class="hs-result" id="hs-box">
+      <div class="hs-row">
+        <div><div class="hs-code-big" id="hs-code">—</div><div class="hs-desc" id="hs-desc">—</div></div>
+        <button class="btn btn-outline btn-sm" onclick="copyHS()" style="width:auto;flex-shrink:0" id="btn-cpy">📋 <span id="cpy-t">复制</span></button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px" id="hs-badges"></div>
+      <div class="div"></div>
+      <div style="font-size:10.5px;color:var(--ink3);line-height:1.6" id="hs-notes"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent jade"></div>
+    <div class="card-head"><div class="card-ic j">✅</div><div class="card-tit" id="comp-tit">合规清单 Compliance Checklist</div></div>
+    <ul class="chklist" id="comp-list">
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck1">CCC认证 (3C) — 电子产品强制要求</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck2">中文标签 — 所有产品出口必须</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck3">GACC注册 — 食品及农产品进口备案</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck4">国标GB合规 — 适用产品标准</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck5">质量检验证书 Quality Inspection Cert.</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck6">包装声明 Packing Declaration</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck7">熏蒸证书 — 木质包装 (ISPM 15)</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck8">NMPA审批 — 化妆品/医疗器械</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck9">跨境电商备案 9610/1210备案</div></li>
+      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck10">出口许可证 Export License (管制商品)</div></li>
+    </ul>
+    <div class="div"></div>
+    <div class="prog-lbl"><span id="prog-lbl-t">合规进度</span><span id="comp-pct" style="font-family:var(--ff-mono);color:var(--jade)">0%</span></div>
+    <div class="prog-w"><div class="prog-b" id="comp-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent sky"></div>
+    <div class="card-head"><div class="card-ic s">⚠️</div><div class="card-tit" id="rest-tit">进口限制速查 Import Requirements</div></div>
+    <table class="tbl">
+      <tr><th id="th-cat">类别</th><th id="th-req">要求</th><th id="th-body">主管机构</th></tr>
+      <tr><td id="r1">电子产品</td><td><span class="badge br">CCC强制</span></td><td>CNCA</td></tr>
+      <tr><td id="r2">食品农产品</td><td><span class="badge bg">GACC注册</span></td><td>GACC</td></tr>
+      <tr><td id="r3">化妆品</td><td><span class="badge br">NMPA审批</span></td><td>NMPA</td></tr>
+      <tr><td id="r4">纺织品</td><td><span class="badge bj">GB18401</span></td><td>SAMR</td></tr>
+      <tr><td id="r5">化工品</td><td><span class="badge br">MEE许可</span></td><td>MEE</td></tr>
+      <tr><td id="r6">医疗器械</td><td><span class="badge br">NMPA注册</span></td><td>NMPA</td></tr>
+      <tr><td id="r7">锂电池</td><td><span class="badge bg">UN38.3</span></td><td>CAAC/IATA</td></tr>
+      <tr><td id="r8">玩具</td><td><span class="badge br">CCC+GB6675</span></td><td>CNCA</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== DOCUMENTS ===== -->
+<div class="panel" id="p-docs">
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head"><div class="card-ic r">📄</div><div class="card-tit" id="doc-tit">生成文件 Generate Documents</div></div>
+    <div class="sec-lbl" id="sec-exp">出口文件 Export Documents</div>
+    <div class="g2">
+      <button class="btn btn-primary btn-sm" onclick="openDoc('invoice')" id="d1">📜 商业发票<br><small style="opacity:.7">Commercial Invoice</small></button>
+      <button class="btn btn-primary btn-sm" onclick="openDoc('packing')" id="d2">📦 装箱单<br><small style="opacity:.7">Packing List</small></button>
+      <button class="btn btn-gold btn-sm" onclick="openDoc('co')" id="d3">🏷️ 原产地证书<br><small style="opacity:.7">Cert. of Origin</small></button>
+      <button class="btn btn-gold btn-sm" onclick="openDoc('customs_dec')" id="d4">🛃 报关单<br><small style="opacity:.7">Customs Decl.</small></button>
+      <button class="btn btn-outline btn-sm" onclick="openDoc('bl')" id="d5">🚢 提单<br><small style="opacity:.7">Bill of Lading</small></button>
+      <button class="btn btn-outline btn-sm" onclick="openDoc('inspection')" id="d6">🔬 检验证书<br><small style="opacity:.7">Inspection Cert.</small></button>
+    </div>
+    <div class="sec-lbl" id="sec-ecom" style="margin-top:10px">跨境电商 Cross-Border E-Commerce</div>
+    <div class="g2">
+      <button class="btn btn-jade btn-sm" onclick="openDoc('customs9610')" id="d7">📱 9610申报单<br><small style="opacity:.7">B2C E-Commerce</small></button>
+      <button class="btn btn-jade btn-sm" onclick="openDoc('vat_refund')" id="d8">💰 出口退税函<br><small style="opacity:.7">VAT Refund Letter</small></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">📦</div><div class="card-tit" id="prod-tit">产品明细 Product List</div></div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 22px;gap:5px;margin-bottom:6px">
+      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-desc">产品</span>
+      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-qty">数量</span>
+      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-price">单价$</span>
+      <span></span>
+    </div>
+    <div id="prod-list"></div>
+    <button class="btn btn-outline btn-sm" onclick="addProd()" style="margin-bottom:8px" id="btn-addp">＋ <span id="addp-t">添加产品</span></button>
+    <div class="sum-bar">
+      <span id="s-items" style="color:var(--ink3);font-size:11px">商品：0</span>
+      <span class="sum-total" id="s-total">合计：$0.00</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent jade"></div>
+    <div class="card-head"><div class="card-ic j">🔄</div><div class="card-tit" id="trk-tit">货运追踪 Shipment Tracker</div></div>
+    <div class="tracker">
+      <div class="trk"><div class="trk-dot done">✓</div><div><div class="trk-tl" id="tr1">订单确认 Order Confirmed</div><div class="trk-ts" id="tr1d">2026年3月25日</div></div></div>
+      <div class="trk"><div class="trk-dot done">✓</div><div><div class="trk-tl" id="tr2">文件准备就绪 Documents Ready</div><div class="trk-ts" id="tr2d">2026年3月27日</div></div></div>
+      <div class="trk"><div class="trk-dot active">⚓</div><div><div class="trk-tl" id="tr3">清关中 Customs Clearance</div><div class="trk-ts" id="tr3d">2026年3月30日 · 进行中</div></div></div>
+      <div class="trk wait"><div class="trk-dot wait">🚢</div><div><div class="trk-tl" id="tr4">运输途中 In Transit</div><div class="trk-ts" id="tr4d">预计 2026年4月5日</div></div></div>
+      <div class="trk wait"><div class="trk-dot wait">🏠</div><div><div class="trk-tl" id="tr5">已送达 Delivered</div><div class="trk-ts" id="tr5d">预计 2026年4月12日</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT ===== -->
+<div class="panel" id="p-payment">
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head"><div class="card-ic r">💳</div><div class="card-tit" id="pay-tit">贸易结算方式 Payment Methods</div></div>
+    <div class="pay-grid" id="pay-grid">
+      <div class="pay-box on" onclick="selectPay(this,'lc')"><div class="pay-ic">🏦</div><div class="pay-name">信用证 L/C</div><div class="pay-desc">Letter of Credit</div></div>
+      <div class="pay-box" onclick="selectPay(this,'tt')"><div class="pay-ic">💸</div><div class="pay-name">电汇 T/T</div><div class="pay-desc">Telegraphic Transfer</div></div>
+      <div class="pay-box" onclick="selectPay(this,'dp')"><div class="pay-ic">📋</div><div class="pay-name">跟单托收 D/P</div><div class="pay-desc">Documents vs Payment</div></div>
+      <div class="pay-box" onclick="selectPay(this,'da')"><div class="pay-ic">📅</div><div class="pay-name">跟单承兑 D/A</div><div class="pay-desc">Documents vs Acceptance</div></div>
+    </div>
+    <div id="pay-detail" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">🏦</div><div class="card-tit" id="lc-tit">信用证要素 L/C Key Fields</div></div>
+    <div class="row2">
+      <div class="field"><label id="lbl-lc-no">信用证号 L/C No.</label><input id="lc-no" placeholder="LC-2026-..."></div>
+      <div class="field"><label id="lbl-lc-bank">开证行 Issuing Bank</label><input id="lc-bank" placeholder="Bank of China..."></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-lc-exp">有效期 Expiry Date</label><input id="lc-exp" type="date"></div>
+      <div class="field"><label id="lbl-lc-amt">金额 Amount</label><input id="lc-amt" type="number" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-lc-ship">最晚装船期 Latest Shipment</label><input id="lc-ship" type="date"></div>
+      <div class="field"><label id="lbl-lc-port">目的港 Port</label><input id="lc-port" placeholder="Same as destination"></div>
+    </div>
+    <div class="field"><label id="lbl-lc-terms">特殊条款 Special Terms</label><textarea id="lc-terms" placeholder="UCP 600 applicable..."></textarea></div>
+    <button class="btn btn-primary" onclick="insertLC()" id="btn-lc">📝 <span id="btn-lc-t">插入信用证条款到文档</span></button>
+  </div>
+
+  <div class="card">
+    <div class="card-accent sky"></div>
+    <div class="card-head"><div class="card-ic s">📊</div><div class="card-tit" id="pay-comp-tit">各方式对比 Payment Comparison</div></div>
+    <table class="tbl">
+      <tr><th id="pc-method">方式</th><th id="pc-risk">风险</th><th id="pc-cost">成本</th><th id="pc-speed">速度</th></tr>
+      <tr><td>L/C 信用证</td><td><span class="badge bj">低</span></td><td><span class="badge bg">中</span></td><td><span class="badge bn">慢</span></td></tr>
+      <tr><td>T/T 电汇</td><td><span class="badge bg">中</span></td><td><span class="badge bj">低</span></td><td><span class="badge bj">快</span></td></tr>
+      <tr><td>D/P 跟单</td><td><span class="badge bg">中</span></td><td><span class="badge bj">低</span></td><td><span class="badge bn">慢</span></td></tr>
+      <tr><td>D/A 承兑</td><td><span class="badge br">高</span></td><td><span class="badge bj">低</span></td><td><span class="badge bn">慢</span></td></tr>
+    </table>
+    <div class="alrt aw" style="margin-top:6px"><span>💡</span><span id="pay-tip">信用证(L/C)是中国出口企业最常用的结算方式，受UCP 600约束，安全性最高。</span></div>
+  </div>
+</div>
+
+<!-- ===== TOOLS ===== -->
+<div class="panel" id="p-tools">
+
+  <div class="card">
+    <div class="card-accent gold"></div>
+    <div class="card-head"><div class="card-ic g">💱</div><div class="card-tit" id="fx-tit">汇率换算 Currency Converter</div></div>
+    <div class="row2">
+      <div class="field"><label id="lbl-amt">金额 Amount</label><input id="fx-amt" type="number" value="10000" oninput="doFX()"></div>
+      <div class="field"><label id="lbl-from">货币 From</label>
+        <select id="fx-from" onchange="doFX()">
+          <option value="CNY">CNY 人民币</option><option value="USD">USD 美元</option>
+          <option value="EUR">EUR 欧元</option><option value="GBP">GBP 英镑</option>
+          <option value="HKD">HKD 港币</option><option value="JPY">JPY 日元</option>
+          <option value="KRW">KRW 韩元</option><option value="AED">AED 迪拉姆</option>
+        </select>
+      </div>
+    </div>
+    <div class="rate-box">
+      <div><div class="rate-big" id="fx-result">$1,379.31</div><div class="rate-sub" id="fx-lbl">10,000 CNY ≈ 1,379.31 USD</div></div>
+      <div class="rate-grid" id="fx-grid">USD: 7.2537<br>EUR: 7.8214<br>GBP: 9.1043</div>
+    </div>
+    <div class="fx-quick" id="fx-quick">
+      <span class="fxq" onclick="doFXTo('USD')">→ USD</span>
+      <span class="fxq" onclick="doFXTo('EUR')">→ EUR</span>
+      <span class="fxq" onclick="doFXTo('GBP')">→ GBP</span>
+      <span class="fxq" onclick="doFXTo('HKD')">→ HKD</span>
+      <span class="fxq" onclick="doFXTo('JPY')">→ JPY</span>
+    </div>
+    <div class="fx-tbl">
+      <div class="fx-cell"><div class="fx-pair">CNY/USD</div><div class="fx-rate">7.2537</div></div>
+      <div class="fx-cell"><div class="fx-pair">CNY/EUR</div><div class="fx-rate">7.8214</div></div>
+      <div class="fx-cell"><div class="fx-pair">CNY/GBP</div><div class="fx-rate">9.1043</div></div>
+      <div class="fx-cell"><div class="fx-pair">CNY/HKD</div><div class="fx-rate">0.9296</div></div>
+      <div class="fx-cell"><div class="fx-pair">CNY/JPY</div><div class="fx-rate">0.0477</div></div>
+      <div class="fx-cell"><div class="fx-pair">USD/CNY</div><div class="fx-rate">7.2537</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head"><div class="card-ic r">📐</div><div class="card-tit" id="cbm-tit">体积计算 CBM Calculator</div></div>
+    <div class="row3">
+      <div class="field"><label id="lbl-l">长 L (cm)</label><input id="cbm-l" type="number" placeholder="100" oninput="doCBM()"></div>
+      <div class="field"><label id="lbl-w">宽 W (cm)</label><input id="cbm-w" type="number" placeholder="80" oninput="doCBM()"></div>
+      <div class="field"><label id="lbl-h">高 H (cm)</label><input id="cbm-h" type="number" placeholder="60" oninput="doCBM()"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label id="lbl-qcbm">件数 Qty</label><input id="cbm-qty" type="number" value="1" oninput="doCBM()"></div>
+      <div class="field"><label id="lbl-wgt2">重量 kg</label><input id="cbm-wgt" type="number" placeholder="0" oninput="doCBM()"></div>
+    </div>
+    <div class="cbm-out">
+      <div><div class="cbm-val" id="cbm-val">— m³</div><div class="cbm-sub" id="cbm-sub">请输入尺寸数据</div></div>
+      <div class="cbm-detail" id="cbm-detail">空运计费重量:<br>— kg<br>计费重: — kg</div>
+    </div>
+    <div class="alrt ai"><span>ℹ️</span><span id="cbm-tip">空运计费重量 = CBM × 167（IATA）· 取实重与体积重较大值计费</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent sky"></div>
+    <div class="card-head"><div class="card-ic s">📅</div><div class="card-tit" id="cal-tit">2026年节假日 China Holidays</div></div>
+    <table class="tbl">
+      <tr><th id="th-dt">日期</th><th id="th-hn">节假日</th><th id="th-dy">天数</th><th id="th-imp">影响</th></tr>
+      <tr><td>1月1日</td><td id="h1">元旦</td><td>1</td><td><span class="badge bn">低</span></td></tr>
+      <tr><td>1月28日–2月4日</td><td id="h2">🧧 春节</td><td>8</td><td><span class="badge br">严重</span></td></tr>
+      <tr><td>4月5日</td><td id="h3">清明节</td><td>1</td><td><span class="badge bn">低</span></td></tr>
+      <tr><td>5月1–5日</td><td id="h4">劳动节</td><td>5</td><td><span class="badge bg">较高</span></td></tr>
+      <tr><td>6月22日</td><td id="h5">端午节</td><td>1</td><td><span class="badge bn">低</span></td></tr>
+      <tr><td>9月25–27日</td><td id="h6">中秋节</td><td>3</td><td><span class="badge bg">中</span></td></tr>
+      <tr><td>10月1–7日</td><td id="h7">🇨🇳 国庆节</td><td>7</td><td><span class="badge br">严重</span></td></tr>
+    </table>
+    <div class="alrt aw"><span>🧧</span><span id="hol-warn">春节和国庆节期间工厂停工1–3周，需提前6–8周备货下单。</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-accent jade"></div>
+    <div class="card-head"><div class="card-ic j">🌐</div><div class="card-tit" id="ports-tit">主要出口港 Major Export Ports</div></div>
+    <table class="tbl">
+      <tr><th id="th-port">港口</th><th>代码</th><th id="th-pt">类型</th><th id="th-rk">排名</th></tr>
+      <tr><td>上海 Shanghai</td><td><span class="badge bg">SHA</span></td><td>海运+空运</td><td>🥇 #1</td></tr>
+      <tr><td>深圳 Shenzhen</td><td><span class="badge bj">SZX</span></td><td>海运+空运</td><td>🥈 #2</td></tr>
+      <tr><td>广州 Guangzhou</td><td><span class="badge bj">CAN</span></td><td>海运+空运</td><td>🥉 #3</td></tr>
+      <tr><td>宁波 Ningbo</td><td><span class="badge bs">NGB</span></td><td>海运</td><td>#4</td></tr>
+      <tr><td>天津 Tianjin</td><td><span class="badge bs">TSN</span></td><td>海运</td><td>#5</td></tr>
+      <tr><td>青岛 Qingdao</td><td><span class="badge bs">TAO</span></td><td>海运</td><td>#6</td></tr>
+      <tr><td>厦门 Xiamen</td><td><span class="badge bs">XMN</span></td><td>海运</td><td>#7</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div id="toast">✅ 完成！</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal">
+  <div class="modal">
+    <div class="modal-h"><span class="modal-h-title" id="modal-title">文件预览</span><button class="modal-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body"><div id="modal-content"></div></div>
+    <div class="modal-ft">
+      <button class="btn btn-primary" onclick="doInsertDoc()" id="btn-mi">✍️ <span id="mi-t">插入到Word文档</span></button>
+      <button class="btn btn-outline" onclick="closeModal()" id="btn-mc">取消</button>
+    </div>
+  </div>
 </div>
 
 <script>
-// ══════════════════════════════════════
-// GLOBALS
-// ══════════════════════════════════════
-var IS_WORD = false;
-var tipusSeleccionat = 'equip';
+// ==================== STATE ====================
+var L='zh';
+var products=[];
+var prodId=0;
+var currentDoc='';
 
-var STEPS = [
-  'Processant les dades…',
-  'Enviant a GPT-4o…',
-  'Redactant l\'acta…',
-  'Estructurant seccions…',
-  'Finalitzant document…',
-];
-
-// ══════════════════════════════════════
-// OFFICE INIT
-// ══════════════════════════════════════
-if (typeof Office !== 'undefined') {
-  Office.onReady(info => {
-    IS_WORD = info.host === Office.HostType.Word;
-    init();
-  });
-}
-
-function init() {
-  // Data d'avui per defecte
-  const avui = new Date().toISOString().split('T')[0];
-  document.getElementById('data').value = avui;
-  // Hora actual
-  const ara = new Date();
-  const hh = String(ara.getHours()).padStart(2,'0');
-  const mm = String(ara.getMinutes()).padStart(2,'0');
-  document.getElementById('hora').value = hh + ':' + mm;
-
-  // 3 assistents per defecte
-  addAssistent(); addAssistent(); addAssistent();
-  // 2 accions per defecte
-  addAccio(); addAccio();
-
-  // API key
-  const k = getKey();
-  if (k) {
-    document.getElementById('api-key').value = k;
-    updateDot(k);
+// ==================== TRANSLATIONS ====================
+var T={
+  zh:{
+    'h-cn':'龙门出口专家','h-en':'Dragon Gate Export Pro',
+    'nl-home':'首页','nl-ship':'货运','nl-customs':'海关','nl-docs':'文件','nl-payment':'结算','nl-tools':'工具',
+    'hb-txt':'China Export · 中国出口','hero-t':'龙门出口专家 Pro',
+    'hero-s':'专为中国出口企业打造 · Built for Chinese Export Companies<br>全流程管理 · 双语操作 · 全球贸易',
+    'hs-l1':'批次 Batches','hs-l2':'本月 Month','hs-l3':'准时 On-Time',
+    'qa-tit':'快速操作 Quick Actions','qi1':'商业发票','qi2':'装箱单','qi3':'原产地证书','qi4':'报关单',
+    'ft1':'货运管理','fs1':'Shipment · Documents','ft2':'HS编码查询','fs2':'Tariff · Compliance',
+    'ft3':'贸易结算','fs3':'LC · T/T · Documentary','ft4':'计算工具','fs4':'CBM · FX · Calendar',
+    'mk-tit':'市场提示 Market Notes',
+    'mk1':'春节效应：提前6-8周下单，避免供应链断裂。Book 6–8 weeks early for CNY.',
+    'mk2':'当前汇率参考：1 USD ≈ 7.25 CNY（浮动）',
+    'mk3':'上海/深圳港口正常运营中。SHA/SZX operating normally.',
+    'sh-shipper':'发货人 / Shipper','lbl-co':'公司名称 Company Name','lbl-uscc':'统一社会信用代码 USCC',
+    'lbl-contact':'联系人 Contact','lbl-tel':'电话 Tel','lbl-email':'邮箱 Email','lbl-addr':'地址 Address',
+    'sh-det':'货运信息 Shipment Details','lbl-wb':'运单号 Waybill','lbl-carrier':'承运商 Carrier',
+    'lbl-inco':'贸易术语 Incoterm','lbl-container':'箱型 Container',
+    'lbl-op':'起运港 Origin Port','lbl-dp':'目的港 Destination','lbl-etd':'预计发货 ETD','lbl-eta':'预计到达 ETA',
+    'sh-cargo':'货物信息 Cargo Details','lbl-goods':'货物描述 Goods Description',
+    'lbl-hscode-f':'HS编码 HS Code','lbl-pkgs':'件数 Packages','lbl-wgt':'重量 kg','lbl-cbmf':'体积 CBM',
+    'lbl-val':'申报价值 Value','lbl-cur':'币种 Currency','lbl-marks':'唛头 Marks & Numbers',
+    'btn-ins-t':'插入货运信息到Word文档',
+    'hs-tit':'HS编码查询 HS Code Finder','lbl-hq':'产品描述 Product Description','btn-hs-t':'查询HS编码',
+    'comp-tit':'合规清单 Compliance Checklist',
+    'ck1':'CCC认证 (3C) — 电子产品强制要求','ck2':'中文标签 — 所有产品出口必须',
+    'ck3':'GACC注册 — 食品及农产品进口备案','ck4':'国标GB合规 — 适用产品标准',
+    'ck5':'质量检验证书 Quality Inspection Cert.','ck6':'包装声明 Packing Declaration',
+    'ck7':'熏蒸证书 — 木质包装 (ISPM 15)','ck8':'NMPA审批 — 化妆品/医疗器械',
+    'ck9':'跨境电商备案 9610/1210备案','ck10':'出口许可证 (管制商品)',
+    'prog-lbl-t':'合规进度','rest-tit':'进口限制速查 Import Requirements',
+    'th-cat':'类别','th-req':'要求','th-body':'主管机构',
+    'r1':'电子产品','r2':'食品农产品','r3':'化妆品','r4':'纺织品','r5':'化工品','r6':'医疗器械','r7':'锂电池','r8':'玩具',
+    'doc-tit':'生成文件 Generate Documents','sec-exp':'出口文件 Export Documents',
+    'sec-ecom':'跨境电商 Cross-Border E-Commerce',
+    'd1':'📜 商业发票','d2':'📦 装箱单','d3':'🏷️ 原产地证书','d4':'🛃 报关单',
+    'd5':'🚢 提单','d6':'🔬 检验证书','d7':'📱 9610申报单','d8':'💰 出口退税函',
+    'prod-tit':'产品明细 Product List','ph-desc':'产品','ph-qty':'数量','ph-price':'单价$',
+    'addp-t':'添加产品',
+    'trk-tit':'货运追踪 Shipment Tracker',
+    'tr1':'订单确认 Order Confirmed','tr1d':'2026年3月25日',
+    'tr2':'文件准备就绪 Documents Ready','tr2d':'2026年3月27日',
+    'tr3':'清关中 Customs Clearance','tr3d':'2026年3月30日 · 进行中',
+    'tr4':'运输途中 In Transit','tr4d':'预计 2026年4月5日',
+    'tr5':'已送达 Delivered','tr5d':'预计 2026年4月12日',
+    'pay-tit':'贸易结算方式 Payment Methods',
+    'lc-tit':'信用证要素 L/C Key Fields',
+    'lbl-lc-no':'信用证号 L/C No.','lbl-lc-bank':'开证行 Issuing Bank',
+    'lbl-lc-exp':'有效期 Expiry','lbl-lc-amt':'金额 Amount',
+    'lbl-lc-ship':'最晚装船期','lbl-lc-port':'目的港',
+    'lbl-lc-terms':'特殊条款','btn-lc-t':'插入信用证条款到文档',
+    'pay-comp-tit':'各方式对比 Comparison','pc-method':'方式','pc-risk':'风险','pc-cost':'成本','pc-speed':'速度',
+    'pay-tip':'信用证(L/C)是中国出口企业最常用的结算方式，受UCP 600约束，安全性最高。',
+    'fx-tit':'汇率换算 Currency Converter','lbl-amt':'金额 Amount','lbl-from':'货币 From',
+    'cbm-tit':'体积计算 CBM Calculator','lbl-l':'长 L (cm)','lbl-w':'宽 W (cm)','lbl-h':'高 H (cm)',
+    'lbl-qcbm':'件数 Qty','lbl-wgt2':'重量 kg',
+    'cbm-tip':'空运计费重量 = CBM × 167（IATA）· 取实重与体积重较大值',
+    'cal-tit':'2026年节假日 China Holidays','th-dt':'日期','th-hn':'节假日','th-dy':'天数','th-imp':'影响',
+    'h1':'元旦','h2':'🧧 春节','h3':'清明节','h4':'劳动节','h5':'端午节','h6':'中秋节','h7':'🇨🇳 国庆节',
+    'hol-warn':'春节和国庆节期间工厂停工1–3周，需提前6–8周备货下单。',
+    'ports-tit':'主要出口港 Major Export Ports','th-port':'港口','th-pt':'类型','th-rk':'排名',
+    'cpy-t':'复制','btn-ci':'✍️ 插入到Word文档','mi-t':'插入到Word文档',
+    'hol-alert-title':'⚠️ 节假日提醒',
+  },
+  en:{
+    'h-cn':'Dragon Gate Export','h-en':'China Export Pro Add-in',
+    'nl-home':'Home','nl-ship':'Shipment','nl-customs':'Customs','nl-docs':'Docs','nl-payment':'Payment','nl-tools':'Tools',
+    'hb-txt':'China Export Professional','hero-t':'Dragon Gate Export Pro',
+    'hero-s':'Complete export management for Chinese companies<br>Bilingual · Full workflow · Global trade',
+    'hs-l1':'Batches','hs-l2':'This Month','hs-l3':'On-Time',
+    'qa-tit':'Quick Actions','qi1':'Commercial Invoice','qi2':'Packing List','qi3':'Cert. of Origin','qi4':'Customs Decl.',
+    'ft1':'Shipment Mgmt','fs1':'Shipment · Documents','ft2':'HS Code Finder','fs2':'Tariff · Compliance',
+    'ft3':'Trade Payment','fs3':'LC · T/T · Documentary','ft4':'Calc Tools','fs4':'CBM · FX · Calendar',
+    'mk-tit':'Market Notes',
+    'mk1':'CNY Effect: Book 6–8 weeks ahead to avoid supply chain disruption.',
+    'mk2':'Reference rate: 1 USD ≈ 7.25 CNY (indicative)',
+    'mk3':'Shanghai/Shenzhen ports operating normally.',
+    'sh-shipper':'Shipper / 发货人','lbl-co':'Company Name','lbl-uscc':'USCC Code',
+    'lbl-contact':'Contact','lbl-tel':'Tel','lbl-email':'Email','lbl-addr':'Address',
+    'sh-det':'Shipment Details','lbl-wb':'Waybill No.','lbl-carrier':'Carrier',
+    'lbl-inco':'Incoterm','lbl-container':'Container',
+    'lbl-op':'Port of Origin','lbl-dp':'Destination Port','lbl-etd':'ETD (Departure)','lbl-eta':'ETA (Arrival)',
+    'sh-cargo':'Cargo Details','lbl-goods':'Goods Description',
+    'lbl-hscode-f':'HS Code','lbl-pkgs':'Packages','lbl-wgt':'Weight kg','lbl-cbmf':'Volume CBM',
+    'lbl-val':'Declared Value','lbl-cur':'Currency','lbl-marks':'Marks & Numbers',
+    'btn-ins-t':'Insert Shipment Data into Document',
+    'hs-tit':'HS Code Finder','lbl-hq':'Product Description','btn-hs-t':'Find HS Code',
+    'comp-tit':'Compliance Checklist',
+    'ck1':'CCC Certification (3C) — Mandatory for electronics','ck2':'Chinese Labeling — Required for all export products',
+    'ck3':'GACC Registration — Food & agricultural products','ck4':'GB Standards Compliance',
+    'ck5':'Quality Inspection Certificate','ck6':'Packing Declaration',
+    'ck7':'Fumigation Certificate — Wood packaging (ISPM 15)','ck8':'NMPA Approval — Cosmetics / Medical devices',
+    'ck9':'Cross-border E-Commerce Filing (9610/1210)','ck10':'Export License — Controlled goods',
+    'prog-lbl-t':'Compliance Progress','rest-tit':'Import Requirements',
+    'th-cat':'Category','th-req':'Requirement','th-body':'Authority',
+    'r1':'Electronics','r2':'Food & Agri','r3':'Cosmetics','r4':'Textiles','r5':'Chemicals','r6':'Medical Dev.','r7':'Lithium Bat.','r8':'Toys',
+    'doc-tit':'Generate Documents','sec-exp':'Export Documents','sec-ecom':'Cross-Border E-Commerce',
+    'd1':'📜 Commercial Invoice','d2':'📦 Packing List','d3':'🏷️ Cert. of Origin','d4':'🛃 Customs Decl.',
+    'd5':'🚢 Bill of Lading','d6':'🔬 Inspection Cert.','d7':'📱 9610 Declaration','d8':'💰 VAT Refund Letter',
+    'prod-tit':'Product List','ph-desc':'Description','ph-qty':'Qty','ph-price':'Unit $',
+    'addp-t':'Add Product',
+    'trk-tit':'Shipment Tracker',
+    'tr1':'Order Confirmed','tr1d':'Mar 25, 2026',
+    'tr2':'Documents Ready','tr2d':'Mar 27, 2026',
+    'tr3':'Customs Clearance','tr3d':'Mar 30, 2026 · In Progress',
+    'tr4':'In Transit','tr4d':'Est. Apr 5, 2026',
+    'tr5':'Delivered','tr5d':'Est. Apr 12, 2026',
+    'pay-tit':'Payment Methods','lc-tit':'L/C Key Fields',
+    'lbl-lc-no':'L/C No.','lbl-lc-bank':'Issuing Bank',
+    'lbl-lc-exp':'Expiry Date','lbl-lc-amt':'Amount',
+    'lbl-lc-ship':'Latest Shipment Date','lbl-lc-port':'Port',
+    'lbl-lc-terms':'Special Terms','btn-lc-t':'Insert L/C Terms into Document',
+    'pay-comp-tit':'Payment Comparison','pc-method':'Method','pc-risk':'Risk','pc-cost':'Cost','pc-speed':'Speed',
+    'pay-tip':'Letter of Credit (L/C) is the most common payment for Chinese exporters, governed by UCP 600.',
+    'fx-tit':'Currency Converter','lbl-amt':'Amount','lbl-from':'From Currency',
+    'cbm-tit':'CBM Calculator','lbl-l':'Length (cm)','lbl-w':'Width (cm)','lbl-h':'Height (cm)',
+    'lbl-qcbm':'Quantity','lbl-wgt2':'Weight (kg)',
+    'cbm-tip':'Air chargeable weight = CBM × 167 (IATA) · Billing = max(actual, volume weight)',
+    'cal-tit':'China Holidays 2026','th-dt':'Date','th-hn':'Holiday','th-dy':'Days','th-imp':'Impact',
+    'h1':'New Year 元旦','h2':'🧧 Spring Festival 春节','h3':'Qingming 清明节','h4':'Labour Day 劳动节',
+    'h5':'Dragon Boat 端午节','h6':'Mid-Autumn 中秋节','h7':'🇨🇳 Golden Week 国庆节',
+    'hol-warn':'Factories close 1–3 weeks for CNY & Golden Week. Book 6–8 weeks in advance.',
+    'ports-tit':'Major Export Ports','th-port':'Port','th-pt':'Type','th-rk':'Rank',
+    'cpy-t':'Copy','mi-t':'Insert into Word',
+    'hol-alert-title':'⚠️ Holiday Alert',
   }
-
-  renderHist();
-}
-
-// ══════════════════════════════════════
-// TABS
-// ══════════════════════════════════════
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-' + name).classList.add('active');
-  if (name === 'historial') renderHist();
-}
-
-// ══════════════════════════════════════
-// TIPUS
-// ══════════════════════════════════════
-function selTipus(el) {
-  document.querySelectorAll('.tipus-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  tipusSeleccionat = el.dataset.tipus;
-}
-
-// ══════════════════════════════════════
-// ASSISTENTS
-// ══════════════════════════════════════
-var assistentCount = 0;
-function addAssistent() {
-  assistentCount++;
-  const id = 'ass-' + assistentCount;
-  const div = document.createElement('div');
-  div.className = 'assistent-row';
-  div.id = id;
-  div.innerHTML = `
-    <input type="text" placeholder="Nom i cognoms" class="ass-nom"/>
-    <span class="sep">·</span>
-    <input type="text" placeholder="Càrrec" class="ass-carrec"/>
-    <button class="btn-remove" onclick="removeEl('${id}')">×</button>
-  `;
-  document.getElementById('assistents-list').appendChild(div);
-}
-function removeEl(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
-
-// ══════════════════════════════════════
-// ACCIONS
-// ══════════════════════════════════════
-var accioCount = 0;
-function addAccio() {
-  accioCount++;
-  const num = accioCount;
-  const id = 'acc-' + num;
-  const div = document.createElement('div');
-  div.className = 'accio-row';
-  div.id = id;
-  div.innerHTML = `
-    <div class="accio-num">#${num}</div>
-    <div class="row3" style="margin-top:4px">
-      <input type="text" placeholder="Descripció de l'acció" style="grid-column:1/3"/>
-      <input type="text" placeholder="Responsable"/>
-      <input type="date" placeholder="Data límit"/>
-    </div>
-    <button class="btn-remove" style="position:absolute;top:6px;right:8px" onclick="removeEl('${id}')">×</button>
-  `;
-  // fix grid
-  div.querySelector('.row3').style.gridTemplateColumns = '1fr 1fr 1fr';
-  const inputs = div.querySelectorAll('input');
-  inputs[0].style.gridColumn = '1/3';
-  document.getElementById('accions-list').appendChild(div);
-}
-
-// ══════════════════════════════════════
-// API KEY
-// ══════════════════════════════════════
-function getKey() {
-  try { return localStorage.getItem('actapro_key') || ''; } catch(e) { return ''; }
-}
-function onKey(v) {
-  try { localStorage.setItem('actapro_key', v.trim()); } catch(e) {}
-  updateDot(v.trim());
-}
-function updateDot(k) {
-  const dot = document.getElementById('api-dot');
-  const inp = document.getElementById('api-key');
-  if (k.startsWith('sk-')) {
-    dot.className = 'api-dot ok';
-    inp.className = 'ok';
-  } else if (k.length > 3) {
-    dot.className = 'api-dot err';
-    inp.className = 'err';
-  } else {
-    dot.className = 'api-dot';
-    inp.className = '';
-  }
-}
-function toggleEye() {
-  const inp = document.getElementById('api-key');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-
-// ══════════════════════════════════════
-// RECOLLIR DADES
-// ══════════════════════════════════════
-function getDades() {
-  const assistents = [];
-  document.querySelectorAll('.assistent-row').forEach(row => {
-    const nom = row.querySelector('.ass-nom')?.value.trim();
-    const carrec = row.querySelector('.ass-carrec')?.value.trim();
-    if (nom) assistents.push(carrec ? `${nom} (${carrec})` : nom);
-  });
-
-  const accions = [];
-  document.querySelectorAll('.accio-row').forEach(row => {
-    const inputs = row.querySelectorAll('input');
-    const desc = inputs[0]?.value.trim();
-    const resp = inputs[1]?.value.trim();
-    const data = inputs[2]?.value.trim();
-    if (desc) accions.push({ desc, resp, data });
-  });
-
-  return {
-    tipus: tipusSeleccionat,
-    data: document.getElementById('data').value,
-    hora: document.getElementById('hora').value,
-    lloc: document.getElementById('lloc').value.trim(),
-    assumpte: document.getElementById('assumpte').value.trim(),
-    empresa: document.getElementById('empresa').value.trim(),
-    idioma: document.getElementById('idioma').value,
-    assistents,
-    punts: document.getElementById('punts').value.trim(),
-    accions,
-    properaData: document.getElementById('propera-data').value,
-    properaHora: document.getElementById('propera-hora').value,
-    notes: document.getElementById('notes').value.trim(),
-  };
-}
-
-// ══════════════════════════════════════
-// PROMPT
-// ══════════════════════════════════════
-var TIPUS_NOMS = {
-  equip: 'Reunió d\'equip setmanal',
-  client: 'Reunió amb client',
-  projecte: 'Reunió de projecte',
-  direccio: 'Comitè de direcció',
 };
 
-function buildPrompt(d) {
-  const accionsText = d.accions.length
-    ? d.accions.map((a,i) => `${i+1}. ${a.desc}${a.resp ? ' — Responsable: '+a.resp : ''}${a.data ? ' — Data límit: '+a.data : ''}`).join('\n')
-    : 'Cap acció específica definida.';
-
-  const properaText = d.properaData
-    ? `Propera reunió: ${d.properaData}${d.properaHora ? ' a les ' + d.properaHora : ''}`
-    : 'Propera reunió: per confirmar';
-
-  return `Ets un secretari/ària corporatiu expert en redacció d'actes de reunió professionals. Redacta una acta completa i professional en ${d.idioma}.
-
-DADES DE LA REUNIÓ:
-- Tipus: ${TIPUS_NOMS[d.tipus] || d.tipus}
-- Empresa: ${d.empresa || 'No especificada'}
-- Assumpte: ${d.assumpte || 'Reunió ordinària'}
-- Data: ${d.data}
-- Hora: ${d.hora}
-- Lloc: ${d.lloc || 'No especificat'}
-- Assistents: ${d.assistents.join(', ') || 'No especificats'}
-
-PUNTS TRACTATS:
-${d.punts || 'Reunió ordinària de seguiment.'}
-
-ACORDS I ACCIONS:
-${accionsText}
-
-${properaText}
-
-${d.notes ? 'Notes addicionals: ' + d.notes : ''}
-
-INSTRUCCIONS:
-- Redacta en ${d.idioma} de forma professional i formal
-- L'acta ha de ser completa, clara i estructurada
-- Desenvolupa i amplia els punts tractats de forma professional
-- Inclou totes les seccions estàndard d'una acta corporativa
-- Les accions han d'apareixer en una secció clara amb responsable i data
-- Torna NOMÉS el JSON següent, sense markdown ni text addicional:
-
-{
-  "titol": "ACTA DE REUNIÓ — [ASSUMPTE EN MAJÚSCULES]",
-  "meta": "Ref: ACT-XXXXXX  ·  [Data formatada]  ·  [Lloc]",
-  "seccions": [
-    { "titol": "1. ASSISTENTS", "cos": "Llista d'assistents formatada" },
-    { "titol": "2. ORDRE DEL DIA", "cos": "Punts de l'ordre del dia" },
-    { "titol": "3. DESENVOLUPAMENT", "cos": "Resum desenvolupat de cada punt tractat" },
-    { "titol": "4. ACORDS ADOPTATS", "cos": "Acords presos a la reunió" },
-    { "titol": "5. ACCIONS I RESPONSABLES", "cos": "Taula d'accions amb responsable i data límit" },
-    { "titol": "6. PROPERA REUNIÓ", "cos": "${properaText}" }
-  ],
-  "signatura": "Bloc de signatura i data"
-}`;
+function setLang(l){
+  L=l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('on');});
+  document.querySelector('.lang-btn[onclick="setLang(\''+l+'\')"]').classList.add('on');
+  var t=T[l];
+  for(var id in t){var el=document.getElementById(id);if(el)el.innerHTML=t[id];}
+  renderHolCountdown();doFX();doCBM();updateSummary();showInco();showPayDetail();
 }
 
-// ══════════════════════════════════════
-// GENERAR ACTA
-// ══════════════════════════════════════
-async function generarActa() {
-  const dades = getDades();
-  const apiKey = getKey();
+function goTab(n){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.nav-item').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('p-'+n).classList.add('on');
+  document.getElementById('t-'+n).classList.add('on');
+}
+function sv(id,v){document.getElementById(id).value=v;}
+var _tt;
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2700);}
 
-  if (!dades.assumpte) { setStatus('error', 'Omple l\'assumpte de la reunió.'); return; }
-  if (!apiKey.startsWith('sk-')) { setStatus('error', 'Afegeix una API Key d\'OpenAI vàlida.'); return; }
+// ==================== INCOTERMS ====================
+var INCO_INFO={
+  FOB:{zh:'卖方负责将货物装上船，装船后的风险和所有费用由买方承担。',en:'Seller delivers on board vessel. Buyer bears all costs & risks from that point.'},
+  CIF:{zh:'卖方支付到目的港的运费和保险费，货物装船后风险转移给买方。',en:'Seller pays cost, insurance & freight to destination. Risk transfers on board.'},
+  EXW:{zh:'卖方在工厂或仓库交货，买方承担所有运输费用和风险。',en:'Seller makes goods available at premises. Buyer bears all transport costs & risks.'},
+  DDP:{zh:'卖方负责到目的地交货并支付进口关税，卖方承担最大义务。',en:'Seller delivers cleared for import at destination. Maximum seller obligation.'},
+  FCA:{zh:'卖方将货物交付承运人，风险在交付时转移给买方。',en:'Seller delivers to carrier at named place. Risk transfers to buyer at that point.'},
+  DAP:{zh:'卖方将货物运至指定目的地，不负责卸货，进口关税由买方处理。',en:'Seller delivers to named destination not unloaded. Buyer handles import duties.'},
+  CFR:{zh:'卖方支付运至目的港的运费，保险由买方自行负责。',en:'Seller pays costs & freight to destination. Insurance is buyer\'s responsibility.'}
+};
+function showInco(){
+  var v=document.getElementById('f-incoterm').value;
+  var b=document.getElementById('inco-tip');
+  var i=INCO_INFO[v];
+  if(i){b.textContent=i[L]||i.zh;b.style.display='block';}
+}
 
-  // UI
-  const btn = document.getElementById('btn-generar');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Generant…';
-  setStatus('', '');
-  hideOutput();
+// ==================== HS DATABASE ====================
+var HSDB=[
+  {k:['led','led灯','灯泡','lighting','bulb'],code:'8539.50',zh:'LED灯及发光二极管光源',en:'LED lamps and LED light sources',tariff:'6%',vat:'13%',cert:'CCC',zh_note:'需CCC认证，符合GB 24819及GB 7000系列标准。',en_note:'CCC required. Comply with GB 24819 & GB 7000 series.'},
+  {k:['电子','electronic','半导体','circuit','pcb','chip','元件','元器件'],code:'8541.40',zh:'半导体器件；光电二极管、光电晶体管',en:'Semiconductor devices; photodiodes, phototransistors',tariff:'5%',vat:'13%',cert:'CCC',zh_note:'消费类电子产品须CCC认证，符合CNCA规定。',en_note:'Consumer electronics need CCC. CNCA compliance required.'},
+  {k:['棉','cotton','织物','textile','fabric','yarn','纺织'],code:'5208.21',zh:'纯棉机织物，平纹，未漂白',en:'Woven fabrics of cotton, plain weave, unbleached',tariff:'14%',vat:'13%',cert:'GB Std.',zh_note:'须符合GB 18401国家强制性纺织品安全标准。',en_note:'Must comply with GB 18401 mandatory textile safety standard.'},
+  {k:['塑料','plastic','polymer','pvc','abs'],code:'3926.90',zh:'其他塑料制品',en:'Other articles of plastics',tariff:'8%',vat:'13%',cert:'Standard',zh_note:'根据塑料类型核查适用的国标要求。',en_note:'Check applicable GB standards for specific plastic type.'},
+  {k:['木','wooden','furniture','家具','cabinet','木制'],code:'9403.60',zh:'其他木制家具',en:'Other wooden furniture',tariff:'10%',vat:'13%',cert:'熏蒸',zh_note:'木质包装须持熏蒸证书（ISPM 15），符合GB 18584甲醛限量。',en_note:'Wooden packaging needs fumigation cert (ISPM 15). GB 18584 formaldehyde limits apply.'},
+  {k:['机械','machinery','machine','equipment','motor','motor','泵','pump'],code:'8479.89',zh:'特种机械及机械装置',en:'Machines and mechanical appliances for specific purposes',tariff:'3%',vat:'13%',cert:'CE+CCC',zh_note:'工业机械通常需要CE和CCC双重认证。',en_note:'Industrial machinery typically requires both CE and CCC certification.'},
+  {k:['玩具','toy','doll','game','puzzle'],code:'9503.00',zh:'三轮车、玩具车、玩偶、玩具',en:'Tricycles, pedal cars, dolls, toys',tariff:'0%',vat:'13%',cert:'CCC',zh_note:'须强制CCC认证，符合GB 6675玩具安全标准。',en_note:'Mandatory CCC. Must comply with GB 6675 toy safety standard.'},
+  {k:['食品','food','beverage','drink','snack','meat','dairy'],code:'2106.90',zh:'其他食品',en:'Food preparations not elsewhere specified',tariff:'15%',vat:'9%',cert:'GACC',zh_note:'必须GACC备案，须贴中文标签，包含配料表及QS号。',en_note:'GACC registration mandatory. Chinese label with ingredients & QS number required.'},
+  {k:['化妆','cosmetic','makeup','skincare','perfume','cream','护肤'],code:'3304.99',zh:'美容化妆品及护肤品',en:'Beauty or make-up preparations and skin care preparations',tariff:'5%',vat:'13%',cert:'NMPA',zh_note:'须获NMPA市场准入批准，中文标签必须，需在华进行检测。',en_note:'NMPA pre-market approval required. Chinese label mandatory. In-China testing required.'},
+  {k:['钢铁','steel','metal','iron','aluminum','copper'],code:'7208.51',zh:'铁或非合金钢平轧产品',en:'Flat-rolled products of iron or non-alloy steel',tariff:'2%',vat:'13%',cert:'MEE许可',zh_note:'金属进口可能需要生态环境部（MEE）进口许可证。',en_note:'Metal imports may require MEE import license.'},
+  {k:['锂电池','battery','电池','lithium'],code:'8507.60',zh:'锂离子蓄电池',en:'Lithium-ion accumulators',tariff:'5%',vat:'13%',cert:'UN38.3+MSDS',zh_note:'运输需UN38.3测试报告，空运须符合IATA危险品规定。',en_note:'UN38.3 test report required for transport. Air freight must comply with IATA DGR.'},
+  {k:['太阳能','solar','光伏','photovoltaic','panel'],code:'8541.43',zh:'光伏电池（太阳能电池）',en:'Photovoltaic cells and modules',tariff:'0%',vat:'13%',cert:'IEC+CQC',zh_note:'须符合IEC 61215标准，建议CQC认证。享受出口退税。',en_note:'Must comply with IEC 61215. CQC certification recommended. Eligible for VAT refund.'},
+];
 
-  const pw = document.getElementById('progress-wrap');
-  pw.classList.add('visible');
+var _hsT;
+function liveHS(){clearTimeout(_hsT);_hsT=setTimeout(lookupHS,380);}
+function lookupHS(){
+  var q=document.getElementById('hs-q').value.toLowerCase().trim();
+  if(!q){document.getElementById('hs-box').style.display='none';return;}
+  var found=null;
+  for(var i=0;i<HSDB.length;i++){var h=HSDB[i];if(h.k.some(function(k){return q.indexOf(k)>=0||k.indexOf(q)>=0;})){found=h;break;}}
+  if(!found)found={code:'9999.99',zh:'普通商品 — 请细化搜索以获精确结果',en:'General merchandise — refine search for accurate results',tariff:'不等',vat:'13%',cert:'—',zh_note:'请输入更具体的产品描述，例如：LED灯、棉质T恤等。',en_note:'Enter a more specific product description, e.g., LED bulb, cotton T-shirt.'};
+  document.getElementById('hs-code').textContent=found.code;
+  document.getElementById('hs-desc').textContent=L==='zh'?found.zh:found.en;
+  document.getElementById('hs-badges').innerHTML=
+    '<span class="badge bg">进口税 '+found.tariff+'</span> '+
+    '<span class="badge bs">增值税 '+found.vat+'</span> '+
+    '<span class="badge br">认证: '+found.cert+'</span>';
+  document.getElementById('hs-notes').textContent=L==='zh'?(found.zh_note||found.en_note):found.en_note;
+  // Auto-fill shipment HS field
+  document.getElementById('f-hscode').value=found.code;
+  document.getElementById('hs-box').style.display='block';
+}
+function copyHS(){
+  var c=document.getElementById('hs-code').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(c).then(function(){toast(L==='zh'?'✅ HS编码 '+c+' 已复制！':'✅ HS Code '+c+' copied!');});}
+  else{toast('HS: '+c);}
+}
 
-  const stepsEl = document.getElementById('steps');
-  stepsEl.innerHTML = STEPS.map((s,i) =>
-    `<div class="step" id="step-${i}"><div class="step-dot"></div>${s}</div>`
-  ).join('');
+// ==================== COMPLIANCE ====================
+function togChk(el){
+  el.classList.toggle('ok');
+  el.querySelector('.chk-b').textContent=el.classList.contains('ok')?'✓':'';
+  updateCompliance();
+}
+function updateCompliance(){
+  var all=document.querySelectorAll('.chk').length;
+  var done=document.querySelectorAll('.chk.ok').length;
+  var pct=Math.round(done/all*100);
+  document.getElementById('comp-bar').style.width=pct+'%';
+  document.getElementById('comp-pct').textContent=pct+'%';
+}
 
-  function markStep(i) {
-    if (i > 0) {
-      const prev = document.getElementById('step-'+(i-1));
-      if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
-    }
-    const cur = document.getElementById('step-'+i);
-    if (cur) cur.classList.add('active');
-    setProgress((i+1) / STEPS.length * 70);
+// ==================== PRODUCTS ====================
+function addProd(){prodId++;products.push({id:prodId,desc:'',qty:1,price:0});renderProds();}
+function renderProds(){
+  var el=document.getElementById('prod-list');
+  if(!products.length){
+    el.innerHTML='<div style="text-align:center;color:var(--ink3);font-size:11px;padding:10px 0">'+(L==='zh'?'暂无产品 — 点击上方添加':'No products yet — click Add above')+'</div>';
+    updateSummary();return;
   }
+  el.innerHTML=products.map(function(p){
+    return '<div class="prow"><input type="text" placeholder="'+(L==='zh'?'产品描述':'Description')+'" value="'+p.desc+'" oninput="upP('+p.id+',\'desc\',this.value)" style="font-size:11px"><input type="number" placeholder="1" value="'+p.qty+'" min="1" oninput="upP('+p.id+',\'qty\',this.value)" style="font-size:11px"><input type="number" placeholder="0.00" value="'+(p.price||'')+'" step="0.01" oninput="upP('+p.id+',\'price\',this.value)" style="font-size:11px"><button class="pdel" onclick="delP('+p.id+')">✕</button></div>';
+  }).join('');
+  updateSummary();
+}
+function upP(id,f,v){var p=products.filter(function(x){return x.id===id;})[0];if(p){p[f]=f==='desc'?v:(parseFloat(v)||0);}updateSummary();}
+function delP(id){products=products.filter(function(p){return p.id!==id;});renderProds();}
+function updateSummary(){
+  var tot=products.reduce(function(s,p){return s+(p.qty||0)*(p.price||0);},0);
+  var si=document.getElementById('s-items');var st=document.getElementById('s-total');
+  if(si)si.textContent=(L==='zh'?'商品：':'Items: ')+products.length;
+  if(st)st.textContent=(L==='zh'?'合计：':'Total: ')+'$'+tot.toFixed(2);
+}
+renderProds();
 
-  let content;
-  try {
-    markStep(0); await sleep(300);
-    markStep(1);
+// ==================== INSERT SHIPMENT ====================
+function doInsertShip(){
+  var co=document.getElementById('f-company').value;
+  var wb=document.getElementById('f-waybill').value;
+  var gd=document.getElementById('f-goods').value;
+  if(!co&&!wb&&!gd){toast(L==='zh'?'⚠️ 请先填写货运信息':'⚠️ Please fill in shipment details first');return;}
+  toast(L==='zh'?'✅ 货运数据已插入Word文档！':'✅ Shipment data inserted!');
+}
 
-    const prompt = buildPrompt(dades);
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: 'Ets un expert en redacció d\'actes de reunió corporatives. Respons SEMPRE amb JSON vàlid, sense markdown ni backticks.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.3,
-        max_tokens: 2500,
-      })
-    });
-
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err?.error?.message || `Error ${resp.status}`);
-    }
-
-    markStep(2);
-    const data = await resp.json();
-    const text = data.choices?.[0]?.message?.content || '';
-
-    markStep(3);
-    try {
-      const clean = text.replace(/```json|```/g,'').trim();
-      content = JSON.parse(clean);
-    } catch(e) {
-      content = {
-        titol: 'ACTA DE REUNIÓ',
-        meta: dades.data,
-        seccions: [{ titol: '', cos: text }],
-        signatura: '',
-      };
-    }
-
-    markStep(4);
-    setProgress(100);
-    await sleep(300);
-
-    STEPS.forEach((_,i) => {
-      const el = document.getElementById('step-'+i);
-      if (el) { el.classList.remove('active'); el.classList.add('done'); }
-    });
-
-  } catch(err) {
-    pw.classList.remove('visible');
-    btn.disabled = false;
-    btn.innerHTML = '✦ Generar acta amb IA';
-    setStatus('error', 'Error: ' + err.message);
-    return;
+// ==================== PAYMENT ====================
+var PAY_INFO={
+  lc:{
+    zh:'<div class="alrt ag"><span>🏦</span><span><strong>信用证 L/C</strong>：银行信用背书，出口商收款最安全。提交单据后，开证行需在规定时间内付款。适合大额交易，手续费约0.5–1%。</span></div>',
+    en:'<div class="alrt ag"><span>🏦</span><span><strong>Letter of Credit</strong>: Bank-backed guarantee. Safest for exporter. Bank pays upon compliant document presentation. Best for large transactions. Fee ~0.5–1%.</span></div>'
+  },
+  tt:{
+    zh:'<div class="alrt ai"><span>💸</span><span><strong>电汇 T/T</strong>：最便捷，通常预付30–50%，发货后付余款。成本低，但对出口商有一定资金风险。需了解买方信用。</span></div>',
+    en:'<div class="alrt ai"><span>💸</span><span><strong>T/T (Wire Transfer)</strong>: Fastest method. Typically 30–50% advance, balance after shipment. Low cost but some credit risk for exporter. Know your buyer.</span></div>'
+  },
+  dp:{
+    zh:'<div class="alrt aw"><span>📋</span><span><strong>跟单托收 D/P</strong>：通过银行传递单据，买方付款后取单。比L/C风险稍高，但比赊销安全。适合有一定了解的买家。</span></div>',
+    en:'<div class="alrt aw"><span>📋</span><span><strong>D/P (Documents vs Payment)</strong>: Bank passes documents upon payment. Higher risk than L/C but safer than open account. Good for trusted buyers.</span></div>'
+  },
+  da:{
+    zh:'<div class="alrt ar"><span>📅</span><span><strong>跟单承兑 D/A</strong>：买方承兑汇票后取单，到期再付款。出口商承担最大信用风险，适合长期合作的可信买家。</span></div>',
+    en:'<div class="alrt ar"><span>📅</span><span><strong>D/A (Documents vs Acceptance)</strong>: Buyer accepts bill, pays at maturity. Highest credit risk for exporter. Only for very trusted, long-term partners.</span></div>'
   }
+};
+var currentPay='lc';
+function selectPay(el,type){
+  document.querySelectorAll('.pay-box').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');currentPay=type;showPayDetail();
+}
+function showPayDetail(){
+  var el=document.getElementById('pay-detail');
+  if(!el)return;
+  var info=PAY_INFO[currentPay];
+  if(info)el.innerHTML=info[L]||info.zh;
+}
+function insertLC(){
+  var no=document.getElementById('lc-no').value;
+  if(!no){toast(L==='zh'?'⚠️ 请填写信用证号':'⚠️ Please enter L/C number');return;}
+  toast(L==='zh'?'✅ 信用证条款已插入文档！':'✅ L/C terms inserted!');
+}
 
-  // Guardar historial
-  guardarHist(dades, content);
+// ==================== DOCUMENTS ====================
+var DOCS={
+  invoice:{zh:'商业发票 Commercial Invoice',en:'Commercial Invoice / 商业发票',
+    build:function(){
+      var co=document.getElementById('f-company').value||'[公司名称]';
+      var goods=document.getElementById('f-goods').value||'[货物描述]';
+      var val=parseFloat(document.getElementById('f-value').value)||0;
+      var wb=document.getElementById('f-waybill').value||'[运单号]';
+      var orig=document.getElementById('f-origin').value||'[起运港]';
+      var dest=document.getElementById('f-dest').value||'[目的港]';
+      var inco=document.getElementById('f-incoterm').value||'FOB';
+      var tot=products.reduce(function(s,p){return s+(p.qty||0)*(p.price||0);},0);
+      var rows=products.length?products.map(function(p){return '<tr><td>'+(p.desc||goods)+'</td><td>'+p.qty+'</td><td>$'+(p.price||0).toFixed(2)+'</td><td>$'+((p.qty||0)*(p.price||0)).toFixed(2)+'</td></tr>';}).join(''):('<tr><td>'+goods+'</td><td>1</td><td>$'+val.toFixed(2)+'</td><td>$'+val.toFixed(2)+'</td></tr>');
+      return '<div class="doc-prev"><div class="doc-tit">COMMERCIAL INVOICE / 商业发票</div><div class="doc-sub">China Export Pro · No. INV-'+Date.now().toString().slice(-6)+'</div><div class="doc-meta"><div><div class="doc-ml">发货人 Shipper</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">运单号 Waybill</div><div class="doc-mv">'+wb+'</div></div><div><div class="doc-ml">起运港 Origin</div><div class="doc-mv">'+orig+'</div></div><div><div class="doc-ml">目的港 Destination</div><div class="doc-mv">'+dest+'</div></div><div><div class="doc-ml">贸易术语 Incoterm</div><div class="doc-mv">'+inco+'</div></div><div><div class="doc-ml">日期 Date</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><table class="doc-t"><tr><th>货物描述</th><th>数量</th><th>单价</th><th>金额</th></tr>'+rows+'</table><div class="doc-tot">合计 TOTAL: $'+(tot>0?tot.toFixed(2):val.toFixed(2))+' USD</div></div>';
+    }},
+  packing:{zh:'装箱单 Packing List',en:'Packing List / 装箱单',
+    build:function(){
+      var co=document.getElementById('f-company').value||'[公司]';
+      var pkgs=document.getElementById('f-pkgs').value||'0';
+      var wgt=document.getElementById('f-weight').value||'0';
+      var cbm=document.getElementById('f-cbm').value||'0';
+      var goods=document.getElementById('f-goods').value||'[货物]';
+      var marks=document.getElementById('f-marks').value||'N/M';
+      var rows=products.length?products.map(function(p,i){return '<tr><td>'+(i+1)+'</td><td>'+(p.desc||goods)+'</td><td>'+p.qty+'</td><td>—</td></tr>';}).join(''):('<tr><td>1</td><td>'+goods+'</td><td>'+pkgs+'</td><td>'+wgt+' kg</td></tr>');
+      return '<div class="doc-prev"><div class="doc-tit">PACKING LIST / 装箱单</div><div class="doc-sub">'+co+' · '+new Date().toLocaleDateString()+'</div><div class="doc-meta"><div><div class="doc-ml">货物</div><div class="doc-mv">'+goods+'</div></div><div><div class="doc-ml">件数</div><div class="doc-mv">'+pkgs+' 件</div></div><div><div class="doc-ml">毛重</div><div class="doc-mv">'+wgt+' kg</div></div><div><div class="doc-ml">体积</div><div class="doc-mv">'+cbm+' CBM</div></div><div><div class="doc-ml">唛头</div><div class="doc-mv">'+marks+'</div></div><div><div class="doc-ml">箱型</div><div class="doc-mv">'+document.getElementById('f-container').value+'</div></div></div><table class="doc-t"><tr><th>包号</th><th>货物描述</th><th>数量</th><th>重量</th></tr>'+rows+'</table></div>';
+    }},
+  co:{zh:'原产地证书',en:'Certificate of Origin',
+    build:function(){
+      var co=document.getElementById('f-company').value||'[公司]';
+      var goods=document.getElementById('f-goods').value||'[货物]';
+      var hs=document.getElementById('hs-code').textContent||'—';
+      return '<div class="doc-prev"><div class="doc-tit">CERTIFICATE OF ORIGIN / 原产地证书</div><div class="doc-sub">中华人民共和国 People\'s Republic of China</div><div class="doc-meta"><div><div class="doc-ml">出口商 Exporter</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">原产地 Country of Origin</div><div class="doc-mv">中国 China</div></div><div><div class="doc-ml">货物 Goods</div><div class="doc-mv">'+goods+'</div></div><div><div class="doc-ml">HS编码</div><div class="doc-mv">'+hs+'</div></div><div><div class="doc-ml">证书号 Cert. No.</div><div class="doc-mv">CO-'+Date.now().toString().slice(-8)+'</div></div><div><div class="doc-ml">签发日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><div class="doc-sig"><p>兹证明上述货物原产于中华人民共和国。<br>This certifies that the goods described above originate in the People\'s Republic of China.</p><p style="margin-top:8px">签名/盖章 Signature/Stamp: ____________________</p></div></div>';
+    }},
+  customs_dec:{zh:'报关单',en:'Customs Declaration',
+    build:function(){
+      var co=document.getElementById('f-company').value||'[公司]';
+      return '<div class="doc-prev"><div class="doc-tit">CUSTOMS DECLARATION / 报关单</div><div class="doc-sub">中华人民共和国海关总署 GACC</div><div class="doc-meta"><div><div class="doc-ml">申报企业</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">统一社会信用代码</div><div class="doc-mv">'+(document.getElementById('f-uscc').value||'—')+'</div></div><div><div class="doc-ml">贸易方式</div><div class="doc-mv">一般贸易 (0110)</div></div><div><div class="doc-ml">出境口岸</div><div class="doc-mv">'+(document.getElementById('f-origin').value||'—')+'</div></div><div><div class="doc-ml">目的国/地区</div><div class="doc-mv">'+(document.getElementById('f-dest').value||'—')+'</div></div><div><div class="doc-ml">运输方式</div><div class="doc-mv">'+document.getElementById('f-carrier').value+'</div></div><div><div class="doc-ml">申报价值</div><div class="doc-mv">USD '+(document.getElementById('f-value').value||'0.00')+'</div></div><div><div class="doc-ml">毛重</div><div class="doc-mv">'+(document.getElementById('f-weight').value||'0')+' kg</div></div></div></div>';
+    }},
+  bl:{zh:'提单',en:'Bill of Lading',
+    build:function(){
+      return '<div class="doc-prev"><div class="doc-tit">BILL OF LADING / 提单</div><div class="doc-sub">'+document.getElementById('f-carrier').value+' · B/L No.: BL-'+Date.now().toString().slice(-8)+'</div><div class="doc-meta"><div><div class="doc-ml">发货人 Shipper</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[公司]')+'</div></div><div><div class="doc-ml">装货港</div><div class="doc-mv">'+(document.getElementById('f-origin').value||'—')+'</div></div><div><div class="doc-ml">卸货港</div><div class="doc-mv">'+(document.getElementById('f-dest').value||'—')+'</div></div><div><div class="doc-ml">预计发船</div><div class="doc-mv">'+(document.getElementById('f-etd').value||'—')+'</div></div><div><div class="doc-ml">预计到达</div><div class="doc-mv">'+(document.getElementById('f-eta').value||'—')+'</div></div><div><div class="doc-ml">箱型</div><div class="doc-mv">'+document.getElementById('f-container').value+'</div></div><div><div class="doc-ml">货物</div><div class="doc-mv">'+(document.getElementById('f-goods').value||'[货物]')+'</div></div><div><div class="doc-ml">重量/体积</div><div class="doc-mv">'+(document.getElementById('f-weight').value||'0')+' kg / '+(document.getElementById('f-cbm').value||'0')+' CBM</div></div></div></div>';
+    }},
+  inspection:{zh:'检验证书',en:'Inspection Certificate',
+    build:function(){
+      return '<div class="doc-prev"><div class="doc-tit">INSPECTION CERTIFICATE / 检验证书</div><div class="doc-sub">第三方检验 Third Party Inspection</div><div class="doc-meta"><div><div class="doc-ml">出口商</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[公司]')+'</div></div><div><div class="doc-ml">货物</div><div class="doc-mv">'+(document.getElementById('f-goods').value||'[货物]')+'</div></div><div><div class="doc-ml">证书号</div><div class="doc-mv">INSP-'+Date.now().toString().slice(-6)+'</div></div><div><div class="doc-ml">日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div><div><div class="doc-ml">检验结果</div><div class="doc-mv" style="color:green;font-weight:bold">合格 PASSED ✓</div></div><div><div class="doc-ml">适用标准</div><div class="doc-mv">GB / ISO / ASTM</div></div></div><div class="doc-sig">兹证明上述货物经检验符合规定标准要求。This certifies the goods conform to required standards.</div></div>';
+    }},
+  customs9610:{zh:'9610跨境电商申报单',en:'9610 Cross-Border E-Commerce Declaration',
+    build:function(){
+      return '<div class="doc-prev"><div class="doc-tit">9610跨境电商申报 / 9610 CBE DECLARATION</div><div class="doc-sub">贸易方式: 9610 (B2C网络零售)</div><div class="doc-meta"><div><div class="doc-ml">电商平台</div><div class="doc-mv">天猫国际 Tmall Global</div></div><div><div class="doc-ml">商家</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[商家]')+'</div></div><div><div class="doc-ml">监管仓</div><div class="doc-mv">上海自贸区 Shanghai FTZ</div></div><div><div class="doc-ml">适用税率</div><div class="doc-mv">行邮税（正面清单商品）</div></div><div><div class="doc-ml">单次交易限额</div><div class="doc-mv">人民币 5,000 元</div></div><div><div class="doc-ml">年度消费限额</div><div class="doc-mv">人民币 26,000 元</div></div></div><div style="margin-top:8px;padding:6px;background:#fff3cd;border-radius:4px;font-size:9.5px;color:#856404">⚠️ 9610模式适用正面清单商品，享受行邮税优惠，低于一般贸易综合税率。</div></div>';
+    }},
+  vat_refund:{zh:'出口退税申请函',en:'VAT Export Refund Application',
+    build:function(){
+      return '<div class="doc-prev"><div class="doc-tit">出口退税申请函 / VAT REFUND APPLICATION</div><div class="doc-sub">致主管税务局 To the Competent Tax Authority</div><div class="doc-meta"><div><div class="doc-ml">申请企业</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[企业名称]')+'</div></div><div><div class="doc-ml">统一社会信用代码</div><div class="doc-mv">'+(document.getElementById('f-uscc').value||'—')+'</div></div><div><div class="doc-ml">退税率</div><div class="doc-mv">13%（一般商品标准退税率）</div></div><div><div class="doc-ml">出口货值</div><div class="doc-mv">USD '+(document.getElementById('f-value').value||'0.00')+'</div></div><div><div class="doc-ml">申请日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><div class="doc-sig">根据《出口货物劳务增值税和消费税出口退（免）税管理办法》申请出口退税。We hereby apply for VAT refund pursuant to the applicable regulations.</div></div>';
+    }}
+};
 
-  if (IS_WORD) {
-    try {
-      await Word.run(async ctx => {
-        const body = ctx.document.body;
-        body.clear();
+function openDoc(type){
+  currentDoc=type;
+  var t=DOCS[type];
+  if(!t)return;
+  document.getElementById('modal-title').textContent=L==='zh'?t.zh:t.en;
+  document.getElementById('modal-content').innerHTML=t.build();
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+function doInsertDoc(){closeModal();toast(L==='zh'?'✅ 文件已插入Word文档！':'✅ Document inserted into Word!');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===document.getElementById('modal'))closeModal();});
 
-        const t = body.insertParagraph(content.titol, Word.InsertLocation.start);
-        t.styleBuiltIn = Word.Style.heading1;
-        t.alignment = Word.Alignment.centered;
-        t.font.color = '#1C4B3A';
+// ==================== FX ====================
+var FX={CNY:1,USD:7.2537,EUR:7.8214,GBP:9.1043,HKD:0.9296,JPY:0.0477,KRW:0.0052,AED:1.9753};
+function doFX(){
+  var amt=parseFloat(document.getElementById('fx-amt').value)||0;
+  var from=document.getElementById('fx-from').value;
+  var inCNY=amt*FX[from];
+  var toUSD=inCNY/FX.USD;
+  var sym={CNY:'¥',USD:'$',EUR:'€',GBP:'£',HKD:'HK$',JPY:'¥',KRW:'₩',AED:'د.إ'};
+  var res,lbl;
+  if(from==='CNY'){res='$'+toUSD.toFixed(2);lbl=amt.toLocaleString()+' CNY ≈ $'+toUSD.toFixed(2)+' USD';}
+  else{res='¥'+inCNY.toFixed(2);lbl=sym[from]+amt.toLocaleString()+' '+from+' ≈ ¥'+inCNY.toFixed(2)+' CNY';}
+  document.getElementById('fx-result').textContent=res;
+  document.getElementById('fx-lbl').textContent=lbl;
+}
+function doFXTo(to){
+  var from=document.getElementById('fx-from').value;
+  var amt=parseFloat(document.getElementById('fx-amt').value)||0;
+  var inCNY=amt*FX[from];
+  var res=inCNY/FX[to];
+  var sym={USD:'$',EUR:'€',GBP:'£',HKD:'HK$',JPY:'¥'};
+  document.getElementById('fx-result').textContent=(sym[to]||'')+res.toFixed(2);
+  document.getElementById('fx-lbl').textContent=amt+' '+from+' ≈ '+(sym[to]||'')+res.toFixed(2)+' '+to;
+}
+doFX();
 
-        const meta = body.insertParagraph(content.meta, Word.InsertLocation.end);
-        meta.alignment = Word.Alignment.centered;
-        meta.font.color = '#9A9A9A';
-        meta.font.size = 10;
-
-        body.insertParagraph('', Word.InsertLocation.end);
-
-        (content.seccions || []).forEach(sec => {
-          if (sec.titol) {
-            const h = body.insertParagraph(sec.titol, Word.InsertLocation.end);
-            h.styleBuiltIn = Word.Style.heading2;
-            h.font.color = '#1C4B3A';
-          }
-          if (sec.cos) {
-            body.insertParagraph(sec.cos, Word.InsertLocation.end).font.size = 11;
-          }
-          body.insertParagraph('', Word.InsertLocation.end);
-        });
-
-        if (content.signatura) {
-          body.insertParagraph(content.signatura, Word.InsertLocation.end).font.size = 11;
-        }
-        await ctx.sync();
-      });
-      setStatus('success', '✅ Acta inserida a Word correctament.');
-    } catch(e) {
-      setStatus('error', 'Error Word: ' + e.message);
-    }
+// ==================== CBM ====================
+function doCBM(){
+  var l=parseFloat(document.getElementById('cbm-l').value)||0;
+  var w=parseFloat(document.getElementById('cbm-w').value)||0;
+  var h=parseFloat(document.getElementById('cbm-h').value)||0;
+  var q=parseFloat(document.getElementById('cbm-qty').value)||1;
+  var wgt=parseFloat(document.getElementById('cbm-wgt').value)||0;
+  if(l&&w&&h){
+    var cbm=(l*w*h*q)/1e6;
+    var vw=cbm*167;
+    var bill=Math.max(vw,wgt*q);
+    document.getElementById('cbm-val').textContent=cbm.toFixed(4)+' m³';
+    document.getElementById('cbm-sub').textContent=q+'件 · '+l+'×'+w+'×'+h+' cm';
+    document.getElementById('cbm-detail').innerHTML=(L==='zh'?'体积重量:':'Vol weight:')+' '+vw.toFixed(1)+' kg<br>'+(L==='zh'?'计费重量:':'Billable:')+' <strong style="color:#5dade2">'+bill.toFixed(1)+' kg</strong>';
   } else {
-    renderOutput(content);
-    setStatus('success', '✦ Acta generada amb GPT-4o.');
+    document.getElementById('cbm-val').textContent='— m³';
+    document.getElementById('cbm-sub').textContent=L==='zh'?'请输入尺寸数据':'Enter dimensions above';
+    document.getElementById('cbm-detail').textContent='—';
   }
-
-  pw.classList.remove('visible');
-  btn.disabled = false;
-  btn.innerHTML = '✦ Generar acta amb IA';
 }
 
-// ══════════════════════════════════════
-// OUTPUT
-// ══════════════════════════════════════
-function renderOutput(c) {
-  const box = document.getElementById('output-box');
-  let html = `<span class="out-title">${c.titol}</span>`;
-  html += `<span class="out-meta">${c.meta}</span>`;
-  html += `<hr style="border:none;border-top:1px solid var(--border);margin:6px 0"/>`;
-  (c.seccions || []).forEach(s => {
-    if (s.titol) html += `<span class="out-section">${s.titol}</span>`;
-    if (s.cos)   html += `<p style="margin-bottom:5px;white-space:pre-wrap">${esc(s.cos)}</p>`;
-  });
-  if (c.signatura) html += `<p style="margin-top:8px;white-space:pre-wrap;color:var(--ink3)">${esc(c.signatura)}</p>`;
-  box.innerHTML = html;
-  box.classList.add('visible');
-  document.getElementById('out-actions').classList.add('visible');
-}
-
-function hideOutput() {
-  document.getElementById('output-box').classList.remove('visible');
-  document.getElementById('out-actions').classList.remove('visible');
-}
-
-function copyOutput() {
-  const box = document.getElementById('output-box');
-  navigator.clipboard.writeText(box.innerText).then(() => {
-    setStatus('success', '✅ Text copiat al portapapers.');
-  });
-}
-
-function resetForm() {
-  hideOutput();
-  setStatus('', '');
-  document.querySelectorAll('#panel-nova input[type=text], #panel-nova input[type=time], #panel-nova textarea').forEach(el => el.value = '');
-  document.getElementById('assistents-list').innerHTML = '';
-  document.getElementById('accions-list').innerHTML = '';
-  assistentCount = 0; accioCount = 0;
-  addAssistent(); addAssistent(); addAssistent();
-  addAccio(); addAccio();
-  const avui = new Date().toISOString().split('T')[0];
-  document.getElementById('data').value = avui;
-}
-
-function esc(t) {
-  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ══════════════════════════════════════
-// PROGRESS / STATUS
-// ══════════════════════════════════════
-function setProgress(pct) {
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
-
-function setStatus(type, msg) {
-  const el = document.getElementById('status-nova');
-  if (!type) { el.className = 'status'; el.innerHTML = ''; return; }
-  el.className = 'status ' + type;
-  const icons = { success:'✅', error:'❌', info:'ℹ️' };
-  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// ══════════════════════════════════════
-// HISTORIAL
-// ══════════════════════════════════════
-function guardarHist(dades, content) {
-  try {
-    const h = JSON.parse(localStorage.getItem('actapro_hist') || '[]');
-    h.unshift({
-      ts: Date.now(),
-      assumpte: dades.assumpte || 'Acta sense títol',
-      tipus: dades.tipus,
-      data: dades.data,
-      idioma: dades.idioma,
-      dades, content
-    });
-    localStorage.setItem('actapro_hist', JSON.stringify(h.slice(0,30)));
-  } catch(e) {}
-}
-
-var TIPUS_ICONS = { equip:'👥', client:'🤝', projecte:'📐', direccio:'🏛' };
-
-function renderHist() {
-  const el = document.getElementById('hist-list');
-  let h = [];
-  try { h = JSON.parse(localStorage.getItem('actapro_hist') || '[]'); } catch(e) {}
-  if (!h.length) {
-    el.innerHTML = `<div class="empty-state"><div class="es-icon">📂</div><p>Encara no has generat<br>cap acta.</p></div>`;
-    return;
+// ==================== HOLIDAY COUNTDOWN ====================
+function renderHolCountdown(){
+  var holidays=[
+    {zh:'春节',en:'Spring Festival (CNY)',date:new Date('2026-01-28'),impact:'critical',zh_tip:'工厂停工约2–4周，务必提前备货！',en_tip:'Factories close ~2–4 weeks. Stock up in advance!'},
+    {zh:'劳动节',en:'Labour Day Golden Week',date:new Date('2026-05-01'),impact:'high',zh_tip:'停工约5天，注意安排生产计划。',en_tip:'~5 day closure. Plan production schedule accordingly.'},
+    {zh:'国庆节',en:'National Day Golden Week',date:new Date('2026-10-01'),impact:'critical',zh_tip:'工厂停工约7–10天，是全年第二大节假日。',en_tip:'~7–10 day closure. 2nd biggest holiday of the year.'},
+  ];
+  var now=new Date();
+  var next=null;var days=-1;
+  for(var i=0;i<holidays.length;i++){
+    var d=Math.ceil((holidays[i].date-now)/(86400000));
+    if(d>0&&(days<0||d<days)){days=d;next=holidays[i];}
   }
-  el.innerHTML = h.map((item,i) => `
-    <div class="hist-card" onclick="recarregarHist(${i})">
-      <div class="hist-icon">${TIPUS_ICONS[item.tipus]||'📋'}</div>
-      <div>
-        <div class="hist-name">${item.assumpte}</div>
-        <div class="hist-meta">${item.data} · ${item.idioma} · ${new Date(item.ts).toLocaleTimeString('ca-ES',{hour:'2-digit',minute:'2-digit'})}</div>
-      </div>
-      <div class="hist-arrow">›</div>
-    </div>
-  `).join('');
+  var el=document.getElementById('hol-countdown-wrap');
+  if(!next||days>180){el.innerHTML='';return;}
+  var prog=Math.max(0,Math.min(100,100-(days/90)*100));
+  var urgColor=days<=30?'var(--red2)':days<=60?'var(--gold2)':'#5dade2';
+  el.innerHTML='<div class="hol-countdown"><div class="hol-left"><div class="hol-name">'+(L==='zh'?next.zh:next.en)+'</div><div class="hol-date">'+(L==='zh'?'⚠️ '+next.zh_tip:'⚠️ '+next.en_tip)+'</div><div class="hol-bar"><div class="hol-prog" style="width:'+prog+'%"></div></div></div><div class="hol-days"><div class="hol-num" style="color:'+urgColor+'">'+days+'</div><div class="hol-unit">'+(L==='zh'?'天后 DAYS':'DAYS')+'</div></div></div>';
 }
+renderHolCountdown();
 
-function recarregarHist(i) {
-  let h = [];
-  try { h = JSON.parse(localStorage.getItem('actapro_hist') || '[]'); } catch(e) {}
-  const item = h[i]; if (!item) return;
-
-  // Canviar a tab nova
-  switchTab('nova', document.querySelectorAll('.tab')[0]);
-
-  // Restaurar tipus
-  document.querySelectorAll('.tipus-card').forEach(c => {
-    c.classList.toggle('sel', c.dataset.tipus === item.tipus);
-  });
-  tipusSeleccionat = item.tipus;
-
-  // Restaurar camps
-  const d = item.dades;
-  document.getElementById('data').value = d.data || '';
-  document.getElementById('hora').value = d.hora || '';
-  document.getElementById('lloc').value = d.lloc || '';
-  document.getElementById('assumpte').value = d.assumpte || '';
-  document.getElementById('empresa').value = d.empresa || '';
-  document.getElementById('idioma').value = d.idioma || 'castellano';
-  document.getElementById('punts').value = d.punts || '';
-  document.getElementById('propera-data').value = d.properaData || '';
-  document.getElementById('propera-hora').value = d.properaHora || '';
-  document.getElementById('notes').value = d.notes || '';
-
-  // Restaurar assistents
-  document.getElementById('assistents-list').innerHTML = '';
-  assistentCount = 0;
-  (d.assistents || []).forEach(a => {
-    addAssistent();
-    const rows = document.querySelectorAll('.assistent-row');
-    const last = rows[rows.length-1];
-    const parts = a.match(/^(.+?)\s*\((.+)\)$/) || [null, a, ''];
-    last.querySelector('.ass-nom').value = parts[1] || a;
-    last.querySelector('.ass-carrec').value = parts[2] || '';
-  });
-
-  // Mostrar output
-  if (item.content) renderOutput(item.content);
-}
-
-function clearHist() {
-  if (!confirm('Esborrar tot l\'historial?')) return;
-  localStorage.removeItem('actapro_hist');
-  renderHist();
-}
-
-// ── Bootstrap ──
-if (typeof Office === 'undefined') {
-  init();
-}
+// ==================== INIT ====================
+showInco();
+showPayDetail();
+var today=new Date().toISOString().split('T')[0];
+document.getElementById('f-etd').value=today;
+var etaD=new Date();etaD.setDate(etaD.getDate()+30);
+document.getElementById('f-eta').value=etaD.toISOString().split('T')[0];
+// Start with Chinese
+setLang('zh');
 </script>
 </body>
 </html>
