@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ActaPro — Generador d'Actes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>
+:root {
+  --bg:       #F5F3EE;
+  --white:    #FFFFFF;
+  --ink:      #1A1A1A;
+  --ink2:     #4A4A4A;
+  --ink3:     #9A9A9A;
+  --accent:   #1C4B3A;
+  --accent2:  #2D7A5F;
+  --accent-lt:#E6F2EE;
+  --gold:     #C8962A;
+  --gold-lt:  #FDF4E3;
+  --red:      #C0392B;
+  --red-lt:   #FDEDEC;
+  --border:   #E2DDD6;
+  --shadow:   0 2px 8px rgba(26,26,26,.07);
+  --r:        8px;
+  --serif:    'Instrument Serif', serif;
+  --sans:     'DM Sans', sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12.5px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--accent);
+  padding: 13px 15px 11px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+header::after {
+  content:'';
+  position:absolute;
+  bottom:-20px; right:-20px;
+  width:100px; height:100px;
+  background: radial-gradient(circle, rgba(200,150,42,.3) 0%, transparent 70%);
+  pointer-events:none;
+}
+.header-inner { display:flex; align-items:center; gap:10px; position:relative; }
+.logo {
+  width:32px; height:32px; border-radius:6px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--serif); font-size:17px; color:white; flex-shrink:0;
+}
+.header-text h1 {
+  font-family: var(--serif); font-size:15px; color:white;
+  font-weight:400; letter-spacing:-.1px;
+}
+.header-text p { font-size:10px; color:rgba(255,255,255,.5); margin-top:1px; }
+.api-dot {
+  margin-left:auto; width:7px; height:7px; border-radius:50%;
+  background: rgba(255,255,255,.2); flex-shrink:0;
+  transition:background .3s;
+}
+.api-dot.ok  { background: #4ade80; box-shadow:0 0 6px rgba(74,222,128,.5); }
+.api-dot.err { background: #f87171; }
+
+/* ── API BAR ── */
+.api-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 7px 14px;
+  display: flex; align-items:center; gap:7px;
+  flex-shrink:0;
+}
+.api-bar label { font-size:10.5px; font-weight:600; color:var(--ink3); white-space:nowrap; }
+.api-wrap { flex:1; position:relative; }
+.api-wrap input {
+  width:100%; padding:5px 28px 5px 9px;
+  border:1.5px solid var(--border); border-radius:6px;
+  font-size:10.5px; font-family:monospace; color:var(--ink3);
+  background:var(--bg); outline:none;
+  transition:border-color .2s;
+}
+.api-wrap input.ok  { border-color:#4ade80; color:var(--ink); }
+.api-wrap input.err { border-color:#f87171; }
+.api-wrap input:focus { border-color:var(--accent2); }
+.api-eye {
+  position:absolute; right:7px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; font-size:11px;
+  color:var(--ink3); padding:0;
+}
+
+/* ── TABS ── */
+.tabs {
+  display:flex; background:var(--white);
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.tab {
+  flex:1; padding:8px 4px 7px; text-align:center;
+  font-size:10px; font-weight:600; color:var(--ink3);
+  cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-1px; transition:all .2s;
+  letter-spacing:.2px; user-select:none;
+}
+.tab .ti { font-size:13px; display:block; margin-bottom:2px; }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab:hover:not(.active) { color:var(--ink2); background:var(--bg); }
+
+/* ── SCROLL ── */
+.scroll {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.scroll::-webkit-scrollbar { width:3px; }
+.scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+
+/* ── PANELS ── */
+.panel { display:none; padding:14px; animation:fadeIn .2s ease; }
+.panel.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
+
+/* ── FORM ── */
+.eyebrow {
+  font-size:9px; font-weight:700; color:var(--ink3);
+  text-transform:uppercase; letter-spacing:1px;
+  margin:14px 0 7px;
+}
+.eyebrow:first-child { margin-top:0; }
+
+.field { margin-bottom:8px; }
+label {
+  display:block; font-size:11px; font-weight:600;
+  color:var(--ink2); margin-bottom:3px;
+}
+input, select, textarea {
+  width:100%; padding:7px 10px;
+  border:1.5px solid var(--border); border-radius:var(--r);
+  font-size:11.5px; font-family:var(--sans); color:var(--ink);
+  background:var(--white); outline:none;
+  transition:border-color .15s, box-shadow .15s;
+  -webkit-appearance:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--accent2);
+  box-shadow:0 0 0 3px rgba(45,122,95,.1);
+}
+input::placeholder, textarea::placeholder { color:var(--ink3); }
+textarea { resize:vertical; min-height:60px; line-height:1.5; }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239A9A9A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center;
+  padding-right:28px; cursor:pointer;
+}
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
+
+/* ── ASSISTENTS ── */
+.assistents-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
+.assistent-row {
+  display:flex; gap:5px; align-items:center;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:6px 8px;
+}
+.assistent-row input {
+  border:none; padding:0; font-size:11.5px;
+  background:transparent; box-shadow:none;
+  margin:0;
+}
+.assistent-row input:focus { box-shadow:none; border:none; }
+.assistent-row .sep { color:var(--border); font-size:14px; flex-shrink:0; }
+.btn-remove {
+  background:none; border:none; cursor:pointer;
+  color:var(--ink3); font-size:14px; padding:0 2px;
+  flex-shrink:0; line-height:1;
+  transition:color .2s;
+}
+.btn-remove:hover { color:var(--red); }
+.btn-add-row {
+  background:none; border:1.5px dashed var(--border);
+  border-radius:var(--r); width:100%; padding:6px;
+  font-size:11px; color:var(--ink3); cursor:pointer;
+  font-family:var(--sans); font-weight:600;
+  transition:all .2s;
+}
+.btn-add-row:hover { border-color:var(--accent2); color:var(--accent); background:var(--accent-lt); }
+
+/* ── ACCIONS ── */
+.accions-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
+.accio-row {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:8px 10px; position:relative;
+}
+.accio-row .row3 { margin-bottom:0; }
+.accio-row input { font-size:11px; padding:5px 8px; }
+.accio-num {
+  position:absolute; top:-8px; left:8px;
+  background:var(--accent); color:white;
+  font-size:9px; font-weight:700; padding:1px 6px;
+  border-radius:99px; letter-spacing:.3px;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  display:none; margin-top:12px;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:12px;
+}
+.progress-wrap.visible { display:block; }
+.progress-label {
+  font-size:11px; font-weight:600; color:var(--ink);
+  display:flex; align-items:center; gap:7px; margin-bottom:8px;
+}
+.progress-track { background:var(--bg); border-radius:99px; height:4px; overflow:hidden; }
+.progress-fill {
+  height:100%; border-radius:99px; width:0%;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+.steps { margin-top:9px; display:flex; flex-direction:column; gap:4px; }
+.step {
+  display:flex; align-items:center; gap:6px;
+  font-size:10.5px; color:var(--ink3); transition:color .3s;
+}
+.step.done   { color:var(--accent2); }
+.step.active { color:var(--ink); font-weight:600; }
+.step-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--border); flex-shrink:0; transition:background .3s;
+}
+.step.done .step-dot   { background:var(--accent2); }
+.step.active .step-dot { background:var(--accent); box-shadow:0 0 0 3px rgba(28,75,58,.15); }
+
+/* ── OUTPUT ── */
+.output-box {
+  display:none; margin-top:12px;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:12px 14px;
+  font-size:11px; line-height:1.65; color:var(--ink2);
+  max-height:220px; overflow-y:auto;
+  box-shadow:var(--shadow);
+}
+.output-box.visible { display:block; animation:fadeIn .25s ease; }
+.out-title {
+  display:block; font-family:var(--serif); font-size:15px;
+  color:var(--ink); text-align:center; margin-bottom:3px;
+}
+.out-meta {
+  display:block; font-size:10px; color:var(--ink3);
+  text-align:center; margin-bottom:8px;
+}
+.out-section {
+  display:block; font-size:10px; font-weight:700;
+  color:var(--accent); text-transform:uppercase;
+  letter-spacing:.5px; margin:10px 0 3px;
+}
+.out-actions { display:none; gap:6px; margin-top:8px; }
+.out-actions.visible { display:flex; }
+
+/* ── BUTTONS ── */
+.btn {
+  width:100%; padding:10px 14px; border:none; border-radius:var(--r);
+  font-size:12.5px; font-weight:600; font-family:var(--sans);
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  letter-spacing:-.1px;
+}
+.btn + .btn { margin-top:6px; }
+.btn-primary {
+  background:var(--accent); color:white;
+}
+.btn-primary:hover:not(:disabled) {
+  background:var(--accent2); transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(28,75,58,.25);
+}
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.btn-ghost {
+  background:transparent; color:var(--ink2);
+  border:1.5px solid var(--border); width:auto; flex:1;
+}
+.btn-ghost:hover { background:var(--white); border-color:var(--ink3); }
+
+/* ── STATUS ── */
+.status {
+  border-radius:var(--r); font-size:11.5px; padding:9px 11px;
+  margin-top:8px; display:none; line-height:1.4;
+  animation:fadeIn .2s ease;
+}
+.status.success { background:var(--accent-lt); color:var(--accent); border:1px solid #A8D5BB; display:flex; align-items:flex-start; gap:7px; }
+.status.error   { background:var(--red-lt);    color:var(--red);    border:1px solid #F5C6C2; display:flex; align-items:flex-start; gap:7px; }
+.status.info    { background:var(--gold-lt);   color:#8B6914;       border:1px solid #F0D898; display:flex; align-items:flex-start; gap:7px; }
+
+/* ── SPINNER ── */
+.spinner {
+  width:13px; height:13px; border-radius:50%; flex-shrink:0;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:white;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── FOOTER ── */
+.footer {
+  padding:10px 14px; background:var(--white);
+  border-top:1px solid var(--border); flex-shrink:0;
+}
+
+/* ── HISTORIAL ── */
+.hist-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:10px 12px; margin-bottom:6px;
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  transition:all .2s;
+}
+.hist-card:hover { border-color:var(--accent2); box-shadow:var(--shadow); }
+.hist-icon { font-size:20px; flex-shrink:0; }
+.hist-name { font-size:11.5px; font-weight:600; color:var(--ink); }
+.hist-meta { font-size:10px; color:var(--ink3); margin-top:1px; }
+.hist-arrow { margin-left:auto; color:var(--ink3); font-size:16px; }
+.empty-state { text-align:center; padding:30px 20px; color:var(--ink3); }
+.empty-state .es-icon { font-size:32px; margin-bottom:8px; }
+.empty-state p { font-size:11.5px; line-height:1.5; }
+
+/* ── TIPUS TAG ── */
+.tipus-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px;
+}
+.tipus-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:10px 8px; text-align:center;
+  cursor:pointer; transition:all .2s; user-select:none;
+}
+.tipus-card:hover { border-color:var(--accent2); background:var(--accent-lt); }
+.tipus-card.sel {
+  border-color:var(--accent); background:var(--accent-lt);
+  box-shadow:0 0 0 3px rgba(28,75,58,.1);
+}
+.tipus-card .ti { font-size:20px; margin-bottom:4px; }
+.tipus-card .tn { font-size:10px; font-weight:700; color:var(--ink); line-height:1.3; }
+.tipus-card.sel .tn { color:var(--accent); }
+
+hr.div { border:none; border-top:1px solid var(--border); margin:12px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">A</div>
+    <div class="header-text">
+      <h1>ActaPro</h1>
+      <p>Actes de reunió professionals amb IA</p>
+    </div>
+    <div class="api-dot" id="api-dot"></div>
+  </div>
+</header>
+
+<!-- API BAR -->
+<div class="api-bar">
+  <label>API Key</label>
+  <div class="api-wrap">
+    <input type="password" id="api-key" placeholder="sk-…" autocomplete="off" oninput="onKey(this.value)"/>
+    <button class="api-eye" onclick="toggleEye()">👁</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('nova',this)">
+    <span class="ti">✦</span>Nova acta
+  </div>
+  <div class="tab" onclick="switchTab('historial',this)">
+    <span class="ti">🕐</span>Historial
+  </div>
+</div>
+
+<div class="scroll" id="scroll">
+
+  <!-- ══ TAB: NOVA ACTA ══ -->
+  <div id="panel-nova" class="panel active">
+
+    <!-- TIPUS -->
+    <div class="eyebrow">Tipus de reunió</div>
+    <div class="tipus-grid">
+      <div class="tipus-card sel" data-tipus="equip" onclick="selTipus(this)">
+        <div class="ti">👥</div>
+        <div class="tn">Reunió d'equip</div>
+      </div>
+      <div class="tipus-card" data-tipus="client" onclick="selTipus(this)">
+        <div class="ti">🤝</div>
+        <div class="tn">Reunió amb client</div>
+      </div>
+      <div class="tipus-card" data-tipus="projecte" onclick="selTipus(this)">
+        <div class="ti">📐</div>
+        <div class="tn">Reunió de projecte</div>
+      </div>
+      <div class="tipus-card" data-tipus="direccio" onclick="selTipus(this)">
+        <div class="ti">🏛</div>
+        <div class="tn">Comitè de direcció</div>
+      </div>
+    </div>
+
+    <!-- DADES BÀSIQUES -->
+    <div class="eyebrow">Dades de la reunió</div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="data"/>
+      </div>
+      <div class="field">
+        <label>Hora</label>
+        <input type="time" id="hora"/>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Lloc / Plataforma</label>
+      <input type="text" id="lloc" placeholder="Sala de juntes / Teams / Zoom…"/>
+    </div>
+
+    <div class="field">
+      <label>Assumpte / Títol</label>
+      <input type="text" id="assumpte" placeholder="Ex: Revisió resultats Q2, Kick-off projecte X…"/>
+    </div>
+
+    <div class="field">
+      <label>Empresa / Organització</label>
+      <input type="text" id="empresa" placeholder="Nom de l'empresa"/>
+    </div>
+
+    <div class="field">
+      <label>Idioma de l'acta</label>
+      <select id="idioma">
+        <option value="català">Català</option>
+        <option value="castellano" selected>Castellano</option>
+        <option value="english">English</option>
+        <option value="français">Français</option>
+        <option value="deutsch">Deutsch</option>
+        <option value="italiano">Italiano</option>
+        <option value="português">Português</option>
+      </select>
+    </div>
+
+    <!-- ASSISTENTS -->
+    <div class="eyebrow">Assistents</div>
+    <div class="assistents-list" id="assistents-list"></div>
+    <button class="btn-add-row" onclick="addAssistent()">＋ Afegir assistent</button>
+
+    <!-- PUNTS TRACTATS -->
+    <div class="eyebrow" style="margin-top:14px">Punts tractats</div>
+    <div class="field">
+      <textarea id="punts" rows="4" placeholder="1. Revisió de l'estat del projecte&#10;2. Pressupost Q3&#10;3. Nous clients&#10;…"></textarea>
+    </div>
+
+    <!-- ACORDS I ACCIONS -->
+    <div class="eyebrow">Acords i accions</div>
+    <div class="accions-list" id="accions-list"></div>
+    <button class="btn-add-row" onclick="addAccio()">＋ Afegir acció</button>
+
+    <!-- PROPERA REUNIÓ -->
+    <div class="eyebrow" style="margin-top:14px">Propera reunió (opcional)</div>
+    <div class="row2">
+      <div class="field">
+        <label>Data propera</label>
+        <input type="date" id="propera-data"/>
+      </div>
+      <div class="field">
+        <label>Hora propera</label>
+        <input type="time" id="propera-hora"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Notes addicionals (opcional)</label>
+      <textarea id="notes" rows="2" placeholder="Qualsevol informació extra per a la IA…"></textarea>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-label">
+        <div class="spinner" style="border-color:rgba(28,75,58,.2);border-top-color:var(--accent)"></div>
+        <span>Generant acta amb IA…</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="steps" id="steps"></div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="output-box" id="output-box"></div>
+    <div class="out-actions" id="out-actions">
+      <button class="btn btn-ghost" onclick="copyOutput()">📋 Copiar</button>
+      <button class="btn btn-ghost" onclick="resetForm()">↩ Nova</button>
+    </div>
+
+    <div id="status-nova" class="status"></div>
+
+  </div>
+
+  <!-- ══ TAB: HISTORIAL ══ -->
+  <div id="panel-historial" class="panel">
+    <div class="eyebrow">Actes recents</div>
+    <div id="hist-list"></div>
+    <hr class="div"/>
+    <button class="btn btn-ghost" style="width:100%;border-color:var(--border)" onclick="clearHist()">🗑 Esborrar historial</button>
+  </div>
+
+</div><!-- /scroll -->
+
+<div class="footer">
+  <button class="btn btn-primary" id="btn-generar" onclick="generarActa()">
+    ✦ Generar acta amb IA
+  </button>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// GLOBALS
+// ══════════════════════════════════════
+var IS_WORD = false;
+var tipusSeleccionat = 'equip';
+
+var STEPS = [
+  'Processant les dades…',
+  'Enviant a GPT-4o…',
+  'Redactant l\'acta…',
+  'Estructurant seccions…',
+  'Finalitzant document…',
+];
+
+// ══════════════════════════════════════
+// OFFICE INIT
+// ══════════════════════════════════════
+if (typeof Office !== 'undefined') {
+  Office.onReady(info => {
+    IS_WORD = info.host === Office.HostType.Word;
+    init();
+  });
+}
+
+function init() {
+  // Data d'avui per defecte
+  const avui = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = avui;
+  // Hora actual
+  const ara = new Date();
+  const hh = String(ara.getHours()).padStart(2,'0');
+  const mm = String(ara.getMinutes()).padStart(2,'0');
+  document.getElementById('hora').value = hh + ':' + mm;
+
+  // 3 assistents per defecte
+  addAssistent(); addAssistent(); addAssistent();
+  // 2 accions per defecte
+  addAccio(); addAccio();
+
+  // API key
+  const k = getKey();
+  if (k) {
+    document.getElementById('api-key').value = k;
+    updateDot(k);
+  }
+
+  renderHist();
+}
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'historial') renderHist();
+}
+
+// ══════════════════════════════════════
+// TIPUS
+// ══════════════════════════════════════
+function selTipus(el) {
+  document.querySelectorAll('.tipus-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  tipusSeleccionat = el.dataset.tipus;
+}
+
+// ══════════════════════════════════════
+// ASSISTENTS
+// ══════════════════════════════════════
+var assistentCount = 0;
+function addAssistent() {
+  assistentCount++;
+  const id = 'ass-' + assistentCount;
+  const div = document.createElement('div');
+  div.className = 'assistent-row';
+  div.id = id;
+  div.innerHTML = `
+    <input type="text" placeholder="Nom i cognoms" class="ass-nom"/>
+    <span class="sep">·</span>
+    <input type="text" placeholder="Càrrec" class="ass-carrec"/>
+    <button class="btn-remove" onclick="removeEl('${id}')">×</button>
+  `;
+  document.getElementById('assistents-list').appendChild(div);
+}
+function removeEl(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+// ══════════════════════════════════════
+// ACCIONS
+// ══════════════════════════════════════
+var accioCount = 0;
+function addAccio() {
+  accioCount++;
+  const num = accioCount;
+  const id = 'acc-' + num;
+  const div = document.createElement('div');
+  div.className = 'accio-row';
+  div.id = id;
+  div.innerHTML = `
+    <div class="accio-num">#${num}</div>
+    <div class="row3" style="margin-top:4px">
+      <input type="text" placeholder="Descripció de l'acció" style="grid-column:1/3"/>
+      <input type="text" placeholder="Responsable"/>
+      <input type="date" placeholder="Data límit"/>
+    </div>
+    <button class="btn-remove" style="position:absolute;top:6px;right:8px" onclick="removeEl('${id}')">×</button>
+  `;
+  // fix grid
+  div.querySelector('.row3').style.gridTemplateColumns = '1fr 1fr 1fr';
+  const inputs = div.querySelectorAll('input');
+  inputs[0].style.gridColumn = '1/3';
+  document.getElementById('accions-list').appendChild(div);
+}
+
+// ══════════════════════════════════════
+// API KEY
+// ══════════════════════════════════════
+function getKey() {
+  try { return localStorage.getItem('actapro_key') || ''; } catch(e) { return ''; }
+}
+function onKey(v) {
+  try { localStorage.setItem('actapro_key', v.trim()); } catch(e) {}
+  updateDot(v.trim());
+}
+function updateDot(k) {
+  const dot = document.getElementById('api-dot');
+  const inp = document.getElementById('api-key');
+  if (k.startsWith('sk-')) {
+    dot.className = 'api-dot ok';
+    inp.className = 'ok';
+  } else if (k.length > 3) {
+    dot.className = 'api-dot err';
+    inp.className = 'err';
+  } else {
+    dot.className = 'api-dot';
+    inp.className = '';
+  }
+}
+function toggleEye() {
+  const inp = document.getElementById('api-key');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// ══════════════════════════════════════
+// RECOLLIR DADES
+// ══════════════════════════════════════
+function getDades() {
+  const assistents = [];
+  document.querySelectorAll('.assistent-row').forEach(row => {
+    const nom = row.querySelector('.ass-nom')?.value.trim();
+    const carrec = row.querySelector('.ass-carrec')?.value.trim();
+    if (nom) assistents.push(carrec ? `${nom} (${carrec})` : nom);
+  });
+
+  const accions = [];
+  document.querySelectorAll('.accio-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const desc = inputs[0]?.value.trim();
+    const resp = inputs[1]?.value.trim();
+    const data = inputs[2]?.value.trim();
+    if (desc) accions.push({ desc, resp, data });
+  });
+
+  return {
+    tipus: tipusSeleccionat,
+    data: document.getElementById('data').value,
+    hora: document.getElementById('hora').value,
+    lloc: document.getElementById('lloc').value.trim(),
+    assumpte: document.getElementById('assumpte').value.trim(),
+    empresa: document.getElementById('empresa').value.trim(),
+    idioma: document.getElementById('idioma').value,
+    assistents,
+    punts: document.getElementById('punts').value.trim(),
+    accions,
+    properaData: document.getElementById('propera-data').value,
+    properaHora: document.getElementById('propera-hora').value,
+    notes: document.getElementById('notes').value.trim(),
+  };
+}
+
+// ══════════════════════════════════════
+// PROMPT
+// ══════════════════════════════════════
+var TIPUS_NOMS = {
+  equip: 'Reunió d\'equip setmanal',
+  client: 'Reunió amb client',
+  projecte: 'Reunió de projecte',
+  direccio: 'Comitè de direcció',
+};
+
+function buildPrompt(d) {
+  const accionsText = d.accions.length
+    ? d.accions.map((a,i) => `${i+1}. ${a.desc}${a.resp ? ' — Responsable: '+a.resp : ''}${a.data ? ' — Data límit: '+a.data : ''}`).join('\n')
+    : 'Cap acció específica definida.';
+
+  const properaText = d.properaData
+    ? `Propera reunió: ${d.properaData}${d.properaHora ? ' a les ' + d.properaHora : ''}`
+    : 'Propera reunió: per confirmar';
+
+  return `Ets un secretari/ària corporatiu expert en redacció d'actes de reunió professionals. Redacta una acta completa i professional en ${d.idioma}.
+
+DADES DE LA REUNIÓ:
+- Tipus: ${TIPUS_NOMS[d.tipus] || d.tipus}
+- Empresa: ${d.empresa || 'No especificada'}
+- Assumpte: ${d.assumpte || 'Reunió ordinària'}
+- Data: ${d.data}
+- Hora: ${d.hora}
+- Lloc: ${d.lloc || 'No especificat'}
+- Assistents: ${d.assistents.join(', ') || 'No especificats'}
+
+PUNTS TRACTATS:
+${d.punts || 'Reunió ordinària de seguiment.'}
+
+ACORDS I ACCIONS:
+${accionsText}
+
+${properaText}
+
+${d.notes ? 'Notes addicionals: ' + d.notes : ''}
+
+INSTRUCCIONS:
+- Redacta en ${d.idioma} de forma professional i formal
+- L'acta ha de ser completa, clara i estructurada
+- Desenvolupa i amplia els punts tractats de forma professional
+- Inclou totes les seccions estàndard d'una acta corporativa
+- Les accions han d'apareixer en una secció clara amb responsable i data
+- Torna NOMÉS el JSON següent, sense markdown ni text addicional:
+
+{
+  "titol": "ACTA DE REUNIÓ — [ASSUMPTE EN MAJÚSCULES]",
+  "meta": "Ref: ACT-XXXXXX  ·  [Data formatada]  ·  [Lloc]",
+  "seccions": [
+    { "titol": "1. ASSISTENTS", "cos": "Llista d'assistents formatada" },
+    { "titol": "2. ORDRE DEL DIA", "cos": "Punts de l'ordre del dia" },
+    { "titol": "3. DESENVOLUPAMENT", "cos": "Resum desenvolupat de cada punt tractat" },
+    { "titol": "4. ACORDS ADOPTATS", "cos": "Acords presos a la reunió" },
+    { "titol": "5. ACCIONS I RESPONSABLES", "cos": "Taula d'accions amb responsable i data límit" },
+    { "titol": "6. PROPERA REUNIÓ", "cos": "${properaText}" }
+  ],
+  "signatura": "Bloc de signatura i data"
+}`;
+}
+
+// ══════════════════════════════════════
+// GENERAR ACTA
+// ══════════════════════════════════════
+async function generarActa() {
+  const dades = getDades();
+  const apiKey = getKey();
+
+  if (!dades.assumpte) { setStatus('error', 'Omple l\'assumpte de la reunió.'); return; }
+  if (!apiKey.startsWith('sk-')) { setStatus('error', 'Afegeix una API Key d\'OpenAI vàlida.'); return; }
+
+  // UI
+  const btn = document.getElementById('btn-generar');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Generant…';
+  setStatus('', '');
+  hideOutput();
+
+  const pw = document.getElementById('progress-wrap');
+  pw.classList.add('visible');
+
+  const stepsEl = document.getElementById('steps');
+  stepsEl.innerHTML = STEPS.map((s,i) =>
+    `<div class="step" id="step-${i}"><div class="step-dot"></div>${s}</div>`
+  ).join('');
+
+  function markStep(i) {
+    if (i > 0) {
+      const prev = document.getElementById('step-'+(i-1));
+      if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+    }
+    const cur = document.getElementById('step-'+i);
+    if (cur) cur.classList.add('active');
+    setProgress((i+1) / STEPS.length * 70);
+  }
+
+  let content;
+  try {
+    markStep(0); await sleep(300);
+    markStep(1);
+
+    const prompt = buildPrompt(dades);
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: 'Ets un expert en redacció d\'actes de reunió corporatives. Respons SEMPRE amb JSON vàlid, sense markdown ni backticks.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 2500,
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `Error ${resp.status}`);
+    }
+
+    markStep(2);
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || '';
+
+    markStep(3);
+    try {
+      const clean = text.replace(/```json|```/g,'').trim();
+      content = JSON.parse(clean);
+    } catch(e) {
+      content = {
+        titol: 'ACTA DE REUNIÓ',
+        meta: dades.data,
+        seccions: [{ titol: '', cos: text }],
+        signatura: '',
+      };
+    }
+
+    markStep(4);
+    setProgress(100);
+    await sleep(300);
+
+    STEPS.forEach((_,i) => {
+      const el = document.getElementById('step-'+i);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); }
+    });
+
+  } catch(err) {
+    pw.classList.remove('visible');
+    btn.disabled = false;
+    btn.innerHTML = '✦ Generar acta amb IA';
+    setStatus('error', 'Error: ' + err.message);
+    return;
+  }
+
+  // Guardar historial
+  guardarHist(dades, content);
+
+  if (IS_WORD) {
+    try {
+      await Word.run(async ctx => {
+        const body = ctx.document.body;
+        body.clear();
+
+        const t = body.insertParagraph(content.titol, Word.InsertLocation.start);
+        t.styleBuiltIn = Word.Style.heading1;
+        t.alignment = Word.Alignment.centered;
+        t.font.color = '#1C4B3A';
+
+        const meta = body.insertParagraph(content.meta, Word.InsertLocation.end);
+        meta.alignment = Word.Alignment.centered;
+        meta.font.color = '#9A9A9A';
+        meta.font.size = 10;
+
+        body.insertParagraph('', Word.InsertLocation.end);
+
+        (content.seccions || []).forEach(sec => {
+          if (sec.titol) {
+            const h = body.insertParagraph(sec.titol, Word.InsertLocation.end);
+            h.styleBuiltIn = Word.Style.heading2;
+            h.font.color = '#1C4B3A';
+          }
+          if (sec.cos) {
+            body.insertParagraph(sec.cos, Word.InsertLocation.end).font.size = 11;
+          }
+          body.insertParagraph('', Word.InsertLocation.end);
+        });
+
+        if (content.signatura) {
+          body.insertParagraph(content.signatura, Word.InsertLocation.end).font.size = 11;
+        }
+        await ctx.sync();
+      });
+      setStatus('success', '✅ Acta inserida a Word correctament.');
+    } catch(e) {
+      setStatus('error', 'Error Word: ' + e.message);
+    }
+  } else {
+    renderOutput(content);
+    setStatus('success', '✦ Acta generada amb GPT-4o.');
+  }
+
+  pw.classList.remove('visible');
+  btn.disabled = false;
+  btn.innerHTML = '✦ Generar acta amb IA';
+}
+
+// ══════════════════════════════════════
+// OUTPUT
+// ══════════════════════════════════════
+function renderOutput(c) {
+  const box = document.getElementById('output-box');
+  let html = `<span class="out-title">${c.titol}</span>`;
+  html += `<span class="out-meta">${c.meta}</span>`;
+  html += `<hr style="border:none;border-top:1px solid var(--border);margin:6px 0"/>`;
+  (c.seccions || []).forEach(s => {
+    if (s.titol) html += `<span class="out-section">${s.titol}</span>`;
+    if (s.cos)   html += `<p style="margin-bottom:5px;white-space:pre-wrap">${esc(s.cos)}</p>`;
+  });
+  if (c.signatura) html += `<p style="margin-top:8px;white-space:pre-wrap;color:var(--ink3)">${esc(c.signatura)}</p>`;
+  box.innerHTML = html;
+  box.classList.add('visible');
+  document.getElementById('out-actions').classList.add('visible');
+}
+
+function hideOutput() {
+  document.getElementById('output-box').classList.remove('visible');
+  document.getElementById('out-actions').classList.remove('visible');
+}
+
+function copyOutput() {
+  const box = document.getElementById('output-box');
+  navigator.clipboard.writeText(box.innerText).then(() => {
+    setStatus('success', '✅ Text copiat al portapapers.');
+  });
+}
+
+function resetForm() {
+  hideOutput();
+  setStatus('', '');
+  document.querySelectorAll('#panel-nova input[type=text], #panel-nova input[type=time], #panel-nova textarea').forEach(el => el.value = '');
+  document.getElementById('assistents-list').innerHTML = '';
+  document.getElementById('accions-list').innerHTML = '';
+  assistentCount = 0; accioCount = 0;
+  addAssistent(); addAssistent(); addAssistent();
+  addAccio(); addAccio();
+  const avui = new Date().toISOString().split('T')[0];
+  document.getElementById('data').value = avui;
+}
+
+function esc(t) {
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════
+// PROGRESS / STATUS
+// ══════════════════════════════════════
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function setStatus(type, msg) {
+  const el = document.getElementById('status-nova');
+  if (!type) { el.className = 'status'; el.innerHTML = ''; return; }
+  el.className = 'status ' + type;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ══════════════════════════════════════
+// HISTORIAL
+// ══════════════════════════════════════
+function guardarHist(dades, content) {
+  try {
+    const h = JSON.parse(localStorage.getItem('actapro_hist') || '[]');
+    h.unshift({
+      ts: Date.now(),
+      assumpte: dades.assumpte || 'Acta sense títol',
+      tipus: dades.tipus,
+      data: dades.data,
+      idioma: dades.idioma,
+      dades, content
+    });
+    localStorage.setItem('actapro_hist', JSON.stringify(h.slice(0,30)));
+  } catch(e) {}
+}
+
+var TIPUS_ICONS = { equip:'👥', client:'🤝', projecte:'📐', direccio:'🏛' };
+
+function renderHist() {
+  const el = document.getElementById('hist-list');
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_hist') || '[]'); } catch(e) {}
+  if (!h.length) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">📂</div><p>Encara no has generat<br>cap acta.</p></div>`;
+    return;
+  }
+  el.innerHTML = h.map((item,i) => `
+    <div class="hist-card" onclick="recarregarHist(${i})">
+      <div class="hist-icon">${TIPUS_ICONS[item.tipus]||'📋'}</div>
+      <div>
+        <div class="hist-name">${item.assumpte}</div>
+        <div class="hist-meta">${item.data} · ${item.idioma} · ${new Date(item.ts).toLocaleTimeString('ca-ES',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div class="hist-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+function recarregarHist(i) {
+  let h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_hist') || '[]'); } catch(e) {}
+  const item = h[i]; if (!item) return;
+
+  // Canviar a tab nova
+  switchTab('nova', document.querySelectorAll('.tab')[0]);
+
+  // Restaurar tipus
+  document.querySelectorAll('.tipus-card').forEach(c => {
+    c.classList.toggle('sel', c.dataset.tipus === item.tipus);
+  });
+  tipusSeleccionat = item.tipus;
+
+  // Restaurar camps
+  const d = item.dades;
+  document.getElementById('data').value = d.data || '';
+  document.getElementById('hora').value = d.hora || '';
+  document.getElementById('lloc').value = d.lloc || '';
+  document.getElementById('assumpte').value = d.assumpte || '';
+  document.getElementById('empresa').value = d.empresa || '';
+  document.getElementById('idioma').value = d.idioma || 'castellano';
+  document.getElementById('punts').value = d.punts || '';
+  document.getElementById('propera-data').value = d.properaData || '';
+  document.getElementById('propera-hora').value = d.properaHora || '';
+  document.getElementById('notes').value = d.notes || '';
+
+  // Restaurar assistents
+  document.getElementById('assistents-list').innerHTML = '';
+  assistentCount = 0;
+  (d.assistents || []).forEach(a => {
+    addAssistent();
+    const rows = document.querySelectorAll('.assistent-row');
+    const last = rows[rows.length-1];
+    const parts = a.match(/^(.+?)\s*\((.+)\)$/) || [null, a, ''];
+    last.querySelector('.ass-nom').value = parts[1] || a;
+    last.querySelector('.ass-carrec').value = parts[2] || '';
+  });
+
+  // Mostrar output
+  if (item.content) renderOutput(item.content);
+}
+
+function clearHist() {
+  if (!confirm('Esborrar tot l\'historial?')) return;
+  localStorage.removeItem('actapro_hist');
+  renderHist();
+}
+
+// ── Bootstrap ──
+if (typeof Office === 'undefined') {
+  init();
+}
+</script>
+</body>
+</html>
