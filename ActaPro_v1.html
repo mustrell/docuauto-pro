@@ -1556,7 +1556,14 @@ async function generate() {
   _lastData = d;
   saveHist(d, content);
   renderOut(content, d);
-  setSt('ok', tr('ok_gen'));
+
+  // Auto-insert into Word if available
+  if (IS_WORD && typeof Word !== 'undefined') {
+    await insertWord();
+  } else {
+    setSt('ok', tr('ok_gen'));
+  }
+
   prog.classList.remove('on');
   btn.disabled=false; btn.innerHTML='✦ '+tr('btn_gen');
 }
