@@ -1,1246 +1,1778 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>龙门出口 · Dragon Gate Export Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ActaPro Elite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 <style>
-:root{
-  --bg:#f5f0e8;--bg2:#ede6d6;--bg3:#e4d9c4;
-  --ink:#1a1008;--ink2:#3d2b0f;--ink3:#6b4c1e;
-  --paper:#faf6ee;--paper2:#fff8ef;
-  --red:#c0392b;--red2:#e74c3c;--redl:rgba(192,57,43,0.1);
-  --gold:#b8860b;--gold2:#d4a017;--goldl:rgba(184,134,11,0.12);
-  --jade:#1a6b4a;--jade2:#27ae60;--jadel:rgba(26,107,74,0.1);
-  --sky:#1a5276;--sky2:#2980b9;--skyl:rgba(26,82,118,0.1);
-  --border:#d4c4a0;--border2:#c4aa7a;
-  --shadow:0 4px 24px rgba(26,16,8,0.12);
-  --shadow2:0 2px 8px rgba(26,16,8,0.08);
-  --ff-serif:'Noto Serif SC',serif;
-  --ff-sans:'Noto Sans SC',sans-serif;
-  --ff-mono:'DM Mono',monospace;
-  --r:8px;--r-sm:5px;
+/* ═══════════════════════════════════════════
+   ACTAPRO ELITE — DESIGN SYSTEM
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #0F1117;
+  --bg2:      #161B27;
+  --bg3:      #1E2436;
+  --surface:  #1A2035;
+  --surface2: #212840;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.12);
+  --ink:      #F0EDE8;
+  --ink2:     #A8A4A0;
+  --ink3:     #5A5650;
+  --gold:     #C9A84C;
+  --gold2:    #E8C96A;
+  --gold-lt:  rgba(201,168,76,.1);
+  --gold-gl:  rgba(201,168,76,.06);
+  --blue:     #4A90D9;
+  --blue-lt:  rgba(74,144,217,.1);
+  --green:    #3DAA72;
+  --green-lt: rgba(61,170,114,.1);
+  --red:      #E05252;
+  --red-lt:   rgba(224,82,82,.1);
+  --shadow:   0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.5);
+  --r:        8px;
+  --r-sm:     5px;
+  --serif:    'Cormorant Garamond', serif;
+  --sans:     'Outfit', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
 }
+
 *{box-sizing:border-box;margin:0;padding:0;}
-html{font-size:13px;}
-body{font-family:var(--ff-sans);background:var(--bg);color:var(--ink);min-height:100vh;position:relative;}
+html,body{height:100%;overflow:hidden;}
 
-/* GRAIN TEXTURE */
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity:1;
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
 }
 
-/* WATERMARK */
-body::before{
-  content:'龙';position:fixed;right:-20px;bottom:40px;
-  font-family:var(--ff-serif);font-size:200px;color:rgba(192,57,43,0.04);
-  pointer-events:none;z-index:0;line-height:1;
+/* Subtle background texture */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 0%, rgba(201,168,76,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 0% 100%, rgba(74,144,217,.03) 0%, transparent 50%);
 }
 
-/* HEADER */
-.header{
-  position:sticky;top:0;z-index:100;
-  background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);
-  border-bottom:2px solid var(--gold);
+/* ═══ HEADER ═══ */
+header {
+  flex-shrink:0; position:relative; z-index:10;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px 8px;
 }
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:54px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-seal{
-  width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(135deg,var(--red),#8b0000);
-  border:2px solid var(--gold2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--ff-serif);font-size:16px;font-weight:700;color:var(--gold2);
-  box-shadow:0 0 0 1px rgba(212,160,23,0.3),0 4px 12px rgba(0,0,0,0.4);
-  flex-shrink:0;
+.hdr-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.hdr-logo {
+  width:28px; height:28px; border-radius:6px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--gold) 0%, #A07830 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:15px; color:var(--bg); font-style:italic;
+  font-weight:600; box-shadow: 0 2px 8px rgba(201,168,76,.3);
 }
-.logo-words{line-height:1.1;}
-.logo-cn{font-family:var(--ff-serif);font-size:14px;font-weight:700;color:var(--gold2);letter-spacing:2px;}
-.logo-en{font-size:9.5px;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
-.lang-toggle{display:flex;gap:0;background:rgba(255,255,255,0.08);border-radius:20px;border:1px solid rgba(255,255,255,0.15);overflow:hidden;}
-.lang-btn{padding:5px 13px;border:none;background:transparent;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--ff-sans);}
-.lang-btn.on{background:linear-gradient(135deg,var(--red),#8b1a1a);color:var(--gold2);}
+.hdr-brand h1 {
+  font-family:var(--serif); font-size:16px; font-weight:500;
+  color:var(--ink); letter-spacing:.2px; line-height:1;
+}
+.hdr-brand p { font-size:9px; color:var(--ink3); margin-top:2px; letter-spacing:.3px; text-transform:uppercase; }
+.hdr-badges { margin-left:auto; display:flex; gap:5px; align-items:center; }
+.badge {
+  font-size:7.5px; font-weight:700; padding:2px 6px; border-radius:99px;
+  letter-spacing:.5px; text-transform:uppercase;
+}
+.badge-gold { background:var(--gold-lt); color:var(--gold); border:1px solid rgba(201,168,76,.2); }
+.badge-iso  { background:var(--blue-lt); color:var(--blue); border:1px solid rgba(74,144,217,.2); }
 
-/* NAV */
-.nav{
-  display:flex;background:var(--bg3);
-  border-bottom:1px solid var(--border2);
-  overflow-x:auto;scrollbar-width:none;
-  position:relative;z-index:1;
+/* API ROW */
+.api-row { display:flex; align-items:center; gap:6px; }
+.api-status {
+  width:6px; height:6px; border-radius:50%; flex-shrink:0;
+  background:var(--ink3); transition:all .3s;
 }
-.nav::-webkit-scrollbar{display:none;}
-.nav-item{
-  flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;
-  padding:8px 4px 7px;cursor:pointer;
-  color:var(--ink3);transition:all .2s;gap:2px;
-  border-bottom:2px solid transparent;
-  position:relative;font-size:9px;
+.api-status.ok  { background:var(--green); box-shadow:0 0 6px rgba(61,170,114,.6); }
+.api-status.err { background:var(--red); }
+.api-field { flex:1; position:relative; }
+.api-field input {
+  width:100%; padding:5px 26px 5px 9px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--ink2);
+  font-size:10px; font-family:var(--mono); outline:none;
+  transition:all .2s;
 }
-.nav-item.on{color:var(--red);border-bottom-color:var(--red);background:var(--bg2);}
-.nav-item:hover:not(.on){color:var(--ink2);background:var(--bg2);}
-.ni{font-size:16px;line-height:1;}
-.nl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;}
-.n-badge{position:absolute;top:4px;right:calc(50% - 18px);background:var(--red);color:#fff;width:14px;height:14px;border-radius:50%;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;}
-
-/* PANEL */
-.content{position:relative;z-index:1;}
-.panel{display:none;padding:12px;animation:slideIn .2s ease;}
-.panel.on{display:block;}
-@keyframes slideIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
-
-/* CARDS */
-.card{
-  background:var(--paper);border:1px solid var(--border);
-  border-radius:var(--r);padding:13px;margin-bottom:10px;
-  box-shadow:var(--shadow2);position:relative;overflow:hidden;
+.api-field input::placeholder { color:var(--ink3); }
+.api-field input:focus { border-color:rgba(201,168,76,.4); color:var(--ink); }
+.api-field input.ok { border-color:rgba(61,170,114,.3); color:var(--green); }
+.api-eye {
+  position:absolute; right:7px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; font-size:10px;
+  color:var(--ink3); padding:0; transition:color .2s;
 }
-.card-accent{position:absolute;top:0;left:0;width:3px;height:100%;background:var(--red);}
-.card-accent.gold{background:var(--gold);}
-.card-accent.jade{background:var(--jade);}
-.card-accent.sky{background:var(--sky);}
-.card-head{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
-.card-ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.card-ic.r{background:var(--redl);color:var(--red);}
-.card-ic.g{background:var(--goldl);color:var(--gold);}
-.card-ic.j{background:var(--jadel);color:var(--jade);}
-.card-ic.s{background:var(--skyl);color:var(--sky);}
-.card-tit{font-family:var(--ff-serif);font-size:12.5px;font-weight:700;color:var(--ink2);}
+.api-eye:hover { color:var(--ink2); }
 
-/* HERO */
-.hero{
-  background:linear-gradient(135deg,var(--ink) 0%,#2d1a08 60%,#1a0a0a 100%);
-  border-radius:var(--r);padding:18px 16px;margin-bottom:10px;
-  position:relative;overflow:hidden;border:1px solid var(--border2);
+/* Lang selector */
+.lang-sel {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--ink2);
+  font-size:10px; font-family:var(--sans);
+  padding:4px 6px; outline:none; cursor:pointer;
+  -webkit-appearance:none; flex-shrink:0;
 }
-.hero-bg{position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:90px;line-height:1;opacity:0.07;font-family:var(--ff-serif);pointer-events:none;}
-.hero-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(212,160,23,0.15);border:1px solid rgba(212,160,23,0.3);color:var(--gold2);padding:3px 10px;border-radius:20px;font-size:9.5px;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;}
-.hero-title{font-family:var(--ff-serif);font-size:18px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:4px;}
-.hero-title em{color:var(--gold2);font-style:normal;}
-.hero-sub{font-size:10.5px;color:rgba(255,255,255,0.45);line-height:1.6;}
-.hero-stats{display:flex;gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;}
-.hs-box{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,0.08);}
-.hs-box:last-child{border-right:none;}
-.hs-num{font-family:var(--ff-mono);font-size:16px;font-weight:500;}
-.hs-box:nth-child(1) .hs-num{color:var(--red2);}
-.hs-box:nth-child(2) .hs-num{color:var(--gold2);}
-.hs-box:nth-child(3) .hs-num{color:#5dade2;}
-.hs-lbl{font-size:9px;color:rgba(255,255,255,0.35);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+.lang-sel:focus { border-color:rgba(201,168,76,.4); }
 
-/* FEAT GRID */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.feat{
-  background:var(--paper);border:1px solid var(--border);border-radius:var(--r);
-  padding:12px 10px;cursor:pointer;transition:all .2s;
-  position:relative;overflow:hidden;
+/* ═══ TABS ═══ */
+.tabs {
+  display:flex; flex-shrink:0; position:relative; z-index:10;
+  background:var(--bg2); border-bottom:1px solid var(--border);
 }
-.feat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--redl),transparent);opacity:0;transition:opacity .2s;}
-.feat:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow);}
-.feat:hover::before{opacity:1;}
-.feat-ic{font-size:22px;margin-bottom:5px;}
-.feat-t{font-family:var(--ff-serif);font-size:11.5px;font-weight:700;color:var(--ink2);}
-.feat-s{font-size:9.5px;color:var(--ink3);margin-top:2px;}
+.tab {
+  flex:1; padding:7px 4px 6px; text-align:center;
+  font-size:9px; font-weight:600; color:var(--ink3);
+  cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-1px; transition:all .18s;
+  letter-spacing:.4px; text-transform:uppercase; user-select:none;
+}
+.tab .ti { font-size:11px; display:block; margin-bottom:2px; }
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab:hover:not(.active) { color:var(--ink2); }
 
-/* FORM */
-.field{margin-bottom:8px;}
-label{display:block;font-size:9.5px;font-weight:700;color:var(--ink3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.6px;}
-input,select,textarea{
-  width:100%;padding:7px 10px;
-  background:var(--paper2);border:1px solid var(--border);
-  border-radius:var(--r-sm);color:var(--ink);
-  font-size:12px;font-family:var(--ff-sans);
-  transition:border-color .2s,box-shadow .2s;
+/* TEMPLATE BAR */
+.tpl-bar {
+  flex-shrink:0; background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:7px 14px; display:none; position:relative; z-index:9;
+}
+.tpl-bar.on { display:block; }
+.tpl-eyebrow {
+  font-size:8px; font-weight:700; color:var(--ink3);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;
+}
+.tpl-chips { display:flex; gap:5px; overflow-x:auto; scrollbar-width:none; }
+.tpl-chips::-webkit-scrollbar { display:none; }
+.tpl-chip {
+  flex-shrink:0; padding:4px 10px;
+  border:1px solid var(--border2); border-radius:99px;
+  font-size:9.5px; font-weight:600; color:var(--ink2);
+  cursor:pointer; transition:all .18s; white-space:nowrap;
+  background:var(--bg3);
+}
+.tpl-chip:hover { border-color:rgba(201,168,76,.4); color:var(--gold); }
+.tpl-chip.on { background:var(--gold-lt); color:var(--gold); border-color:rgba(201,168,76,.4); }
+
+/* ═══ SCROLL ═══ */
+.scroll {
+  flex:1; overflow-y:auto; overflow-x:hidden; position:relative; z-index:1;
+  scrollbar-width:thin; scrollbar-color:var(--bg3) transparent;
+}
+.scroll::-webkit-scrollbar { width:3px; }
+.scroll::-webkit-scrollbar-thumb { background:var(--bg3); border-radius:99px; }
+
+/* ═══ PANELS ═══ */
+.panel { display:none; padding:14px; animation:fadeIn .2s ease; }
+.panel.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+/* ═══ SECTION LABELS ═══ */
+.sec {
+  font-size:8px; font-weight:700; color:var(--gold);
+  text-transform:uppercase; letter-spacing:1.2px;
+  margin:16px 0 8px; display:flex; align-items:center; gap:8px;
+}
+.sec::after { content:''; flex:1; height:1px; background:var(--border); }
+.sec:first-child { margin-top:0; }
+
+/* ═══ LOGO UPLOAD ═══ */
+.logo-zone {
+  border:1px dashed var(--border2); border-radius:var(--r);
+  padding:10px 14px; cursor:pointer; text-align:center;
+  transition:all .2s; background:var(--bg3); margin-bottom:8px;
+  position:relative;
+}
+.logo-zone:hover { border-color:rgba(201,168,76,.4); background:var(--gold-gl); }
+.logo-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+.logo-zone .lz-ic { font-size:16px; margin-bottom:3px; }
+.logo-zone .lz-txt { font-size:10.5px; font-weight:600; color:var(--ink2); }
+.logo-zone .lz-sub { font-size:9px; color:var(--ink3); margin-top:1px; }
+.logo-prev {
+  display:none; align-items:center; gap:8px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r); padding:7px 10px; margin-bottom:8px;
+}
+.logo-prev.on { display:flex; }
+.logo-prev img { height:24px; max-width:70px; object-fit:contain; }
+.logo-prev span { font-size:10px; color:var(--ink2); flex:1; }
+.logo-prev button { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:14px; transition:color .2s; }
+.logo-prev button:hover { color:var(--red); }
+
+/* ═══ FIELDS ═══ */
+.field { margin-bottom:7px; }
+label {
+  display:block; font-size:10px; font-weight:600;
+  color:var(--ink2); margin-bottom:3px; letter-spacing:.1px;
+}
+input[type=text], input[type=date], input[type=time],
+input[type=email], input[type=number], select, textarea {
+  width:100%; padding:7px 10px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r); font-size:11px; font-family:var(--sans);
+  color:var(--ink); outline:none;
+  transition:border-color .15s, box-shadow .15s;
   -webkit-appearance:none;
 }
-input:focus,select:focus,textarea:focus{
-  outline:none;border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(184,134,11,0.12);
-  background:#fff;
+input:focus, select:focus, textarea:focus {
+  border-color:rgba(201,168,76,.5);
+  box-shadow:0 0 0 3px rgba(201,168,76,.08);
 }
-input::placeholder,textarea::placeholder{color:var(--border2);}
-select option{background:#fff;color:var(--ink);}
-textarea{min-height:52px;resize:vertical;line-height:1.5;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
-
-/* TAGS */
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
-.tag{padding:3px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:10px;cursor:pointer;color:var(--ink3);transition:all .15s;}
-.tag:hover{background:var(--red);color:#fff;border-color:var(--red);}
-.tag.g:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
-.tag.j:hover{background:var(--jade);color:#fff;border-color:var(--jade);}
-
-/* BUTTONS */
-.btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:12px;font-weight:700;font-family:var(--ff-sans);transition:all .2s;width:100%;}
-.btn-primary{background:linear-gradient(135deg,var(--red),#8b1a1a);color:#fff;box-shadow:0 3px 10px rgba(192,57,43,0.3);}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(192,57,43,0.45);}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#8b6914);color:#fff;box-shadow:0 3px 10px rgba(184,134,11,0.25);}
-.btn-gold:hover{transform:translateY(-1px);}
-.btn-jade{background:linear-gradient(135deg,var(--jade),#0e4d2e);color:#fff;}
-.btn-jade:hover{transform:translateY(-1px);}
-.btn-outline{background:transparent;color:var(--ink2);border:1.5px solid var(--border2);}
-.btn-outline:hover{border-color:var(--red);color:var(--red);}
-.btn-sm{padding:6px 11px;font-size:11px;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
-
-/* DIVIDER */
-.div{height:1px;background:var(--border);margin:9px 0;}
-.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
-.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* BADGES */
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:9.5px;font-weight:700;white-space:nowrap;}
-.br{background:rgba(192,57,43,0.1);color:var(--red);border:1px solid rgba(192,57,43,0.2);}
-.bg{background:rgba(184,134,11,0.1);color:var(--gold);border:1px solid rgba(184,134,11,0.2);}
-.bj{background:rgba(26,107,74,0.1);color:var(--jade);border:1px solid rgba(26,107,74,0.2);}
-.bs{background:rgba(26,82,118,0.1);color:var(--sky);border:1px solid rgba(26,82,118,0.2);}
-.bn{background:var(--bg3);color:var(--ink3);border:1px solid var(--border);}
-
-/* TABLE */
-.tbl{width:100%;border-collapse:collapse;font-size:11px;}
-.tbl th{background:var(--bg3);color:var(--ink3);padding:6px 8px;text-align:left;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border2);}
-.tbl td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle;}
-.tbl tr:last-child td{border-bottom:none;}
-.tbl tr:hover td{background:var(--bg2);}
-
-/* HS RESULT */
-.hs-result{background:linear-gradient(135deg,var(--goldl),var(--redl));border:1px solid var(--border2);border-radius:var(--r);padding:12px;margin-top:9px;display:none;animation:slideIn .2s;}
-.hs-code-big{font-family:var(--ff-mono);font-size:24px;font-weight:500;color:var(--gold);}
-.hs-desc{font-size:11.5px;color:var(--ink2);margin-top:3px;line-height:1.5;}
-.hs-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-
-/* CHECKLIST */
-.chklist{list-style:none;}
-.chk{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
-.chk:last-child{border-bottom:none;}
-.chk:hover{background:var(--bg2);}
-.chk-b{width:17px;height:17px;border:1.5px solid var(--border2);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;font-size:10px;}
-.chk.ok .chk-b{background:var(--jade);border-color:var(--jade);color:#fff;}
-.chk-t{font-size:11.5px;color:var(--ink2);line-height:1.4;}
-.chk.ok .chk-t{text-decoration:line-through;color:var(--ink3);}
-.prog-w{background:var(--bg3);border-radius:20px;height:5px;overflow:hidden;margin-top:5px;border:1px solid var(--border);}
-.prog-b{height:100%;background:linear-gradient(90deg,var(--jade),var(--jade2));border-radius:20px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
-.prog-lbl{font-size:9.5px;color:var(--ink3);margin-bottom:3px;display:flex;justify-content:space-between;}
-
-/* INCOTERM */
-.inco-tip{background:var(--skyl);border:1px solid rgba(26,82,118,0.2);border-radius:var(--r-sm);padding:8px;margin-top:5px;font-size:10.5px;color:var(--sky);line-height:1.5;display:none;}
-
-/* TRACKER */
-.tracker{padding:2px 0;}
-.trk{display:flex;align-items:flex-start;gap:9px;padding:5px 0;position:relative;}
-.trk:not(:last-child)::after{content:'';position:absolute;left:12px;top:30px;bottom:-5px;width:1px;background:var(--border);}
-.trk-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;border:1.5px solid var(--border);background:var(--bg3);color:var(--ink3);z-index:1;position:relative;}
-.trk-dot.done{background:var(--jadel);border-color:var(--jade);color:var(--jade);}
-.trk-dot.active{background:var(--redl);border-color:var(--red);color:var(--red);animation:pulse 2s infinite;}
-.trk-dot.wait{opacity:.4;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,0.35);}50%{box-shadow:0 0 0 7px rgba(192,57,43,0);}}
-.trk-tl{font-size:11.5px;font-weight:600;color:var(--ink);}
-.trk-ts{font-size:10px;color:var(--ink3);margin-top:1px;}
-.trk.wait .trk-tl,.trk.wait .trk-ts{color:var(--ink3);}
-
-/* RATE */
-.rate-box{background:linear-gradient(135deg,var(--ink),var(--ink2));border-radius:var(--r);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
-.rate-big{font-family:var(--ff-mono);font-size:22px;font-weight:500;color:var(--gold2);}
-.rate-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
-.rate-grid{text-align:right;font-family:var(--ff-mono);font-size:9.5px;color:rgba(255,255,255,0.35);line-height:1.7;}
-
-/* CBM */
-.cbm-out{background:linear-gradient(135deg,var(--ink),#1a2a38);border-radius:var(--r);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
-.cbm-val{font-family:var(--ff-mono);font-size:20px;font-weight:500;color:#5dade2;}
-.cbm-sub{font-size:9.5px;color:rgba(255,255,255,0.35);margin-top:2px;}
-.cbm-detail{text-align:right;font-family:var(--ff-mono);font-size:9.5px;color:rgba(255,255,255,0.4);line-height:1.7;}
-
-/* ALERT */
-.alrt{padding:8px 11px;border-radius:var(--r-sm);font-size:10.5px;display:flex;gap:6px;align-items:flex-start;line-height:1.5;margin-top:8px;}
-.aw{background:rgba(184,134,11,0.07);border:1px solid rgba(184,134,11,0.2);color:var(--ink2);}
-.ar{background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.2);color:var(--ink2);}
-.ai{background:rgba(26,82,118,0.07);border:1px solid rgba(26,82,118,0.2);color:var(--ink2);}
-.ag{background:rgba(26,107,74,0.07);border:1px solid rgba(26,107,74,0.2);color:var(--ink2);}
-
-/* PRODUCT ROW */
-.prow{display:grid;grid-template-columns:2fr 1fr 1fr 22px;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
-.prow:last-child{border-bottom:none;}
-.pdel{width:22px;height:22px;background:var(--redl);border:none;border-radius:50%;color:var(--red);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
-.pdel:hover{background:var(--red);color:#fff;}
-
-/* SUMMARY BAR */
-.sum-bar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px;display:flex;justify-content:space-between;align-items:center;font-size:11px;}
-.sum-total{font-family:var(--ff-mono);font-size:13px;font-weight:600;color:var(--gold);}
-
-/* MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(26,16,8,0.75);z-index:200;display:none;align-items:center;justify-content:center;padding:14px;}
-.modal-ov.show{display:flex;}
-.modal{background:var(--paper);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:400px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideIn .25s ease;}
-.modal-h{padding:13px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);border-radius:9px 9px 0 0;}
-.modal-h-title{font-family:var(--ff-serif);font-size:13px;font-weight:700;color:var(--gold2);}
-.modal-x{width:25px;height:25px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:rgba(255,255,255,0.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
-.modal-body{padding:14px;}
-.modal-ft{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:7px;}
-
-/* DOC PREVIEW */
-.doc-prev{background:#fff;color:#1a1008;border-radius:6px;padding:14px;font-size:10.5px;line-height:1.6;font-family:'Times New Roman',Georgia,serif;border:1px solid #ddd;}
-.doc-tit{text-align:center;font-size:14px;font-weight:700;margin-bottom:5px;border-bottom:2px solid #c0392b;padding-bottom:5px;color:#1a1008;}
-.doc-sub{text-align:center;font-size:10px;color:#666;margin-bottom:8px;}
-.doc-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:8px;}
-.doc-ml{font-weight:700;color:#555;font-size:9.5px;}
-.doc-mv{font-size:10px;}
-.doc-t{width:100%;border-collapse:collapse;font-size:9.5px;margin:6px 0;}
-.doc-t th{background:#c0392b;color:#fff;padding:3px 5px;text-align:left;font-size:9px;}
-.doc-t td{padding:3px 5px;border-bottom:1px solid #eee;}
-.doc-tot{text-align:right;font-size:11px;font-weight:700;margin-top:6px;color:#c0392b;}
-.doc-sig{margin-top:10px;font-size:9.5px;border-top:1px solid #eee;padding-top:8px;}
-
-/* TOAST */
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);border:1px solid var(--gold);color:var(--gold2);padding:8px 18px;border-radius:20px;font-size:11.5px;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:var(--ff-sans);}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* EXCHANGE QUICK BTNS */
-.fx-quick{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
-.fxq{padding:4px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--ff-mono);transition:all .15s;color:var(--ink3);}
-.fxq:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
-
-/* PAYMENT TERMS TABLE */
-.pt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
-.pt-row:last-child{border-bottom:none;}
-.pt-label{color:var(--ink3);font-size:10px;font-weight:700;}
-.pt-val{font-family:var(--ff-mono);color:var(--ink2);font-size:11px;}
-
-/* LC / PAYMENT SECTION */
-.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.pay-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
-.pay-box:hover{border-color:var(--gold);background:var(--goldl);}
-.pay-box.on{border-color:var(--red);background:var(--redl);}
-.pay-ic{font-size:18px;margin-bottom:4px;}
-.pay-name{font-size:10.5px;font-weight:700;color:var(--ink2);}
-.pay-desc{font-size:9px;color:var(--ink3);margin-top:1px;}
-
-/* SCROLL */
-.panel::-webkit-scrollbar{width:4px;}
-.panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
-/* HOLIDAY COUNTDOWN */
-.hol-countdown{
-  background:linear-gradient(135deg,var(--ink),#2d1a08);
-  border-radius:var(--r);padding:12px;margin-bottom:8px;
-  display:flex;align-items:center;justify-content:space-between;
+input::placeholder, textarea::placeholder { color:var(--ink3); }
+textarea { resize:vertical; min-height:52px; line-height:1.55; }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235A5650' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center;
+  padding-right:26px; cursor:pointer;
 }
-.hol-left{flex:1;}
-.hol-name{font-family:var(--ff-serif);font-size:13px;font-weight:700;color:var(--gold2);}
-.hol-date{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
-.hol-days{text-align:right;}
-.hol-num{font-family:var(--ff-mono);font-size:28px;font-weight:500;color:var(--red2);line-height:1;}
-.hol-unit{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.5px;}
-.hol-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:8px;overflow:hidden;}
-.hol-prog{height:100%;background:linear-gradient(90deg,var(--gold),var(--red2));border-radius:2px;}
+select option { background:var(--bg2); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
 
-/* QUICK INSERT GRID */
-.qi-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.qi-btn{
-  background:var(--paper2);border:1px solid var(--border);border-radius:var(--r-sm);
-  padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center;
+/* ═══ ATTENDEES ═══ */
+.att-list { display:flex; flex-direction:column; gap:4px; margin-bottom:6px; }
+.att-row {
+  display:grid; grid-template-columns:1fr 1px 1fr auto;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; transition:border-color .2s;
 }
-.qi-btn:hover{border-color:var(--red);transform:translateY(-1px);box-shadow:var(--shadow);}
-.qi-ic{font-size:18px;margin-bottom:4px;}
-.qi-t{font-size:10.5px;font-weight:700;color:var(--ink2);}
-.qi-s{font-size:9.5px;color:var(--ink3);}
+.att-row:focus-within { border-color:rgba(201,168,76,.3); }
+.att-row input {
+  border:none; background:transparent; padding:6px 9px;
+  font-size:11px; box-shadow:none; color:var(--ink);
+}
+.att-row input:focus { box-shadow:none; border:none; }
+.att-sep { background:var(--border); }
+.att-del {
+  background:none; border:none; cursor:pointer; color:var(--ink3);
+  font-size:14px; padding:0 9px; transition:all .18s;
+  border-left:1px solid var(--border);
+}
+.att-del:hover { color:var(--red); background:var(--red-lt); }
 
-/* EXCHANGE TABLE */
-.fx-tbl{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;}
-.fx-cell{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 8px;text-align:center;}
-.fx-pair{font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase;}
-.fx-rate{font-family:var(--ff-mono);font-size:11px;color:var(--ink2);margin-top:1px;}
+/* ═══ ACTIONS ═══ */
+.acc-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
+.acc-card {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; transition:border-color .2s;
+}
+.acc-card:focus-within { border-color:rgba(201,168,76,.3); }
+.acc-head {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 9px; border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+.acc-n {
+  width:16px; height:16px; border-radius:4px; flex-shrink:0;
+  background:var(--gold-lt); color:var(--gold);
+  font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(201,168,76,.2);
+}
+.acc-head input {
+  flex:1; border:none; background:transparent; font-size:11px;
+  padding:2px 6px; outline:none; color:var(--ink);
+}
+.acc-del { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:12px; transition:color .2s; padding:2px; }
+.acc-del:hover { color:var(--red); }
+.acc-foot { display:grid; grid-template-columns:1fr 1fr; }
+.acc-foot input { border:none; border-right:1px solid var(--border); background:transparent; font-size:10.5px; padding:6px 9px; color:var(--ink); outline:none; }
+.acc-foot input:last-child { border-right:none; }
+
+/* ═══ SIGNATURES ═══ */
+.sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px; }
+.sig-card {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+}
+.sig-card input {
+  width:100%; border:none; background:transparent; font-size:10.5px;
+  padding:6px 9px; color:var(--ink); outline:none;
+  border-bottom:1px solid var(--border);
+}
+.sig-card input:last-child { border-bottom:none; }
+.sig-line {
+  height:24px; margin:3px 9px 6px;
+  border-bottom:1px solid var(--border2); position:relative;
+}
+.sig-line::after {
+  content:'✍'; position:absolute; bottom:2px; right:0;
+  font-size:10px; color:var(--ink3);
+}
+
+/* ═══ ADD BTN ═══ */
+.btn-add {
+  width:100%; padding:6px; border:1px dashed var(--border2);
+  border-radius:var(--r); background:none; cursor:pointer;
+  font-size:10px; font-weight:600; color:var(--ink3);
+  font-family:var(--sans); transition:all .18s;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.btn-add:hover { border-color:rgba(201,168,76,.4); color:var(--gold); background:var(--gold-gl); }
+
+/* ═══ PROGRESS ═══ */
+.prog {
+  display:none; margin-top:12px; background:var(--bg3);
+  border:1px solid var(--border2); border-radius:var(--r); padding:12px;
+}
+.prog.on { display:block; }
+.prog-top {
+  display:flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px;
+}
+.prog-track { background:var(--bg); border-radius:99px; height:2px; overflow:hidden; }
+.prog-fill {
+  height:100%; width:0%; border-radius:99px;
+  background:linear-gradient(90deg, var(--gold) 0%, var(--gold2) 100%);
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 8px rgba(201,168,76,.4);
+}
+.prog-steps { margin-top:8px; display:flex; flex-direction:column; gap:3px; }
+.prog-step { display:flex; align-items:center; gap:6px; font-size:9.5px; color:var(--ink3); transition:color .3s; }
+.prog-step.done   { color:var(--green); }
+.prog-step.active { color:var(--gold); font-weight:600; }
+.prog-dot { width:4px; height:4px; border-radius:50%; background:var(--ink3); flex-shrink:0; transition:all .3s; }
+.prog-step.done   .prog-dot { background:var(--green); }
+.prog-step.active .prog-dot { background:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,.2); }
+
+/* ═══ OUTPUT ═══ */
+.out {
+  display:none; margin-top:12px; background:var(--surface);
+  border:1px solid var(--border2); border-radius:var(--r);
+  padding:14px; font-size:10.5px; line-height:1.7;
+  color:var(--ink2); max-height:240px; overflow-y:auto;
+}
+.out.on { display:block; animation:fadeIn .25s ease; }
+.out-ref {
+  font-family:var(--mono); font-size:8.5px; color:var(--ink3);
+  margin-bottom:3px; letter-spacing:.5px;
+}
+.out-title {
+  display:block; font-family:var(--serif); font-size:18px;
+  color:var(--gold); margin-bottom:2px; font-weight:500;
+}
+.out-company { display:block; font-size:10px; color:var(--ink3); margin-bottom:2px; }
+.out-meta { display:block; font-size:9.5px; color:var(--ink3); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.out-sec { display:block; font-size:8.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.8px; margin:10px 0 3px; }
+.out-actions { display:none; gap:5px; margin-top:8px; }
+.out-actions.on { display:flex; }
+
+/* ═══ STATUS ═══ */
+.st {
+  border-radius:var(--r); font-size:10.5px; padding:8px 10px;
+  margin-top:8px; display:none; gap:6px; animation:fadeIn .2s;
+  line-height:1.4;
+}
+.st.ok  { background:var(--green-lt); color:var(--green);  border:1px solid rgba(61,170,114,.2);  display:flex; }
+.st.err { background:var(--red-lt);   color:var(--red);    border:1px solid rgba(224,82,82,.2);   display:flex; }
+.st.inf { background:var(--gold-lt);  color:var(--gold);   border:1px solid rgba(201,168,76,.2);  display:flex; }
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  width:100%; padding:10px 14px; border:none; border-radius:var(--r);
+  font-size:12px; font-weight:600; font-family:var(--sans);
+  cursor:pointer; transition:all .18s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn+.btn { margin-top:6px; }
+.btn-primary {
+  background:linear-gradient(135deg, var(--gold) 0%, #A07830 100%);
+  color:var(--bg); box-shadow:0 3px 12px rgba(201,168,76,.25);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow:0 5px 20px rgba(201,168,76,.4); transform:translateY(-1px);
+}
+.btn-primary:active:not(:disabled) { transform:none; }
+.btn-primary:disabled { opacity:.3; cursor:not-allowed; }
+.btn-outline {
+  background:transparent; color:var(--ink2);
+  border:1px solid var(--border2); flex:1; width:auto;
+}
+.btn-outline:hover { border-color:var(--border2); color:var(--ink); background:var(--bg3); }
+
+/* ═══ SPINNER ═══ */
+.spin {
+  width:11px; height:11px; border-radius:50%; flex-shrink:0;
+  border:2px solid rgba(15,17,23,.2); border-top-color:var(--bg);
+  animation:rot .7s linear infinite;
+}
+@keyframes rot { to{transform:rotate(360deg)} }
+
+/* ═══ HISTORY ═══ */
+.hist-empty { text-align:center; padding:28px 14px; color:var(--ink3); }
+.hist-empty .hi { font-size:28px; margin-bottom:8px; opacity:.5; }
+.hist-empty p { font-size:10.5px; line-height:1.5; }
+.hist-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:9px 11px; margin-bottom:5px;
+  display:flex; align-items:center; gap:9px; cursor:pointer;
+  transition:all .18s;
+}
+.hist-card:hover { border-color:rgba(201,168,76,.3); transform:translateX(2px); }
+.hist-ic { font-size:18px; flex-shrink:0; opacity:.8; }
+.hist-info { flex:1; min-width:0; }
+.hist-name { font-size:11px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hist-meta { font-size:9px; color:var(--ink3); margin-top:1px; }
+.hist-lang { font-size:8px; background:var(--gold-lt); color:var(--gold); padding:1px 6px; border-radius:99px; font-weight:700; flex-shrink:0; letter-spacing:.3px; }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  flex-shrink:0; padding:10px 14px;
+  background:var(--bg2); border-top:1px solid var(--border);
+  position:relative; z-index:10;
+}
+
+/* ═══ ISO BADGE ═══ */
+.iso-notice {
+  background:var(--blue-lt); border:1px solid rgba(74,144,217,.15);
+  border-radius:var(--r-sm); padding:6px 9px; margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+  font-size:9px; color:rgba(74,144,217,.9);
+}
+.iso-notice .iso-icon { font-size:12px; flex-shrink:0; }
+
+hr.div { border:none; border-top:1px solid var(--border); margin:10px 0; }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<div class="header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-seal">龙</div>
-      <div class="logo-words">
-        <div class="logo-cn" id="h-cn">龙门出口专家</div>
-        <div class="logo-en" id="h-en">Dragon Gate Export Pro</div>
-      </div>
+<header>
+  <div class="hdr-top">
+    <div class="hdr-logo">A</div>
+    <div class="hdr-brand">
+      <h1>ActaPro <em style="font-style:italic;color:var(--gold)">Elite</em></h1>
+      <p data-i18n="hdr_sub">AI-powered meeting minutes</p>
     </div>
-    <div class="lang-toggle">
-      <button class="lang-btn on" onclick="setLang('zh')">中文</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <div class="hdr-badges">
+      <span class="badge badge-iso">ISO 15489</span>
+      <span class="badge badge-gold">GPT-4o</span>
     </div>
+  </div>
+  <div class="api-row">
+    <div class="api-status" id="api-st"></div>
+    <div class="api-field">
+      <input type="password" id="api-key" placeholder="OpenAI API Key — sk-…" autocomplete="off" oninput="onKey(this.value)"/>
+      <button class="api-eye" onclick="toggleEye()">👁</button>
+    </div>
+    <select id="ui-lang" class="lang-sel" onchange="setLang(this.value)"></select>
+  </div>
+</header>
+
+<!-- TEMPLATE BAR -->
+<div class="tpl-bar" id="tpl-bar">
+  <div class="tpl-eyebrow" data-i18n="tpl_label">Template</div>
+  <div class="tpl-chips" id="tpl-chips"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('nova',this)">
+    <span class="ti">✦</span><span data-i18n="tab_new">New</span>
+  </div>
+  <div class="tab" onclick="switchTab('hist',this)">
+    <span class="ti">📂</span><span data-i18n="tab_hist">History</span>
   </div>
 </div>
 
-<!-- NAV -->
-<div class="nav">
-  <div class="nav-item on" onclick="goTab('home')" id="t-home"><span class="ni">⛩️</span><span class="nl" id="nl-home">首页</span></div>
-  <div class="nav-item" onclick="goTab('ship')" id="t-ship"><span class="ni">📦</span><span class="nl" id="nl-ship">货运</span></div>
-  <div class="nav-item" onclick="goTab('customs')" id="t-customs"><span class="ni">🛃</span><span class="nl" id="nl-customs">海关</span></div>
-  <div class="nav-item" onclick="goTab('docs')" id="t-docs"><span class="ni">📄</span><span class="nl" id="nl-docs">文件</span><span class="n-badge">8</span></div>
-  <div class="nav-item" onclick="goTab('payment')" id="t-payment"><span class="ni">💳</span><span class="nl" id="nl-payment">结算</span></div>
-  <div class="nav-item" onclick="goTab('tools')" id="t-tools"><span class="ni">🔧</span><span class="nl" id="nl-tools">工具</span></div>
+<div class="scroll">
+
+<!-- ══════════════ PANEL: NEW MINUTES ══════════════ -->
+<div id="panel-nova" class="panel active">
+
+  <!-- ISO Notice -->
+  <div class="iso-notice">
+    <span class="iso-icon">🏛</span>
+    <span data-i18n="iso_notice">Structure compliant with ISO 15489 & Robert's Rules of Order</span>
+  </div>
+
+  <!-- CORPORATE IDENTITY -->
+  <div class="sec" data-i18n="sec_identity">Corporate identity</div>
+  <div class="logo-prev" id="logo-prev">
+    <img id="logo-img" src="" alt=""/>
+    <span id="logo-name" data-i18n="logo_loaded">Logo loaded</span>
+    <button onclick="removeLogo()">×</button>
+  </div>
+  <div class="logo-zone" id="logo-zone">
+    <input type="file" id="logo-file" accept="image/*" onchange="onLogo(this)"/>
+    <div class="lz-ic">🏢</div>
+    <div class="lz-txt" data-i18n="logo_txt">Upload company logo</div>
+    <div class="lz-sub" data-i18n="logo_sub">PNG · JPG · SVG — appears in document header</div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_company">Company / Organisation</label>
+      <input type="text" id="f-company" data-ph="ph_company"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_dept">Department (opt.)</label>
+      <input type="text" id="f-dept" data-ph="ph_dept"/>
+    </div>
+  </div>
+
+  <!-- MEETING INFO -->
+  <div class="sec" data-i18n="sec_meeting">Meeting information</div>
+  <div class="field">
+    <label data-i18n="lbl_subject">Subject / Title <span style="color:var(--red)">*</span></label>
+    <input type="text" id="f-subject" data-ph="ph_subject"/>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_type">Meeting type</label>
+      <select id="f-type">
+        <option value="team" data-i18n-opt="tpl_team">Team meeting</option>
+        <option value="client" data-i18n-opt="tpl_client">Client meeting</option>
+        <option value="project" data-i18n-opt="tpl_project">Project meeting</option>
+        <option value="board" data-i18n-opt="tpl_board">Board meeting</option>
+        <option value="sales" data-i18n-opt="tpl_sales">Sales meeting</option>
+        <option value="review" data-i18n-opt="tpl_review">Review meeting</option>
+        <option value="crisis" data-i18n-opt="tpl_crisis">Crisis meeting</option>
+        <option value="agm" data-i18n-opt="tpl_agm">AGM / General Assembly</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_doc_lang">Document language</label>
+      <select id="f-doclang">
+        <option value="English">🇬🇧 English</option>
+        <option value="Español">🇪🇸 Español</option>
+        <option value="Català">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+        <option value="Français">🇫🇷 Français</option>
+        <option value="Deutsch">🇩🇪 Deutsch</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Português">🇵🇹 Português</option>
+        <option value="Nederlands">🇳🇱 Nederlands</option>
+        <option value="Polski">🇵🇱 Polski</option>
+        <option value="Română">🇷🇴 Română</option>
+        <option value="Svenska">🇸🇪 Svenska</option>
+        <option value="Norsk">🇳🇴 Norsk</option>
+        <option value="Dansk">🇩🇰 Dansk</option>
+        <option value="Suomi">🇫🇮 Suomi</option>
+        <option value="Magyar">🇭🇺 Magyar</option>
+        <option value="Čeština">🇨🇿 Čeština</option>
+        <option value="Slovenčina">🇸🇰 Slovenčina</option>
+        <option value="Slovenščina">🇸🇮 Slovenščina</option>
+        <option value="Hrvatski">🇭🇷 Hrvatski</option>
+        <option value="العربية">🇸🇦 العربية</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_date">Date</label>
+      <input type="date" id="f-date"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_ref">Reference no.</label>
+      <input type="text" id="f-ref" data-ph="ph_ref"/>
+    </div>
+  </div>
+  <div class="row3">
+    <div class="field">
+      <label data-i18n="lbl_start">Start</label>
+      <input type="time" id="f-start"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_end">End</label>
+      <input type="time" id="f-end"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_dur">Duration</label>
+      <input type="text" id="f-dur" readonly data-ph="ph_dur"/>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_location">Location / Platform</label>
+      <input type="text" id="f-loc" data-ph="ph_loc"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_chair">Chair / Facilitator</label>
+      <input type="text" id="f-chair" data-ph="ph_chair"/>
+    </div>
+  </div>
+  <div class="field">
+    <label data-i18n="lbl_secretary">Secretary / Note-taker</label>
+    <input type="text" id="f-sec" data-ph="ph_secretary"/>
+  </div>
+
+  <!-- ATTENDEES -->
+  <div class="sec" data-i18n="sec_att">Attendees</div>
+  <div class="att-list" id="att-list"></div>
+  <button class="btn-add" onclick="addAtt()">＋ <span data-i18n="add_att">Add attendee</span></button>
+
+  <!-- APOLOGIES -->
+  <div class="field" style="margin-top:8px">
+    <label data-i18n="lbl_apologies">Apologies / Absent</label>
+    <input type="text" id="f-apologies" data-ph="ph_apologies"/>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="sec" data-i18n="sec_agenda">Agenda</div>
+  <div class="field">
+    <textarea id="f-agenda" rows="3" data-ph="ph_agenda"></textarea>
+  </div>
+
+  <!-- DISCUSSION -->
+  <div class="sec" data-i18n="sec_discussion">Discussion notes</div>
+  <div class="field">
+    <textarea id="f-discussion" rows="4" data-ph="ph_discussion"></textarea>
+  </div>
+
+  <!-- DECISIONS & ACTIONS -->
+  <div class="sec" data-i18n="sec_actions">Decisions &amp; action items</div>
+  <div class="acc-list" id="acc-list"></div>
+  <button class="btn-add" onclick="addAcc()">＋ <span data-i18n="add_action">Add action</span></button>
+
+  <!-- RISKS -->
+  <div class="field" style="margin-top:10px">
+    <label data-i18n="lbl_risks">Risks / Issues raised (opt.)</label>
+    <textarea id="f-risks" rows="2" data-ph="ph_risks"></textarea>
+  </div>
+
+  <!-- NEXT MEETING -->
+  <div class="sec" data-i18n="sec_next">Next meeting</div>
+  <div class="row3">
+    <div class="field">
+      <label data-i18n="lbl_date">Date</label>
+      <input type="date" id="f-ndate"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_start">Time</label>
+      <input type="time" id="f-ntime"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_location">Location</label>
+      <input type="text" id="f-nloc" data-ph="ph_loc"/>
+    </div>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="sec" data-i18n="sec_sig">Signatures</div>
+  <div class="sig-grid" id="sig-grid"></div>
+  <button class="btn-add" onclick="addSig()">＋ <span data-i18n="add_sig">Add signature</span></button>
+
+  <!-- AI NOTES -->
+  <div class="field" style="margin-top:12px">
+    <label data-i18n="lbl_ai_notes">Additional context for AI</label>
+    <textarea id="f-notes" rows="2" data-ph="ph_ai_notes"></textarea>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog" id="prog">
+    <div class="prog-top">
+      <div class="spin"></div>
+      <span id="prog-lbl" data-i18n="prog_lbl">Generating with GPT-4o…</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-steps" id="prog-steps"></div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="out" id="out"></div>
+  <div class="out-actions" id="out-act">
+    <button class="btn btn-outline" onclick="copyOut()">📋 <span data-i18n="btn_copy">Copy</span></button>
+    <button class="btn btn-outline" onclick="resetForm()">↩ <span data-i18n="btn_new">New</span></button>
+  </div>
+  <div id="st" class="st"></div>
+
+</div><!-- /panel-nova -->
+
+<!-- ══════════════ PANEL: HISTORY ══════════════ -->
+<div id="panel-hist" class="panel">
+  <div id="hist-list"></div>
+  <hr class="div"/>
+  <button class="btn btn-outline" style="width:100%" onclick="clearHist()">🗑 <span data-i18n="btn_clear">Clear history</span></button>
 </div>
 
-<div class="content">
+</div><!-- /scroll -->
 
-<!-- ===== HOME ===== -->
-<div class="panel on" id="p-home">
-
-  <div class="hero">
-    <div class="hero-bg">龙</div>
-    <div class="hero-badge">🐉 <span id="hb-txt">China Export · 中国出口</span></div>
-    <div class="hero-title" id="hero-t">龙门出口专家 <em>Pro</em></div>
-    <div class="hero-sub" id="hero-s">专为中国出口企业打造 · Built for Chinese Export Companies<br>全流程管理 · 双语操作 · 全球贸易</div>
-    <div class="hero-stats">
-      <div class="hs-box"><div class="hs-num" id="hs-n1">12</div><div class="hs-lbl" id="hs-l1">批次 Batches</div></div>
-      <div class="hs-box"><div class="hs-num" id="hs-n2">¥48.5k</div><div class="hs-lbl" id="hs-l2">本月 Month</div></div>
-      <div class="hs-box"><div class="hs-num" id="hs-n3">98%</div><div class="hs-lbl" id="hs-l3">准时 On-Time</div></div>
-    </div>
-  </div>
-
-  <!-- Holiday Countdown -->
-  <div id="hol-countdown-wrap"></div>
-
-  <!-- Quick Access -->
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">⚡</div><div class="card-tit" id="qa-tit">快速操作 Quick Actions</div></div>
-    <div class="qi-grid">
-      <div class="qi-btn" onclick="openDoc('invoice')"><div class="qi-ic">📜</div><div class="qi-t" id="qi1">商业发票</div><div class="qi-s">Commercial Invoice</div></div>
-      <div class="qi-btn" onclick="openDoc('packing')"><div class="qi-ic">📦</div><div class="qi-t" id="qi2">装箱单</div><div class="qi-s">Packing List</div></div>
-      <div class="qi-btn" onclick="openDoc('co')"><div class="qi-ic">🏷️</div><div class="qi-t" id="qi3">原产地证书</div><div class="qi-s">Certificate of Origin</div></div>
-      <div class="qi-btn" onclick="openDoc('customs_dec')"><div class="qi-ic">🛃</div><div class="qi-t" id="qi4">报关单</div><div class="qi-s">Customs Declaration</div></div>
-    </div>
-  </div>
-
-  <!-- Feature Grid -->
-  <div class="feat-grid">
-    <div class="feat" onclick="goTab('ship')"><div class="feat-ic">📦</div><div class="feat-t" id="ft1">货运管理</div><div class="feat-s" id="fs1">Shipment · Documents</div></div>
-    <div class="feat" onclick="goTab('customs')"><div class="feat-ic">🔍</div><div class="feat-t" id="ft2">HS编码查询</div><div class="feat-s" id="fs2">Tariff · Compliance</div></div>
-    <div class="feat" onclick="goTab('payment')"><div class="feat-ic">💳</div><div class="feat-t" id="ft3">贸易结算</div><div class="feat-s" id="fs3">LC · TT · Documentary</div></div>
-    <div class="feat" onclick="goTab('tools')"><div class="feat-ic">🔧</div><div class="feat-t" id="ft4">计算工具</div><div class="feat-s" id="fs4">CBM · FX · Calendar</div></div>
-  </div>
-
-  <!-- Market Alerts -->
-  <div class="card">
-    <div class="card-accent sky"></div>
-    <div class="card-head"><div class="card-ic s">📢</div><div class="card-tit" id="mk-tit">市场提示 Market Notes</div></div>
-    <div class="alrt aw"><span>🧧</span><span id="mk1">春节效应：提前6-8周下单，避免供应链断裂。Book 6–8 weeks early for CNY.</span></div>
-    <div class="alrt ai"><span>💱</span><span id="mk2">当前汇率参考：1 USD ≈ 7.25 CNY（浮动）· Indicative rate</span></div>
-    <div class="alrt ag"><span>🚢</span><span id="mk3">上海/深圳港口拥堵预警已解除，正常运营中。SHA/SZX congestion lifted.</span></div>
-  </div>
-</div>
-
-<!-- ===== SHIPMENT ===== -->
-<div class="panel" id="p-ship">
-
-  <div class="card">
-    <div class="card-accent"></div>
-    <div class="card-head"><div class="card-ic r">🏭</div><div class="card-tit" id="sh-shipper">发货人 / Shipper</div></div>
-    <div class="field"><label id="lbl-co">公司名称 Company Name</label><input id="f-company" placeholder="e.g. 广州科技有限公司 Guangzhou Tech Co., Ltd."></div>
-    <div class="row2">
-      <div class="field"><label id="lbl-uscc">统一社会信用代码 USCC</label><input id="f-uscc" placeholder="91440101..."></div>
-      <div class="field"><label id="lbl-contact">联系人 Contact</label><input id="f-contact" placeholder="姓名 Name"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-tel">电话 Tel</label><input id="f-tel" placeholder="+86 ..."></div>
-      <div class="field"><label id="lbl-email">邮箱 Email</label><input id="f-email" type="email" placeholder="export@..."></div>
-    </div>
-    <div class="field"><label id="lbl-addr">地址 Address</label><textarea id="f-addr" placeholder="详细地址 Full address..."></textarea></div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">🚢</div><div class="card-tit" id="sh-det">货运信息 Shipment Details</div></div>
-    <div class="row2">
-      <div class="field"><label id="lbl-wb">运单号 Waybill No.</label><input id="f-waybill" placeholder="SF / COSCO / B/L No."></div>
-      <div class="field"><label id="lbl-carrier">承运商 Carrier</label>
-        <select id="f-carrier">
-          <option>SF Express 顺丰速运</option><option>COSCO Shipping 中远海运</option>
-          <option>ZTO Express 中通快递</option><option>YTO Express 圆通速递</option>
-          <option>STO Express 申通快递</option><option>Cainiao 菜鸟物流</option>
-          <option>JD Logistics 京东物流</option><option>EMS 中国邮政</option>
-          <option>MSC 地中海航运</option><option>EVERGREEN 长荣海运</option>
-          <option>OOCL 东方海外</option><option>DHL China</option><option>FedEx China</option>
-          <option>UPS China</option><option>Maersk 马士基</option>
-        </select>
-      </div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-inco">贸易术语 Incoterm</label>
-        <select id="f-incoterm" onchange="showInco()">
-          <option value="FOB">FOB – 离岸价</option><option value="CIF">CIF – 成本+保险+运费</option>
-          <option value="EXW">EXW – 工厂交货</option><option value="DDP">DDP – 完税后交货</option>
-          <option value="FCA">FCA – 承运人交货</option><option value="DAP">DAP – 目的地交货</option>
-          <option value="CFR">CFR – 成本加运费</option>
-        </select>
-        <div class="inco-tip" id="inco-tip"></div>
-      </div>
-      <div class="field"><label id="lbl-container">箱型 Container</label>
-        <select id="f-container">
-          <option>20' Standard (20GP)</option><option>40' Standard (40GP)</option>
-          <option>40' High Cube (40HC)</option><option>LCL 拼箱</option>
-          <option>Air Freight 空运</option><option>Express 快递</option>
-          <option>Reefer 冷藏箱</option><option>Flat Rack 平板箱</option>
-        </select>
-      </div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-op">起运港 Origin Port</label>
-        <input id="f-origin" placeholder="Shanghai (SHA)">
-        <div class="tags">
-          <span class="tag g" onclick="sv('f-origin','Shanghai 上海 (SHA)')">上海 SHA</span>
-          <span class="tag g" onclick="sv('f-origin','Shenzhen 深圳 (SZX)')">深圳 SZX</span>
-          <span class="tag g" onclick="sv('f-origin','Guangzhou 广州 (CAN)')">广州 CAN</span>
-          <span class="tag g" onclick="sv('f-origin','Ningbo 宁波 (NGB)')">宁波 NGB</span>
-          <span class="tag g" onclick="sv('f-origin','Tianjin 天津 (TSN)')">天津 TSN</span>
-        </div>
-      </div>
-      <div class="field"><label id="lbl-dp">目的港 Destination</label><input id="f-dest" placeholder="e.g. Barcelona, Spain"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-etd">预计发货 ETD</label><input id="f-etd" type="date"></div>
-      <div class="field"><label id="lbl-eta">预计到达 ETA</label><input id="f-eta" type="date"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent jade"></div>
-    <div class="card-head"><div class="card-ic j">📏</div><div class="card-tit" id="sh-cargo">货物信息 Cargo Details</div></div>
-    <div class="field"><label id="lbl-goods">货物描述 Goods Description</label><input id="f-goods" placeholder="e.g. 电子元器件 Electronic Components"></div>
-    <div class="field"><label id="lbl-hscode-f">HS编码 HS Code</label><input id="f-hscode" placeholder="e.g. 8541.40"></div>
-    <div class="row3">
-      <div class="field"><label id="lbl-pkgs">件数 Packages</label><input id="f-pkgs" type="number" placeholder="0" min="0"></div>
-      <div class="field"><label id="lbl-wgt">重量 kg</label><input id="f-weight" type="number" placeholder="0.0" step="0.1"></div>
-      <div class="field"><label id="lbl-cbmf">体积 CBM</label><input id="f-cbm" type="number" placeholder="0.00" step="0.01"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-val">申报价值 Value</label><input id="f-value" type="number" placeholder="0.00" step="0.01"></div>
-      <div class="field"><label id="lbl-cur">币种 Currency</label>
-        <select id="f-currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option><option>JPY</option></select>
-      </div>
-    </div>
-    <div class="field"><label id="lbl-marks">唛头 Marks & Numbers</label><textarea id="f-marks" placeholder="包装标记、批号..."></textarea></div>
-    <button class="btn btn-primary" onclick="doInsertShip()" id="btn-ins">✍️ <span id="btn-ins-t">插入货运信息到Word文档</span></button>
-  </div>
-</div>
-
-<!-- ===== CUSTOMS ===== -->
-<div class="panel" id="p-customs">
-
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">🔍</div><div class="card-tit" id="hs-tit">HS编码查询 HS Code Finder</div></div>
-    <div class="field"><label id="lbl-hq">产品描述 Product Description</label>
-      <input id="hs-q" placeholder="e.g. LED灯泡, 棉质衬衫, 电子元件..." oninput="liveHS()">
-    </div>
-    <div class="tags">
-      <span class="tag" onclick="sv('hs-q','LED灯');lookupHS()">💡 LED灯</span>
-      <span class="tag" onclick="sv('hs-q','电子元件');lookupHS()">⚡ 电子</span>
-      <span class="tag" onclick="sv('hs-q','棉织物');lookupHS()">🧵 纺织</span>
-      <span class="tag" onclick="sv('hs-q','塑料制品');lookupHS()">🧴 塑料</span>
-      <span class="tag" onclick="sv('hs-q','木制家具');lookupHS()">🪑 家具</span>
-      <span class="tag" onclick="sv('hs-q','机械设备');lookupHS()">⚙️ 机械</span>
-      <span class="tag" onclick="sv('hs-q','玩具');lookupHS()">🧸 玩具</span>
-      <span class="tag" onclick="sv('hs-q','食品');lookupHS()">🍵 食品</span>
-      <span class="tag" onclick="sv('hs-q','化妆品');lookupHS()">💄 化妆</span>
-      <span class="tag" onclick="sv('hs-q','钢铁');lookupHS()">🔩 钢铁</span>
-      <span class="tag" onclick="sv('hs-q','锂电池');lookupHS()">🔋 电池</span>
-      <span class="tag" onclick="sv('hs-q','太阳能');lookupHS()">☀️ 光伏</span>
-    </div>
-    <button class="btn btn-gold" onclick="lookupHS()" style="margin-top:8px" id="btn-hs">🔍 <span id="btn-hs-t">查询HS编码</span></button>
-    <div class="hs-result" id="hs-box">
-      <div class="hs-row">
-        <div><div class="hs-code-big" id="hs-code">—</div><div class="hs-desc" id="hs-desc">—</div></div>
-        <button class="btn btn-outline btn-sm" onclick="copyHS()" style="width:auto;flex-shrink:0" id="btn-cpy">📋 <span id="cpy-t">复制</span></button>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px" id="hs-badges"></div>
-      <div class="div"></div>
-      <div style="font-size:10.5px;color:var(--ink3);line-height:1.6" id="hs-notes"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent jade"></div>
-    <div class="card-head"><div class="card-ic j">✅</div><div class="card-tit" id="comp-tit">合规清单 Compliance Checklist</div></div>
-    <ul class="chklist" id="comp-list">
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck1">CCC认证 (3C) — 电子产品强制要求</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck2">中文标签 — 所有产品出口必须</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck3">GACC注册 — 食品及农产品进口备案</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck4">国标GB合规 — 适用产品标准</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck5">质量检验证书 Quality Inspection Cert.</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck6">包装声明 Packing Declaration</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck7">熏蒸证书 — 木质包装 (ISPM 15)</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck8">NMPA审批 — 化妆品/医疗器械</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck9">跨境电商备案 9610/1210备案</div></li>
-      <li class="chk" onclick="togChk(this)"><div class="chk-b"></div><div class="chk-t" id="ck10">出口许可证 Export License (管制商品)</div></li>
-    </ul>
-    <div class="div"></div>
-    <div class="prog-lbl"><span id="prog-lbl-t">合规进度</span><span id="comp-pct" style="font-family:var(--ff-mono);color:var(--jade)">0%</span></div>
-    <div class="prog-w"><div class="prog-b" id="comp-bar" style="width:0%"></div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent sky"></div>
-    <div class="card-head"><div class="card-ic s">⚠️</div><div class="card-tit" id="rest-tit">进口限制速查 Import Requirements</div></div>
-    <table class="tbl">
-      <tr><th id="th-cat">类别</th><th id="th-req">要求</th><th id="th-body">主管机构</th></tr>
-      <tr><td id="r1">电子产品</td><td><span class="badge br">CCC强制</span></td><td>CNCA</td></tr>
-      <tr><td id="r2">食品农产品</td><td><span class="badge bg">GACC注册</span></td><td>GACC</td></tr>
-      <tr><td id="r3">化妆品</td><td><span class="badge br">NMPA审批</span></td><td>NMPA</td></tr>
-      <tr><td id="r4">纺织品</td><td><span class="badge bj">GB18401</span></td><td>SAMR</td></tr>
-      <tr><td id="r5">化工品</td><td><span class="badge br">MEE许可</span></td><td>MEE</td></tr>
-      <tr><td id="r6">医疗器械</td><td><span class="badge br">NMPA注册</span></td><td>NMPA</td></tr>
-      <tr><td id="r7">锂电池</td><td><span class="badge bg">UN38.3</span></td><td>CAAC/IATA</td></tr>
-      <tr><td id="r8">玩具</td><td><span class="badge br">CCC+GB6675</span></td><td>CNCA</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- ===== DOCUMENTS ===== -->
-<div class="panel" id="p-docs">
-  <div class="card">
-    <div class="card-accent"></div>
-    <div class="card-head"><div class="card-ic r">📄</div><div class="card-tit" id="doc-tit">生成文件 Generate Documents</div></div>
-    <div class="sec-lbl" id="sec-exp">出口文件 Export Documents</div>
-    <div class="g2">
-      <button class="btn btn-primary btn-sm" onclick="openDoc('invoice')" id="d1">📜 商业发票<br><small style="opacity:.7">Commercial Invoice</small></button>
-      <button class="btn btn-primary btn-sm" onclick="openDoc('packing')" id="d2">📦 装箱单<br><small style="opacity:.7">Packing List</small></button>
-      <button class="btn btn-gold btn-sm" onclick="openDoc('co')" id="d3">🏷️ 原产地证书<br><small style="opacity:.7">Cert. of Origin</small></button>
-      <button class="btn btn-gold btn-sm" onclick="openDoc('customs_dec')" id="d4">🛃 报关单<br><small style="opacity:.7">Customs Decl.</small></button>
-      <button class="btn btn-outline btn-sm" onclick="openDoc('bl')" id="d5">🚢 提单<br><small style="opacity:.7">Bill of Lading</small></button>
-      <button class="btn btn-outline btn-sm" onclick="openDoc('inspection')" id="d6">🔬 检验证书<br><small style="opacity:.7">Inspection Cert.</small></button>
-    </div>
-    <div class="sec-lbl" id="sec-ecom" style="margin-top:10px">跨境电商 Cross-Border E-Commerce</div>
-    <div class="g2">
-      <button class="btn btn-jade btn-sm" onclick="openDoc('customs9610')" id="d7">📱 9610申报单<br><small style="opacity:.7">B2C E-Commerce</small></button>
-      <button class="btn btn-jade btn-sm" onclick="openDoc('vat_refund')" id="d8">💰 出口退税函<br><small style="opacity:.7">VAT Refund Letter</small></button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">📦</div><div class="card-tit" id="prod-tit">产品明细 Product List</div></div>
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 22px;gap:5px;margin-bottom:6px">
-      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-desc">产品</span>
-      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-qty">数量</span>
-      <span style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase" id="ph-price">单价$</span>
-      <span></span>
-    </div>
-    <div id="prod-list"></div>
-    <button class="btn btn-outline btn-sm" onclick="addProd()" style="margin-bottom:8px" id="btn-addp">＋ <span id="addp-t">添加产品</span></button>
-    <div class="sum-bar">
-      <span id="s-items" style="color:var(--ink3);font-size:11px">商品：0</span>
-      <span class="sum-total" id="s-total">合计：$0.00</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent jade"></div>
-    <div class="card-head"><div class="card-ic j">🔄</div><div class="card-tit" id="trk-tit">货运追踪 Shipment Tracker</div></div>
-    <div class="tracker">
-      <div class="trk"><div class="trk-dot done">✓</div><div><div class="trk-tl" id="tr1">订单确认 Order Confirmed</div><div class="trk-ts" id="tr1d">2026年3月25日</div></div></div>
-      <div class="trk"><div class="trk-dot done">✓</div><div><div class="trk-tl" id="tr2">文件准备就绪 Documents Ready</div><div class="trk-ts" id="tr2d">2026年3月27日</div></div></div>
-      <div class="trk"><div class="trk-dot active">⚓</div><div><div class="trk-tl" id="tr3">清关中 Customs Clearance</div><div class="trk-ts" id="tr3d">2026年3月30日 · 进行中</div></div></div>
-      <div class="trk wait"><div class="trk-dot wait">🚢</div><div><div class="trk-tl" id="tr4">运输途中 In Transit</div><div class="trk-ts" id="tr4d">预计 2026年4月5日</div></div></div>
-      <div class="trk wait"><div class="trk-dot wait">🏠</div><div><div class="trk-tl" id="tr5">已送达 Delivered</div><div class="trk-ts" id="tr5d">预计 2026年4月12日</div></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== PAYMENT ===== -->
-<div class="panel" id="p-payment">
-  <div class="card">
-    <div class="card-accent"></div>
-    <div class="card-head"><div class="card-ic r">💳</div><div class="card-tit" id="pay-tit">贸易结算方式 Payment Methods</div></div>
-    <div class="pay-grid" id="pay-grid">
-      <div class="pay-box on" onclick="selectPay(this,'lc')"><div class="pay-ic">🏦</div><div class="pay-name">信用证 L/C</div><div class="pay-desc">Letter of Credit</div></div>
-      <div class="pay-box" onclick="selectPay(this,'tt')"><div class="pay-ic">💸</div><div class="pay-name">电汇 T/T</div><div class="pay-desc">Telegraphic Transfer</div></div>
-      <div class="pay-box" onclick="selectPay(this,'dp')"><div class="pay-ic">📋</div><div class="pay-name">跟单托收 D/P</div><div class="pay-desc">Documents vs Payment</div></div>
-      <div class="pay-box" onclick="selectPay(this,'da')"><div class="pay-ic">📅</div><div class="pay-name">跟单承兑 D/A</div><div class="pay-desc">Documents vs Acceptance</div></div>
-    </div>
-    <div id="pay-detail" style="margin-top:10px"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">🏦</div><div class="card-tit" id="lc-tit">信用证要素 L/C Key Fields</div></div>
-    <div class="row2">
-      <div class="field"><label id="lbl-lc-no">信用证号 L/C No.</label><input id="lc-no" placeholder="LC-2026-..."></div>
-      <div class="field"><label id="lbl-lc-bank">开证行 Issuing Bank</label><input id="lc-bank" placeholder="Bank of China..."></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-lc-exp">有效期 Expiry Date</label><input id="lc-exp" type="date"></div>
-      <div class="field"><label id="lbl-lc-amt">金额 Amount</label><input id="lc-amt" type="number" placeholder="0.00" step="0.01"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-lc-ship">最晚装船期 Latest Shipment</label><input id="lc-ship" type="date"></div>
-      <div class="field"><label id="lbl-lc-port">目的港 Port</label><input id="lc-port" placeholder="Same as destination"></div>
-    </div>
-    <div class="field"><label id="lbl-lc-terms">特殊条款 Special Terms</label><textarea id="lc-terms" placeholder="UCP 600 applicable..."></textarea></div>
-    <button class="btn btn-primary" onclick="insertLC()" id="btn-lc">📝 <span id="btn-lc-t">插入信用证条款到文档</span></button>
-  </div>
-
-  <div class="card">
-    <div class="card-accent sky"></div>
-    <div class="card-head"><div class="card-ic s">📊</div><div class="card-tit" id="pay-comp-tit">各方式对比 Payment Comparison</div></div>
-    <table class="tbl">
-      <tr><th id="pc-method">方式</th><th id="pc-risk">风险</th><th id="pc-cost">成本</th><th id="pc-speed">速度</th></tr>
-      <tr><td>L/C 信用证</td><td><span class="badge bj">低</span></td><td><span class="badge bg">中</span></td><td><span class="badge bn">慢</span></td></tr>
-      <tr><td>T/T 电汇</td><td><span class="badge bg">中</span></td><td><span class="badge bj">低</span></td><td><span class="badge bj">快</span></td></tr>
-      <tr><td>D/P 跟单</td><td><span class="badge bg">中</span></td><td><span class="badge bj">低</span></td><td><span class="badge bn">慢</span></td></tr>
-      <tr><td>D/A 承兑</td><td><span class="badge br">高</span></td><td><span class="badge bj">低</span></td><td><span class="badge bn">慢</span></td></tr>
-    </table>
-    <div class="alrt aw" style="margin-top:6px"><span>💡</span><span id="pay-tip">信用证(L/C)是中国出口企业最常用的结算方式，受UCP 600约束，安全性最高。</span></div>
-  </div>
-</div>
-
-<!-- ===== TOOLS ===== -->
-<div class="panel" id="p-tools">
-
-  <div class="card">
-    <div class="card-accent gold"></div>
-    <div class="card-head"><div class="card-ic g">💱</div><div class="card-tit" id="fx-tit">汇率换算 Currency Converter</div></div>
-    <div class="row2">
-      <div class="field"><label id="lbl-amt">金额 Amount</label><input id="fx-amt" type="number" value="10000" oninput="doFX()"></div>
-      <div class="field"><label id="lbl-from">货币 From</label>
-        <select id="fx-from" onchange="doFX()">
-          <option value="CNY">CNY 人民币</option><option value="USD">USD 美元</option>
-          <option value="EUR">EUR 欧元</option><option value="GBP">GBP 英镑</option>
-          <option value="HKD">HKD 港币</option><option value="JPY">JPY 日元</option>
-          <option value="KRW">KRW 韩元</option><option value="AED">AED 迪拉姆</option>
-        </select>
-      </div>
-    </div>
-    <div class="rate-box">
-      <div><div class="rate-big" id="fx-result">$1,379.31</div><div class="rate-sub" id="fx-lbl">10,000 CNY ≈ 1,379.31 USD</div></div>
-      <div class="rate-grid" id="fx-grid">USD: 7.2537<br>EUR: 7.8214<br>GBP: 9.1043</div>
-    </div>
-    <div class="fx-quick" id="fx-quick">
-      <span class="fxq" onclick="doFXTo('USD')">→ USD</span>
-      <span class="fxq" onclick="doFXTo('EUR')">→ EUR</span>
-      <span class="fxq" onclick="doFXTo('GBP')">→ GBP</span>
-      <span class="fxq" onclick="doFXTo('HKD')">→ HKD</span>
-      <span class="fxq" onclick="doFXTo('JPY')">→ JPY</span>
-    </div>
-    <div class="fx-tbl">
-      <div class="fx-cell"><div class="fx-pair">CNY/USD</div><div class="fx-rate">7.2537</div></div>
-      <div class="fx-cell"><div class="fx-pair">CNY/EUR</div><div class="fx-rate">7.8214</div></div>
-      <div class="fx-cell"><div class="fx-pair">CNY/GBP</div><div class="fx-rate">9.1043</div></div>
-      <div class="fx-cell"><div class="fx-pair">CNY/HKD</div><div class="fx-rate">0.9296</div></div>
-      <div class="fx-cell"><div class="fx-pair">CNY/JPY</div><div class="fx-rate">0.0477</div></div>
-      <div class="fx-cell"><div class="fx-pair">USD/CNY</div><div class="fx-rate">7.2537</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent"></div>
-    <div class="card-head"><div class="card-ic r">📐</div><div class="card-tit" id="cbm-tit">体积计算 CBM Calculator</div></div>
-    <div class="row3">
-      <div class="field"><label id="lbl-l">长 L (cm)</label><input id="cbm-l" type="number" placeholder="100" oninput="doCBM()"></div>
-      <div class="field"><label id="lbl-w">宽 W (cm)</label><input id="cbm-w" type="number" placeholder="80" oninput="doCBM()"></div>
-      <div class="field"><label id="lbl-h">高 H (cm)</label><input id="cbm-h" type="number" placeholder="60" oninput="doCBM()"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label id="lbl-qcbm">件数 Qty</label><input id="cbm-qty" type="number" value="1" oninput="doCBM()"></div>
-      <div class="field"><label id="lbl-wgt2">重量 kg</label><input id="cbm-wgt" type="number" placeholder="0" oninput="doCBM()"></div>
-    </div>
-    <div class="cbm-out">
-      <div><div class="cbm-val" id="cbm-val">— m³</div><div class="cbm-sub" id="cbm-sub">请输入尺寸数据</div></div>
-      <div class="cbm-detail" id="cbm-detail">空运计费重量:<br>— kg<br>计费重: — kg</div>
-    </div>
-    <div class="alrt ai"><span>ℹ️</span><span id="cbm-tip">空运计费重量 = CBM × 167（IATA）· 取实重与体积重较大值计费</span></div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent sky"></div>
-    <div class="card-head"><div class="card-ic s">📅</div><div class="card-tit" id="cal-tit">2026年节假日 China Holidays</div></div>
-    <table class="tbl">
-      <tr><th id="th-dt">日期</th><th id="th-hn">节假日</th><th id="th-dy">天数</th><th id="th-imp">影响</th></tr>
-      <tr><td>1月1日</td><td id="h1">元旦</td><td>1</td><td><span class="badge bn">低</span></td></tr>
-      <tr><td>1月28日–2月4日</td><td id="h2">🧧 春节</td><td>8</td><td><span class="badge br">严重</span></td></tr>
-      <tr><td>4月5日</td><td id="h3">清明节</td><td>1</td><td><span class="badge bn">低</span></td></tr>
-      <tr><td>5月1–5日</td><td id="h4">劳动节</td><td>5</td><td><span class="badge bg">较高</span></td></tr>
-      <tr><td>6月22日</td><td id="h5">端午节</td><td>1</td><td><span class="badge bn">低</span></td></tr>
-      <tr><td>9月25–27日</td><td id="h6">中秋节</td><td>3</td><td><span class="badge bg">中</span></td></tr>
-      <tr><td>10月1–7日</td><td id="h7">🇨🇳 国庆节</td><td>7</td><td><span class="badge br">严重</span></td></tr>
-    </table>
-    <div class="alrt aw"><span>🧧</span><span id="hol-warn">春节和国庆节期间工厂停工1–3周，需提前6–8周备货下单。</span></div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent jade"></div>
-    <div class="card-head"><div class="card-ic j">🌐</div><div class="card-tit" id="ports-tit">主要出口港 Major Export Ports</div></div>
-    <table class="tbl">
-      <tr><th id="th-port">港口</th><th>代码</th><th id="th-pt">类型</th><th id="th-rk">排名</th></tr>
-      <tr><td>上海 Shanghai</td><td><span class="badge bg">SHA</span></td><td>海运+空运</td><td>🥇 #1</td></tr>
-      <tr><td>深圳 Shenzhen</td><td><span class="badge bj">SZX</span></td><td>海运+空运</td><td>🥈 #2</td></tr>
-      <tr><td>广州 Guangzhou</td><td><span class="badge bj">CAN</span></td><td>海运+空运</td><td>🥉 #3</td></tr>
-      <tr><td>宁波 Ningbo</td><td><span class="badge bs">NGB</span></td><td>海运</td><td>#4</td></tr>
-      <tr><td>天津 Tianjin</td><td><span class="badge bs">TSN</span></td><td>海运</td><td>#5</td></tr>
-      <tr><td>青岛 Qingdao</td><td><span class="badge bs">TAO</span></td><td>海运</td><td>#6</td></tr>
-      <tr><td>厦门 Xiamen</td><td><span class="badge bs">XMN</span></td><td>海运</td><td>#7</td></tr>
-    </table>
-  </div>
-</div>
-
-</div><!-- /content -->
-
-<div id="toast">✅ 完成！</div>
-
-<!-- MODAL -->
-<div class="modal-ov" id="modal">
-  <div class="modal">
-    <div class="modal-h"><span class="modal-h-title" id="modal-title">文件预览</span><button class="modal-x" onclick="closeModal()">✕</button></div>
-    <div class="modal-body"><div id="modal-content"></div></div>
-    <div class="modal-ft">
-      <button class="btn btn-primary" onclick="doInsertDoc()" id="btn-mi">✍️ <span id="mi-t">插入到Word文档</span></button>
-      <button class="btn btn-outline" onclick="closeModal()" id="btn-mc">取消</button>
-    </div>
-  </div>
+<div class="footer">
+  <button class="btn btn-primary" id="btn-gen" onclick="generate()">
+    ✦ <span data-i18n="btn_gen">Generate professional minutes with AI</span>
+  </button>
 </div>
 
 <script>
-// ==================== STATE ====================
-var L='zh';
-var products=[];
-var prodId=0;
-var currentDoc='';
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// ACTAPRO ELITE — ENGINE
+// ═══════════════════════════════════════════════════════════
 
-// ==================== TRANSLATIONS ====================
-var T={
-  zh:{
-    'h-cn':'龙门出口专家','h-en':'Dragon Gate Export Pro',
-    'nl-home':'首页','nl-ship':'货运','nl-customs':'海关','nl-docs':'文件','nl-payment':'结算','nl-tools':'工具',
-    'hb-txt':'China Export · 中国出口','hero-t':'龙门出口专家 Pro',
-    'hero-s':'专为中国出口企业打造 · Built for Chinese Export Companies<br>全流程管理 · 双语操作 · 全球贸易',
-    'hs-l1':'批次 Batches','hs-l2':'本月 Month','hs-l3':'准时 On-Time',
-    'qa-tit':'快速操作 Quick Actions','qi1':'商业发票','qi2':'装箱单','qi3':'原产地证书','qi4':'报关单',
-    'ft1':'货运管理','fs1':'Shipment · Documents','ft2':'HS编码查询','fs2':'Tariff · Compliance',
-    'ft3':'贸易结算','fs3':'LC · T/T · Documentary','ft4':'计算工具','fs4':'CBM · FX · Calendar',
-    'mk-tit':'市场提示 Market Notes',
-    'mk1':'春节效应：提前6-8周下单，避免供应链断裂。Book 6–8 weeks early for CNY.',
-    'mk2':'当前汇率参考：1 USD ≈ 7.25 CNY（浮动）',
-    'mk3':'上海/深圳港口正常运营中。SHA/SZX operating normally.',
-    'sh-shipper':'发货人 / Shipper','lbl-co':'公司名称 Company Name','lbl-uscc':'统一社会信用代码 USCC',
-    'lbl-contact':'联系人 Contact','lbl-tel':'电话 Tel','lbl-email':'邮箱 Email','lbl-addr':'地址 Address',
-    'sh-det':'货运信息 Shipment Details','lbl-wb':'运单号 Waybill','lbl-carrier':'承运商 Carrier',
-    'lbl-inco':'贸易术语 Incoterm','lbl-container':'箱型 Container',
-    'lbl-op':'起运港 Origin Port','lbl-dp':'目的港 Destination','lbl-etd':'预计发货 ETD','lbl-eta':'预计到达 ETA',
-    'sh-cargo':'货物信息 Cargo Details','lbl-goods':'货物描述 Goods Description',
-    'lbl-hscode-f':'HS编码 HS Code','lbl-pkgs':'件数 Packages','lbl-wgt':'重量 kg','lbl-cbmf':'体积 CBM',
-    'lbl-val':'申报价值 Value','lbl-cur':'币种 Currency','lbl-marks':'唛头 Marks & Numbers',
-    'btn-ins-t':'插入货运信息到Word文档',
-    'hs-tit':'HS编码查询 HS Code Finder','lbl-hq':'产品描述 Product Description','btn-hs-t':'查询HS编码',
-    'comp-tit':'合规清单 Compliance Checklist',
-    'ck1':'CCC认证 (3C) — 电子产品强制要求','ck2':'中文标签 — 所有产品出口必须',
-    'ck3':'GACC注册 — 食品及农产品进口备案','ck4':'国标GB合规 — 适用产品标准',
-    'ck5':'质量检验证书 Quality Inspection Cert.','ck6':'包装声明 Packing Declaration',
-    'ck7':'熏蒸证书 — 木质包装 (ISPM 15)','ck8':'NMPA审批 — 化妆品/医疗器械',
-    'ck9':'跨境电商备案 9610/1210备案','ck10':'出口许可证 (管制商品)',
-    'prog-lbl-t':'合规进度','rest-tit':'进口限制速查 Import Requirements',
-    'th-cat':'类别','th-req':'要求','th-body':'主管机构',
-    'r1':'电子产品','r2':'食品农产品','r3':'化妆品','r4':'纺织品','r5':'化工品','r6':'医疗器械','r7':'锂电池','r8':'玩具',
-    'doc-tit':'生成文件 Generate Documents','sec-exp':'出口文件 Export Documents',
-    'sec-ecom':'跨境电商 Cross-Border E-Commerce',
-    'd1':'📜 商业发票','d2':'📦 装箱单','d3':'🏷️ 原产地证书','d4':'🛃 报关单',
-    'd5':'🚢 提单','d6':'🔬 检验证书','d7':'📱 9610申报单','d8':'💰 出口退税函',
-    'prod-tit':'产品明细 Product List','ph-desc':'产品','ph-qty':'数量','ph-price':'单价$',
-    'addp-t':'添加产品',
-    'trk-tit':'货运追踪 Shipment Tracker',
-    'tr1':'订单确认 Order Confirmed','tr1d':'2026年3月25日',
-    'tr2':'文件准备就绪 Documents Ready','tr2d':'2026年3月27日',
-    'tr3':'清关中 Customs Clearance','tr3d':'2026年3月30日 · 进行中',
-    'tr4':'运输途中 In Transit','tr4d':'预计 2026年4月5日',
-    'tr5':'已送达 Delivered','tr5d':'预计 2026年4月12日',
-    'pay-tit':'贸易结算方式 Payment Methods',
-    'lc-tit':'信用证要素 L/C Key Fields',
-    'lbl-lc-no':'信用证号 L/C No.','lbl-lc-bank':'开证行 Issuing Bank',
-    'lbl-lc-exp':'有效期 Expiry','lbl-lc-amt':'金额 Amount',
-    'lbl-lc-ship':'最晚装船期','lbl-lc-port':'目的港',
-    'lbl-lc-terms':'特殊条款','btn-lc-t':'插入信用证条款到文档',
-    'pay-comp-tit':'各方式对比 Comparison','pc-method':'方式','pc-risk':'风险','pc-cost':'成本','pc-speed':'速度',
-    'pay-tip':'信用证(L/C)是中国出口企业最常用的结算方式，受UCP 600约束，安全性最高。',
-    'fx-tit':'汇率换算 Currency Converter','lbl-amt':'金额 Amount','lbl-from':'货币 From',
-    'cbm-tit':'体积计算 CBM Calculator','lbl-l':'长 L (cm)','lbl-w':'宽 W (cm)','lbl-h':'高 H (cm)',
-    'lbl-qcbm':'件数 Qty','lbl-wgt2':'重量 kg',
-    'cbm-tip':'空运计费重量 = CBM × 167（IATA）· 取实重与体积重较大值',
-    'cal-tit':'2026年节假日 China Holidays','th-dt':'日期','th-hn':'节假日','th-dy':'天数','th-imp':'影响',
-    'h1':'元旦','h2':'🧧 春节','h3':'清明节','h4':'劳动节','h5':'端午节','h6':'中秋节','h7':'🇨🇳 国庆节',
-    'hol-warn':'春节和国庆节期间工厂停工1–3周，需提前6–8周备货下单。',
-    'ports-tit':'主要出口港 Major Export Ports','th-port':'港口','th-pt':'类型','th-rk':'排名',
-    'cpy-t':'复制','btn-ci':'✍️ 插入到Word文档','mi-t':'插入到Word文档',
-    'hol-alert-title':'⚠️ 节假日提醒',
-  },
-  en:{
-    'h-cn':'Dragon Gate Export','h-en':'China Export Pro Add-in',
-    'nl-home':'Home','nl-ship':'Shipment','nl-customs':'Customs','nl-docs':'Docs','nl-payment':'Payment','nl-tools':'Tools',
-    'hb-txt':'China Export Professional','hero-t':'Dragon Gate Export Pro',
-    'hero-s':'Complete export management for Chinese companies<br>Bilingual · Full workflow · Global trade',
-    'hs-l1':'Batches','hs-l2':'This Month','hs-l3':'On-Time',
-    'qa-tit':'Quick Actions','qi1':'Commercial Invoice','qi2':'Packing List','qi3':'Cert. of Origin','qi4':'Customs Decl.',
-    'ft1':'Shipment Mgmt','fs1':'Shipment · Documents','ft2':'HS Code Finder','fs2':'Tariff · Compliance',
-    'ft3':'Trade Payment','fs3':'LC · T/T · Documentary','ft4':'Calc Tools','fs4':'CBM · FX · Calendar',
-    'mk-tit':'Market Notes',
-    'mk1':'CNY Effect: Book 6–8 weeks ahead to avoid supply chain disruption.',
-    'mk2':'Reference rate: 1 USD ≈ 7.25 CNY (indicative)',
-    'mk3':'Shanghai/Shenzhen ports operating normally.',
-    'sh-shipper':'Shipper / 发货人','lbl-co':'Company Name','lbl-uscc':'USCC Code',
-    'lbl-contact':'Contact','lbl-tel':'Tel','lbl-email':'Email','lbl-addr':'Address',
-    'sh-det':'Shipment Details','lbl-wb':'Waybill No.','lbl-carrier':'Carrier',
-    'lbl-inco':'Incoterm','lbl-container':'Container',
-    'lbl-op':'Port of Origin','lbl-dp':'Destination Port','lbl-etd':'ETD (Departure)','lbl-eta':'ETA (Arrival)',
-    'sh-cargo':'Cargo Details','lbl-goods':'Goods Description',
-    'lbl-hscode-f':'HS Code','lbl-pkgs':'Packages','lbl-wgt':'Weight kg','lbl-cbmf':'Volume CBM',
-    'lbl-val':'Declared Value','lbl-cur':'Currency','lbl-marks':'Marks & Numbers',
-    'btn-ins-t':'Insert Shipment Data into Document',
-    'hs-tit':'HS Code Finder','lbl-hq':'Product Description','btn-hs-t':'Find HS Code',
-    'comp-tit':'Compliance Checklist',
-    'ck1':'CCC Certification (3C) — Mandatory for electronics','ck2':'Chinese Labeling — Required for all export products',
-    'ck3':'GACC Registration — Food & agricultural products','ck4':'GB Standards Compliance',
-    'ck5':'Quality Inspection Certificate','ck6':'Packing Declaration',
-    'ck7':'Fumigation Certificate — Wood packaging (ISPM 15)','ck8':'NMPA Approval — Cosmetics / Medical devices',
-    'ck9':'Cross-border E-Commerce Filing (9610/1210)','ck10':'Export License — Controlled goods',
-    'prog-lbl-t':'Compliance Progress','rest-tit':'Import Requirements',
-    'th-cat':'Category','th-req':'Requirement','th-body':'Authority',
-    'r1':'Electronics','r2':'Food & Agri','r3':'Cosmetics','r4':'Textiles','r5':'Chemicals','r6':'Medical Dev.','r7':'Lithium Bat.','r8':'Toys',
-    'doc-tit':'Generate Documents','sec-exp':'Export Documents','sec-ecom':'Cross-Border E-Commerce',
-    'd1':'📜 Commercial Invoice','d2':'📦 Packing List','d3':'🏷️ Cert. of Origin','d4':'🛃 Customs Decl.',
-    'd5':'🚢 Bill of Lading','d6':'🔬 Inspection Cert.','d7':'📱 9610 Declaration','d8':'💰 VAT Refund Letter',
-    'prod-tit':'Product List','ph-desc':'Description','ph-qty':'Qty','ph-price':'Unit $',
-    'addp-t':'Add Product',
-    'trk-tit':'Shipment Tracker',
-    'tr1':'Order Confirmed','tr1d':'Mar 25, 2026',
-    'tr2':'Documents Ready','tr2d':'Mar 27, 2026',
-    'tr3':'Customs Clearance','tr3d':'Mar 30, 2026 · In Progress',
-    'tr4':'In Transit','tr4d':'Est. Apr 5, 2026',
-    'tr5':'Delivered','tr5d':'Est. Apr 12, 2026',
-    'pay-tit':'Payment Methods','lc-tit':'L/C Key Fields',
-    'lbl-lc-no':'L/C No.','lbl-lc-bank':'Issuing Bank',
-    'lbl-lc-exp':'Expiry Date','lbl-lc-amt':'Amount',
-    'lbl-lc-ship':'Latest Shipment Date','lbl-lc-port':'Port',
-    'lbl-lc-terms':'Special Terms','btn-lc-t':'Insert L/C Terms into Document',
-    'pay-comp-tit':'Payment Comparison','pc-method':'Method','pc-risk':'Risk','pc-cost':'Cost','pc-speed':'Speed',
-    'pay-tip':'Letter of Credit (L/C) is the most common payment for Chinese exporters, governed by UCP 600.',
-    'fx-tit':'Currency Converter','lbl-amt':'Amount','lbl-from':'From Currency',
-    'cbm-tit':'CBM Calculator','lbl-l':'Length (cm)','lbl-w':'Width (cm)','lbl-h':'Height (cm)',
-    'lbl-qcbm':'Quantity','lbl-wgt2':'Weight (kg)',
-    'cbm-tip':'Air chargeable weight = CBM × 167 (IATA) · Billing = max(actual, volume weight)',
-    'cal-tit':'China Holidays 2026','th-dt':'Date','th-hn':'Holiday','th-dy':'Days','th-imp':'Impact',
-    'h1':'New Year 元旦','h2':'🧧 Spring Festival 春节','h3':'Qingming 清明节','h4':'Labour Day 劳动节',
-    'h5':'Dragon Boat 端午节','h6':'Mid-Autumn 中秋节','h7':'🇨🇳 Golden Week 国庆节',
-    'hol-warn':'Factories close 1–3 weeks for CNY & Golden Week. Book 6–8 weeks in advance.',
-    'ports-tit':'Major Export Ports','th-port':'Port','th-pt':'Type','th-rk':'Rank',
-    'cpy-t':'Copy','mi-t':'Insert into Word',
-    'hol-alert-title':'⚠️ Holiday Alert',
-  }
-};
+var IS_WORD = false;
+var LANG = 'en';
+var TPL = 'team';
+var logoData = null;
+var attN = 0, accN = 0, sigN = 0;
 
-function setLang(l){
-  L=l;
-  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('on');});
-  document.querySelector('.lang-btn[onclick="setLang(\''+l+'\')"]').classList.add('on');
-  var t=T[l];
-  for(var id in t){var el=document.getElementById(id);if(el)el.innerHTML=t[id];}
-  renderHolCountdown();doFX();doCBM();updateSummary();showInco();showPayDetail();
-}
+var STEPS_KEYS = ['step1','step2','step3','step4','step5','step6','step7'];
 
-function goTab(n){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.nav-item').forEach(function(t){t.classList.remove('on');});
-  document.getElementById('p-'+n).classList.add('on');
-  document.getElementById('t-'+n).classList.add('on');
-}
-function sv(id,v){document.getElementById(id).value=v;}
-var _tt;
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2700);}
-
-// ==================== INCOTERMS ====================
-var INCO_INFO={
-  FOB:{zh:'卖方负责将货物装上船，装船后的风险和所有费用由买方承担。',en:'Seller delivers on board vessel. Buyer bears all costs & risks from that point.'},
-  CIF:{zh:'卖方支付到目的港的运费和保险费，货物装船后风险转移给买方。',en:'Seller pays cost, insurance & freight to destination. Risk transfers on board.'},
-  EXW:{zh:'卖方在工厂或仓库交货，买方承担所有运输费用和风险。',en:'Seller makes goods available at premises. Buyer bears all transport costs & risks.'},
-  DDP:{zh:'卖方负责到目的地交货并支付进口关税，卖方承担最大义务。',en:'Seller delivers cleared for import at destination. Maximum seller obligation.'},
-  FCA:{zh:'卖方将货物交付承运人，风险在交付时转移给买方。',en:'Seller delivers to carrier at named place. Risk transfers to buyer at that point.'},
-  DAP:{zh:'卖方将货物运至指定目的地，不负责卸货，进口关税由买方处理。',en:'Seller delivers to named destination not unloaded. Buyer handles import duties.'},
-  CFR:{zh:'卖方支付运至目的港的运费，保险由买方自行负责。',en:'Seller pays costs & freight to destination. Insurance is buyer\'s responsibility.'}
-};
-function showInco(){
-  var v=document.getElementById('f-incoterm').value;
-  var b=document.getElementById('inco-tip');
-  var i=INCO_INFO[v];
-  if(i){b.textContent=i[L]||i.zh;b.style.display='block';}
-}
-
-// ==================== HS DATABASE ====================
-var HSDB=[
-  {k:['led','led灯','灯泡','lighting','bulb'],code:'8539.50',zh:'LED灯及发光二极管光源',en:'LED lamps and LED light sources',tariff:'6%',vat:'13%',cert:'CCC',zh_note:'需CCC认证，符合GB 24819及GB 7000系列标准。',en_note:'CCC required. Comply with GB 24819 & GB 7000 series.'},
-  {k:['电子','electronic','半导体','circuit','pcb','chip','元件','元器件'],code:'8541.40',zh:'半导体器件；光电二极管、光电晶体管',en:'Semiconductor devices; photodiodes, phototransistors',tariff:'5%',vat:'13%',cert:'CCC',zh_note:'消费类电子产品须CCC认证，符合CNCA规定。',en_note:'Consumer electronics need CCC. CNCA compliance required.'},
-  {k:['棉','cotton','织物','textile','fabric','yarn','纺织'],code:'5208.21',zh:'纯棉机织物，平纹，未漂白',en:'Woven fabrics of cotton, plain weave, unbleached',tariff:'14%',vat:'13%',cert:'GB Std.',zh_note:'须符合GB 18401国家强制性纺织品安全标准。',en_note:'Must comply with GB 18401 mandatory textile safety standard.'},
-  {k:['塑料','plastic','polymer','pvc','abs'],code:'3926.90',zh:'其他塑料制品',en:'Other articles of plastics',tariff:'8%',vat:'13%',cert:'Standard',zh_note:'根据塑料类型核查适用的国标要求。',en_note:'Check applicable GB standards for specific plastic type.'},
-  {k:['木','wooden','furniture','家具','cabinet','木制'],code:'9403.60',zh:'其他木制家具',en:'Other wooden furniture',tariff:'10%',vat:'13%',cert:'熏蒸',zh_note:'木质包装须持熏蒸证书（ISPM 15），符合GB 18584甲醛限量。',en_note:'Wooden packaging needs fumigation cert (ISPM 15). GB 18584 formaldehyde limits apply.'},
-  {k:['机械','machinery','machine','equipment','motor','motor','泵','pump'],code:'8479.89',zh:'特种机械及机械装置',en:'Machines and mechanical appliances for specific purposes',tariff:'3%',vat:'13%',cert:'CE+CCC',zh_note:'工业机械通常需要CE和CCC双重认证。',en_note:'Industrial machinery typically requires both CE and CCC certification.'},
-  {k:['玩具','toy','doll','game','puzzle'],code:'9503.00',zh:'三轮车、玩具车、玩偶、玩具',en:'Tricycles, pedal cars, dolls, toys',tariff:'0%',vat:'13%',cert:'CCC',zh_note:'须强制CCC认证，符合GB 6675玩具安全标准。',en_note:'Mandatory CCC. Must comply with GB 6675 toy safety standard.'},
-  {k:['食品','food','beverage','drink','snack','meat','dairy'],code:'2106.90',zh:'其他食品',en:'Food preparations not elsewhere specified',tariff:'15%',vat:'9%',cert:'GACC',zh_note:'必须GACC备案，须贴中文标签，包含配料表及QS号。',en_note:'GACC registration mandatory. Chinese label with ingredients & QS number required.'},
-  {k:['化妆','cosmetic','makeup','skincare','perfume','cream','护肤'],code:'3304.99',zh:'美容化妆品及护肤品',en:'Beauty or make-up preparations and skin care preparations',tariff:'5%',vat:'13%',cert:'NMPA',zh_note:'须获NMPA市场准入批准，中文标签必须，需在华进行检测。',en_note:'NMPA pre-market approval required. Chinese label mandatory. In-China testing required.'},
-  {k:['钢铁','steel','metal','iron','aluminum','copper'],code:'7208.51',zh:'铁或非合金钢平轧产品',en:'Flat-rolled products of iron or non-alloy steel',tariff:'2%',vat:'13%',cert:'MEE许可',zh_note:'金属进口可能需要生态环境部（MEE）进口许可证。',en_note:'Metal imports may require MEE import license.'},
-  {k:['锂电池','battery','电池','lithium'],code:'8507.60',zh:'锂离子蓄电池',en:'Lithium-ion accumulators',tariff:'5%',vat:'13%',cert:'UN38.3+MSDS',zh_note:'运输需UN38.3测试报告，空运须符合IATA危险品规定。',en_note:'UN38.3 test report required for transport. Air freight must comply with IATA DGR.'},
-  {k:['太阳能','solar','光伏','photovoltaic','panel'],code:'8541.43',zh:'光伏电池（太阳能电池）',en:'Photovoltaic cells and modules',tariff:'0%',vat:'13%',cert:'IEC+CQC',zh_note:'须符合IEC 61215标准，建议CQC认证。享受出口退税。',en_note:'Must comply with IEC 61215. CQC certification recommended. Eligible for VAT refund.'},
+// ═══════════════════════════════════════════════════════════
+// I18N — 20 INTERFACE LANGUAGES
+// ═══════════════════════════════════════════════════════════
+var LANGS = [
+  {code:'en', flag:'🇬🇧', name:'English'},
+  {code:'es', flag:'🇪🇸', name:'Español'},
+  {code:'ca', flag:'🏴', name:'Català'},
+  {code:'fr', flag:'🇫🇷', name:'Français'},
+  {code:'de', flag:'🇩🇪', name:'Deutsch'},
+  {code:'it', flag:'🇮🇹', name:'Italiano'},
+  {code:'pt', flag:'🇵🇹', name:'Português'},
+  {code:'nl', flag:'🇳🇱', name:'Nederlands'},
+  {code:'pl', flag:'🇵🇱', name:'Polski'},
+  {code:'ro', flag:'🇷🇴', name:'Română'},
+  {code:'sv', flag:'🇸🇪', name:'Svenska'},
+  {code:'no', flag:'🇳🇴', name:'Norsk'},
+  {code:'da', flag:'🇩🇰', name:'Dansk'},
+  {code:'fi', flag:'🇫🇮', name:'Suomi'},
+  {code:'hu', flag:'🇭🇺', name:'Magyar'},
+  {code:'cs', flag:'🇨🇿', name:'Čeština'},
+  {code:'sk', flag:'🇸🇰', name:'Slovenčina'},
+  {code:'hr', flag:'🇭🇷', name:'Hrvatski'},
+  {code:'zh', flag:'🇨🇳', name:'中文'},
+  {code:'ar', flag:'🇸🇦', name:'العربية'},
 ];
 
-var _hsT;
-function liveHS(){clearTimeout(_hsT);_hsT=setTimeout(lookupHS,380);}
-function lookupHS(){
-  var q=document.getElementById('hs-q').value.toLowerCase().trim();
-  if(!q){document.getElementById('hs-box').style.display='none';return;}
-  var found=null;
-  for(var i=0;i<HSDB.length;i++){var h=HSDB[i];if(h.k.some(function(k){return q.indexOf(k)>=0||k.indexOf(q)>=0;})){found=h;break;}}
-  if(!found)found={code:'9999.99',zh:'普通商品 — 请细化搜索以获精确结果',en:'General merchandise — refine search for accurate results',tariff:'不等',vat:'13%',cert:'—',zh_note:'请输入更具体的产品描述，例如：LED灯、棉质T恤等。',en_note:'Enter a more specific product description, e.g., LED bulb, cotton T-shirt.'};
-  document.getElementById('hs-code').textContent=found.code;
-  document.getElementById('hs-desc').textContent=L==='zh'?found.zh:found.en;
-  document.getElementById('hs-badges').innerHTML=
-    '<span class="badge bg">进口税 '+found.tariff+'</span> '+
-    '<span class="badge bs">增值税 '+found.vat+'</span> '+
-    '<span class="badge br">认证: '+found.cert+'</span>';
-  document.getElementById('hs-notes').textContent=L==='zh'?(found.zh_note||found.en_note):found.en_note;
-  // Auto-fill shipment HS field
-  document.getElementById('f-hscode').value=found.code;
-  document.getElementById('hs-box').style.display='block';
-}
-function copyHS(){
-  var c=document.getElementById('hs-code').textContent;
-  if(navigator.clipboard){navigator.clipboard.writeText(c).then(function(){toast(L==='zh'?'✅ HS编码 '+c+' 已复制！':'✅ HS Code '+c+' copied!');});}
-  else{toast('HS: '+c);}
+var T = {
+en:{
+  hdr_sub:'AI-powered professional meeting minutes',
+  tpl_label:'Template',tab_new:'New minutes',tab_hist:'History',
+  iso_notice:'Structure compliant with ISO 15489 & Robert\'s Rules of Order',
+  sec_identity:'Corporate identity',logo_loaded:'Logo loaded',
+  logo_txt:'Upload company logo',logo_sub:'PNG · JPG · SVG — appears in header',
+  lbl_company:'Company / Organisation',ph_company:'Acme Corp Ltd.',
+  lbl_dept:'Department (opt.)',ph_dept:'Operations / Finance…',
+  sec_meeting:'Meeting information',
+  lbl_subject:'Subject / Title',ph_subject:'E.g. Q2 Review, Project Alpha Kick-off…',
+  lbl_type:'Meeting type',lbl_doc_lang:'Document language',
+  lbl_date:'Date',lbl_ref:'Reference no.',ph_ref:'Auto-generated',
+  lbl_start:'Start',lbl_end:'End',lbl_dur:'Duration',ph_dur:'Auto',
+  lbl_location:'Location / Platform',ph_loc:'Conference room A / Teams / Zoom…',
+  lbl_chair:'Chair / Facilitator',ph_chair:'Full name',
+  lbl_secretary:'Secretary / Note-taker',ph_secretary:'Full name',
+  sec_att:'Attendees',add_att:'Add attendee',
+  ph_att_name:'Full name',ph_att_role:'Title / Role',
+  lbl_apologies:'Apologies / Absent',ph_apologies:'Names of absent members',
+  sec_agenda:'Agenda',ph_agenda:'1. Previous minutes review\n2. Matters arising\n3. Main business items\n4. AOB\n5. Date of next meeting',
+  sec_discussion:'Discussion notes',ph_discussion:'Summarise the key discussion points. The AI will develop them into professional minutes.\n\nE.g. The sales KPIs were reviewed showing 12% growth vs. last quarter…',
+  sec_actions:'Decisions & action items',add_action:'Add action item',
+  ph_acc_desc:'Action item / Decision',ph_acc_owner:'Owner',ph_acc_due:'Due date',
+  lbl_risks:'Risks / Issues raised (opt.)',ph_risks:'Any risks, blockers or issues identified…',
+  sec_next:'Next meeting',
+  sec_sig:'Signatures',add_sig:'Add signature',
+  ph_sig_name:'Full name',ph_sig_role:'Title / Role',
+  lbl_ai_notes:'Additional context for AI',ph_ai_notes:'Desired tone, special formatting, additional context…',
+  prog_lbl:'Generating with GPT-4o…',
+  step1:'Processing form data…',step2:'Building prompt…',step3:'Connecting to GPT-4o…',
+  step4:'Drafting professional content…',step5:'Structuring sections (ISO 15489)…',step6:'Applying corporate style…',step7:'Finalising document…',
+  btn_copy:'Copy text',btn_new:'New minutes',btn_clear:'Clear history',
+  btn_gen:'Generate professional minutes with AI',
+  btn_insert:'Insert into Word document',
+  err_subject:'Please fill in the meeting subject.',
+  err_key:'Please enter a valid OpenAI API Key (sk-…).',
+  ok_word:'✅ Minutes inserted into Word successfully.',
+  ok_gen:'✦ Minutes generated with GPT-4o — click "Insert into Word" to add to your document.',
+  err_word:'Word error: ',err_api:'Error: ',
+  hist_empty:'No minutes generated yet.\nCreate your first one now!',
+  hist_loaded:'Minutes loaded from history.',
+  confirm_clear:'Clear all history?',
+  tpl_team:'Team meeting',tpl_client:'Client meeting',tpl_project:'Project meeting',
+  tpl_board:'Board meeting',tpl_sales:'Sales meeting',tpl_review:'Review meeting',
+  tpl_crisis:'Crisis meeting',tpl_agm:'AGM / General Assembly',
+},
+es:{
+  hdr_sub:'Actas de reunión profesionales con IA',
+  tpl_label:'Plantilla',tab_new:'Nueva acta',tab_hist:'Historial',
+  iso_notice:'Estructura conforme a ISO 15489 y Reglas de Orden de Robert',
+  sec_identity:'Identidad corporativa',logo_loaded:'Logo cargado',
+  logo_txt:'Subir logo de la empresa',logo_sub:'PNG · JPG · SVG — aparece en la cabecera',
+  lbl_company:'Empresa / Organización',ph_company:'Acme Corp S.L.',
+  lbl_dept:'Departamento (opt.)',ph_dept:'Operaciones / Finanzas…',
+  sec_meeting:'Datos de la reunión',
+  lbl_subject:'Asunto / Título',ph_subject:'Ej. Revisión Q2, Kick-off proyecto Alpha…',
+  lbl_type:'Tipo de reunión',lbl_doc_lang:'Idioma del documento',
+  lbl_date:'Fecha',lbl_ref:'Nº de referencia',ph_ref:'Auto-generado',
+  lbl_start:'Inicio',lbl_end:'Fin',lbl_dur:'Duración',ph_dur:'Auto',
+  lbl_location:'Lugar / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Moderador',ph_chair:'Nombre completo',
+  lbl_secretary:'Secretario/a',ph_secretary:'Nombre completo',
+  sec_att:'Asistentes',add_att:'Añadir asistente',
+  ph_att_name:'Nombre y apellidos',ph_att_role:'Cargo / Rol',
+  lbl_apologies:'Disculpas / Ausentes',ph_apologies:'Nombres de los ausentes',
+  sec_agenda:'Orden del día',ph_agenda:'1. Revisión del acta anterior\n2. Asuntos pendientes\n3. Puntos principales\n4. Ruegos y preguntas\n5. Próxima reunión',
+  sec_discussion:'Resumen de los puntos tratados',ph_discussion:'Describe brevemente los puntos discutidos. La IA los desarrollará profesionalmente.\n\nEj. Se han revisado los KPIs de ventas con crecimiento del 12%…',
+  sec_actions:'Acuerdos y acciones',add_action:'Añadir acción',
+  ph_acc_desc:'Acción / Acuerdo adoptado',ph_acc_owner:'Responsable',ph_acc_due:'Fecha límite',
+  lbl_risks:'Riesgos / Incidencias (opt.)',ph_risks:'Riesgos, bloqueos o problemas identificados…',
+  sec_next:'Próxima reunión',
+  sec_sig:'Firmas',add_sig:'Añadir firma',
+  ph_sig_name:'Nombre y apellidos',ph_sig_role:'Cargo / Rol',
+  lbl_ai_notes:'Notas adicionales para la IA',ph_ai_notes:'Tono deseado, formato especial, contexto adicional…',
+  prog_lbl:'Generando con GPT-4o…',
+  step1:'Procesando datos del formulario…',step2:'Construyendo prompt…',step3:'Conectando con GPT-4o…',
+  step4:'Redactando contenido profesional…',step5:'Estructurando secciones (ISO 15489)…',step6:'Aplicando estilo corporativo…',step7:'Finalizando documento…',
+  btn_copy:'Copiar texto',btn_new:'Nueva acta',btn_clear:'Borrar historial',
+  btn_gen:'Generar acta profesional con IA',
+  btn_insert:'Insertar en documento Word',
+  err_subject:'Rellena el asunto de la reunión.',
+  err_key:'Introduce una API Key de OpenAI válida (sk-…).',
+  ok_word:'✅ Acta insertada en Word correctamente.',
+  ok_gen:'✦ Acta generada con GPT-4o — pulsa "Insertar en Word" para añadirla al documento.',
+  err_word:'Error Word: ',err_api:'Error: ',
+  hist_empty:'Aún no has generado ningún acta.\n¡Crea la primera ahora!',
+  hist_loaded:'Acta cargada desde el historial.',
+  confirm_clear:'¿Borrar todo el historial?',
+  tpl_team:'Reunión de equipo',tpl_client:'Reunión con cliente',tpl_project:'Reunión de proyecto',
+  tpl_board:'Consejo / Junta',tpl_sales:'Reunión comercial',tpl_review:'Reunión de revisión',
+  tpl_crisis:'Reunión de crisis',tpl_agm:'Asamblea General',
+},
+ca:{
+  hdr_sub:'Actes de reunió professionals amb IA',
+  tpl_label:'Plantilla',tab_new:'Nova acta',tab_hist:'Historial',
+  iso_notice:'Estructura conforme a ISO 15489 i Regles d\'Ordre de Robert',
+  sec_identity:'Identitat corporativa',logo_loaded:'Logo carregat',
+  logo_txt:'Pujar logo de l\'empresa',logo_sub:'PNG · JPG · SVG — apareixerà a la capçalera',
+  lbl_company:'Empresa / Organització',ph_company:'Acme Corp S.L.',
+  lbl_dept:'Departament (opc.)',ph_dept:'Operacions / Finances…',
+  sec_meeting:'Dades de la reunió',
+  lbl_subject:'Assumpte / Títol',ph_subject:'Ex: Revisió Q2, Kick-off projecte Alpha…',
+  lbl_type:'Tipus de reunió',lbl_doc_lang:'Idioma del document',
+  lbl_date:'Data',lbl_ref:'Núm. referència',ph_ref:'Auto-generat',
+  lbl_start:'Inici',lbl_end:'Fi',lbl_dur:'Durada',ph_dur:'Auto',
+  lbl_location:'Lloc / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'President / Moderador',ph_chair:'Nom complet',
+  lbl_secretary:'Secretari/ària',ph_secretary:'Nom complet',
+  sec_att:'Assistents',add_att:'Afegir assistent',
+  ph_att_name:'Nom i cognoms',ph_att_role:'Càrrec / Rol',
+  lbl_apologies:'Absències disculpades',ph_apologies:'Noms dels absents',
+  sec_agenda:'Ordre del dia',ph_agenda:'1. Aprovació acta anterior\n2. Assumptes pendents\n3. Punts principals\n4. Precs i preguntes\n5. Propera reunió',
+  sec_discussion:'Resum dels punts tractats',ph_discussion:'Descriu els punts discutits. La IA els desenvoluparà professionalment.\n\nEx: S\'han revisat els KPIs de vendes amb creixement del 12%…',
+  sec_actions:'Acords i accions',add_action:'Afegir acció',
+  ph_acc_desc:'Acció / Acord adoptat',ph_acc_owner:'Responsable',ph_acc_due:'Data límit',
+  lbl_risks:'Riscos / Incidències (opc.)',ph_risks:'Riscos, bloquejos o problemes identificats…',
+  sec_next:'Propera reunió',
+  sec_sig:'Signatures',add_sig:'Afegir signatura',
+  ph_sig_name:'Nom i cognoms',ph_sig_role:'Càrrec / Rol',
+  lbl_ai_notes:'Notes addicionals per a la IA',ph_ai_notes:'To desitjat, format especial, context addicional…',
+  prog_lbl:'Generant amb GPT-4o…',
+  step1:'Processant dades del formulari…',step2:'Construint prompt…',step3:'Connectant amb GPT-4o…',
+  step4:'Redactant contingut professional…',step5:'Estructurant seccions (ISO 15489)…',step6:'Aplicant estil corporatiu…',step7:'Finalitzant document…',
+  btn_copy:'Copiar text',btn_new:'Nova acta',btn_clear:'Esborrar historial',
+  btn_gen:'Generar acta professional amb IA',
+  btn_insert:'Inserir al document Word',
+  err_subject:'Omple l\'assumpte de la reunió.',
+  err_key:'Introdueix una API Key d\'OpenAI vàlida (sk-…).',
+  ok_word:'✅ Acta inserida a Word correctament.',
+  ok_gen:'✦ Acta generada amb GPT-4o — prem "Inserir al Word" per afegir-la al document.',
+  err_word:'Error Word: ',err_api:'Error: ',
+  hist_empty:'Encara no has generat cap acta.\nCrea la primera ara!',
+  hist_loaded:'Acta carregada des de l\'historial.',
+  confirm_clear:'Esborrar tot l\'historial?',
+  tpl_team:'Reunió d\'equip',tpl_client:'Reunió amb client',tpl_project:'Reunió de projecte',
+  tpl_board:'Consell / Junta',tpl_sales:'Reunió comercial',tpl_review:'Reunió de revisió',
+  tpl_crisis:'Reunió de crisi',tpl_agm:'Assemblea General',
+},
+fr:{
+  hdr_sub:'Comptes rendus de réunion professionnels avec IA',
+  tpl_label:'Modèle',tab_new:'Nouveau CR',tab_hist:'Historique',
+  iso_notice:'Structure conforme à ISO 15489 et Règles de procédure Robert',
+  sec_identity:'Identité corporative',logo_loaded:'Logo chargé',
+  logo_txt:'Télécharger le logo',logo_sub:'PNG · JPG · SVG — apparaît dans l\'en-tête',
+  lbl_company:'Entreprise / Organisation',ph_company:'Acme Corp SAS',
+  lbl_dept:'Département (opt.)',ph_dept:'Opérations / Finance…',
+  sec_meeting:'Informations sur la réunion',
+  lbl_subject:'Objet / Titre',ph_subject:'Ex. Bilan Q2, Lancement projet Alpha…',
+  lbl_type:'Type de réunion',lbl_doc_lang:'Langue du document',
+  lbl_date:'Date',lbl_ref:'N° de référence',ph_ref:'Auto-généré',
+  lbl_start:'Début',lbl_end:'Fin',lbl_dur:'Durée',ph_dur:'Auto',
+  lbl_location:'Lieu / Plateforme',ph_loc:'Salle A / Teams / Zoom…',
+  lbl_chair:'Président / Animateur',ph_chair:'Nom complet',
+  lbl_secretary:'Secrétaire / Rapporteur',ph_secretary:'Nom complet',
+  sec_att:'Participants',add_att:'Ajouter un participant',
+  ph_att_name:'Nom et prénom',ph_att_role:'Poste / Rôle',
+  lbl_apologies:'Excusés / Absents',ph_apologies:'Noms des absents',
+  sec_agenda:'Ordre du jour',ph_agenda:'1. Approbation CR précédent\n2. Questions en suspens\n3. Points principaux\n4. Questions diverses\n5. Prochaine réunion',
+  sec_discussion:'Résumé des discussions',ph_discussion:'Décrivez brièvement les points discutés. L\'IA les développera professionnellement.',
+  sec_actions:'Décisions et actions',add_action:'Ajouter une action',
+  ph_acc_desc:'Action / Décision prise',ph_acc_owner:'Responsable',ph_acc_due:'Échéance',
+  lbl_risks:'Risques / Problèmes (opt.)',ph_risks:'Risques ou blocages identifiés…',
+  sec_next:'Prochaine réunion',
+  sec_sig:'Signatures',add_sig:'Ajouter une signature',
+  ph_sig_name:'Nom et prénom',ph_sig_role:'Poste / Rôle',
+  lbl_ai_notes:'Notes supplémentaires pour l\'IA',ph_ai_notes:'Ton souhaité, format spécial, contexte…',
+  prog_lbl:'Génération avec GPT-4o…',
+  step1:'Traitement des données…',step2:'Construction du prompt…',step3:'Connexion à GPT-4o…',
+  step4:'Rédaction du contenu…',step5:'Structuration ISO 15489…',step6:'Application du style…',step7:'Finalisation…',
+  btn_copy:'Copier',btn_new:'Nouveau CR',btn_clear:'Vider l\'historique',
+  btn_gen:'Générer un compte rendu professionnel avec IA',
+  btn_insert:'Insérer dans Word',
+  err_subject:'Veuillez renseigner l\'objet de la réunion.',
+  err_key:'Veuillez entrer une clé API OpenAI valide (sk-…).',
+  ok_word:'✅ CR inséré dans Word avec succès.',
+  ok_gen:'✦ CR généré avec GPT-4o.',
+  err_word:'Erreur Word : ',err_api:'Erreur : ',
+  hist_empty:'Aucun compte rendu généré.\nCréez le premier maintenant !',
+  hist_loaded:'CR chargé depuis l\'historique.',
+  confirm_clear:'Vider tout l\'historique ?',
+  tpl_team:'Réunion d\'équipe',tpl_client:'Réunion client',tpl_project:'Réunion de projet',
+  tpl_board:'Conseil d\'administration',tpl_sales:'Réunion commerciale',tpl_review:'Réunion de bilan',
+  tpl_crisis:'Réunion de crise',tpl_agm:'Assemblée Générale',
+},
+de:{
+  hdr_sub:'Professionelle Besprechungsprotokolle mit KI',
+  tpl_label:'Vorlage',tab_new:'Neues Protokoll',tab_hist:'Verlauf',
+  iso_notice:'Struktur gemäß ISO 15489 und Robert\'s Rules of Order',
+  sec_identity:'Unternehmensidentität',logo_loaded:'Logo geladen',
+  logo_txt:'Unternehmenslogo hochladen',logo_sub:'PNG · JPG · SVG — erscheint in der Kopfzeile',
+  lbl_company:'Unternehmen / Organisation',ph_company:'Acme Corp GmbH',
+  lbl_dept:'Abteilung (opt.)',ph_dept:'Betrieb / Finanzen…',
+  sec_meeting:'Besprechungsdetails',
+  lbl_subject:'Betreff / Titel',ph_subject:'Z.B. Q2-Review, Projekt-Kickoff…',
+  lbl_type:'Besprechungstyp',lbl_doc_lang:'Dokumentsprache',
+  lbl_date:'Datum',lbl_ref:'Referenznummer',ph_ref:'Automatisch',
+  lbl_start:'Beginn',lbl_end:'Ende',lbl_dur:'Dauer',ph_dur:'Auto',
+  lbl_location:'Ort / Plattform',ph_loc:'Konferenzraum A / Teams / Zoom…',
+  lbl_chair:'Vorsitzender / Moderator',ph_chair:'Vollständiger Name',
+  lbl_secretary:'Protokollführer',ph_secretary:'Vollständiger Name',
+  sec_att:'Teilnehmer',add_att:'Teilnehmer hinzufügen',
+  ph_att_name:'Vor- und Nachname',ph_att_role:'Position / Rolle',
+  lbl_apologies:'Entschuldigungen / Abwesende',ph_apologies:'Namen der Abwesenden',
+  sec_agenda:'Tagesordnung',ph_agenda:'1. Genehmigung des letzten Protokolls\n2. Offene Punkte\n3. Hauptpunkte\n4. Sonstiges\n5. Nächster Termin',
+  sec_discussion:'Diskussionszusammenfassung',ph_discussion:'Beschreiben Sie kurz die diskutierten Punkte. Die KI wird sie professionell ausarbeiten.',
+  sec_actions:'Beschlüsse und Maßnahmen',add_action:'Maßnahme hinzufügen',
+  ph_acc_desc:'Maßnahme / Beschluss',ph_acc_owner:'Verantwortlicher',ph_acc_due:'Fälligkeitsdatum',
+  lbl_risks:'Risiken / Probleme (opt.)',ph_risks:'Identifizierte Risiken oder Blocker…',
+  sec_next:'Nächste Besprechung',
+  sec_sig:'Unterschriften',add_sig:'Unterschrift hinzufügen',
+  ph_sig_name:'Vor- und Nachname',ph_sig_role:'Position / Rolle',
+  lbl_ai_notes:'Zusätzliche Hinweise für die KI',ph_ai_notes:'Gewünschter Ton, Format, zusätzlicher Kontext…',
+  prog_lbl:'Protokoll wird mit GPT-4o erstellt…',
+  step1:'Formulardaten verarbeiten…',step2:'Prompt erstellen…',step3:'Verbindung zu GPT-4o…',
+  step4:'Professionellen Inhalt verfassen…',step5:'ISO-15489-Struktur anwenden…',step6:'Unternehmensstil anwenden…',step7:'Dokument fertigstellen…',
+  btn_copy:'Text kopieren',btn_new:'Neues Protokoll',btn_clear:'Verlauf löschen',
+  btn_gen:'Professionelles Protokoll mit KI erstellen',
+  btn_insert:'In Word-Dokument einfügen',
+  err_subject:'Bitte Betreff ausfüllen.',
+  err_key:'Bitte gültigen OpenAI API-Schlüssel eingeben.',
+  ok_word:'✅ Protokoll erfolgreich in Word eingefügt.',
+  ok_gen:'✦ Protokoll mit GPT-4o erstellt.',
+  err_word:'Word-Fehler: ',err_api:'Fehler: ',
+  hist_empty:'Noch kein Protokoll erstellt.\nErstes jetzt anlegen!',
+  hist_loaded:'Protokoll aus dem Verlauf geladen.',
+  confirm_clear:'Gesamten Verlauf löschen?',
+  tpl_team:'Teammeeting',tpl_client:'Kundenbesprechung',tpl_project:'Projektbesprechung',
+  tpl_board:'Vorstandssitzung',tpl_sales:'Vertriebsbesprechung',tpl_review:'Review-Meeting',
+  tpl_crisis:'Krisensitzung',tpl_agm:'Hauptversammlung',
+},
+it:{
+  hdr_sub:'Verbali di riunione professionali con IA',
+  tpl_label:'Modello',tab_new:'Nuovo verbale',tab_hist:'Storico',
+  iso_notice:'Struttura conforme a ISO 15489 e Regole di Robert',
+  sec_identity:'Identità aziendale',logo_loaded:'Logo caricato',
+  logo_txt:'Carica logo aziendale',logo_sub:'PNG · JPG · SVG — appare nell\'intestazione',
+  lbl_company:'Azienda / Organizzazione',ph_company:'Acme Corp S.r.l.',
+  lbl_dept:'Dipartimento (opt.)',ph_dept:'Operazioni / Finanza…',
+  sec_meeting:'Dati della riunione',
+  lbl_subject:'Oggetto / Titolo',ph_subject:'Es. Revisione Q2, Kick-off progetto Alpha…',
+  lbl_type:'Tipo di riunione',lbl_doc_lang:'Lingua del documento',
+  lbl_date:'Data',lbl_ref:'N. di riferimento',ph_ref:'Auto-generato',
+  lbl_start:'Inizio',lbl_end:'Fine',lbl_dur:'Durata',ph_dur:'Auto',
+  lbl_location:'Luogo / Piattaforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Moderatore',ph_chair:'Nome completo',
+  lbl_secretary:'Segretario/a',ph_secretary:'Nome completo',
+  sec_att:'Partecipanti',add_att:'Aggiungi partecipante',
+  ph_att_name:'Nome e cognome',ph_att_role:'Ruolo / Qualifica',
+  lbl_apologies:'Assenti giustificati',ph_apologies:'Nomi degli assenti',
+  sec_agenda:'Ordine del giorno',ph_agenda:'1. Approvazione verbale precedente\n2. Argomenti in sospeso\n3. Punti principali\n4. Varie ed eventuali\n5. Prossima riunione',
+  sec_discussion:'Sintesi della discussione',ph_discussion:'Descrivi brevemente i punti discussi. L\'IA li svilupperà professionalmente.',
+  sec_actions:'Decisioni e azioni',add_action:'Aggiungi azione',
+  ph_acc_desc:'Azione / Decisione presa',ph_acc_owner:'Responsabile',ph_acc_due:'Scadenza',
+  lbl_risks:'Rischi / Problemi (opt.)',ph_risks:'Rischi o blocchi identificati…',
+  sec_next:'Prossima riunione',
+  sec_sig:'Firme',add_sig:'Aggiungi firma',
+  ph_sig_name:'Nome e cognome',ph_sig_role:'Ruolo / Qualifica',
+  lbl_ai_notes:'Note aggiuntive per l\'IA',ph_ai_notes:'Tono desiderato, formato, contesto…',
+  prog_lbl:'Generazione con GPT-4o…',
+  step1:'Elaborazione dati…',step2:'Costruzione prompt…',step3:'Connessione a GPT-4o…',
+  step4:'Redazione contenuto…',step5:'Strutturazione ISO 15489…',step6:'Stile aziendale…',step7:'Finalizzazione…',
+  btn_copy:'Copia testo',btn_new:'Nuovo verbale',btn_clear:'Cancella storico',
+  btn_gen:'Genera verbale professionale con IA',
+  btn_insert:'Inserisci in Word',
+  err_subject:'Inserisci l\'oggetto della riunione.',
+  err_key:'Inserisci una chiave API OpenAI valida.',
+  ok_word:'✅ Verbale inserito in Word con successo.',
+  ok_gen:'✦ Verbale generato con GPT-4o.',
+  err_word:'Errore Word: ',err_api:'Errore: ',
+  hist_empty:'Nessun verbale generato.\nCrea il primo adesso!',
+  hist_loaded:'Verbale caricato dallo storico.',
+  confirm_clear:'Cancellare tutto lo storico?',
+  tpl_team:'Riunione di team',tpl_client:'Riunione con cliente',tpl_project:'Riunione di progetto',
+  tpl_board:'Consiglio di amministrazione',tpl_sales:'Riunione commerciale',tpl_review:'Riunione di revisione',
+  tpl_crisis:'Riunione di crisi',tpl_agm:'Assemblea Generale',
+},
+pt:{
+  hdr_sub:'Atas de reunião profissionais com IA',
+  tpl_label:'Modelo',tab_new:'Nova ata',tab_hist:'Histórico',
+  iso_notice:'Estrutura em conformidade com ISO 15489',
+  sec_identity:'Identidade corporativa',logo_loaded:'Logo carregado',
+  logo_txt:'Carregar logo da empresa',logo_sub:'PNG · JPG · SVG — aparece no cabeçalho',
+  lbl_company:'Empresa / Organização',ph_company:'Acme Corp Lda.',
+  lbl_dept:'Departamento (opt.)',ph_dept:'Operações / Finanças…',
+  sec_meeting:'Detalhes da reunião',
+  lbl_subject:'Assunto / Título',ph_subject:'Ex. Revisão Q2, Arranque projeto Alpha…',
+  lbl_type:'Tipo de reunião',lbl_doc_lang:'Idioma do documento',
+  lbl_date:'Data',lbl_ref:'Nº de referência',ph_ref:'Auto-gerado',
+  lbl_start:'Início',lbl_end:'Fim',lbl_dur:'Duração',ph_dur:'Auto',
+  lbl_location:'Local / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Facilitador',ph_chair:'Nome completo',
+  lbl_secretary:'Secretário/a',ph_secretary:'Nome completo',
+  sec_att:'Participantes',add_att:'Adicionar participante',
+  ph_att_name:'Nome completo',ph_att_role:'Cargo / Função',
+  lbl_apologies:'Ausências justificadas',ph_apologies:'Nomes dos ausentes',
+  sec_agenda:'Ordem do dia',ph_agenda:'1. Aprovação da ata anterior\n2. Assuntos pendentes\n3. Pontos principais\n4. Outros assuntos\n5. Próxima reunião',
+  sec_discussion:'Resumo da discussão',ph_discussion:'Descreva os pontos discutidos. A IA irá desenvolvê-los profissionalmente.',
+  sec_actions:'Decisões e ações',add_action:'Adicionar ação',
+  ph_acc_desc:'Ação / Decisão tomada',ph_acc_owner:'Responsável',ph_acc_due:'Prazo',
+  lbl_risks:'Riscos / Problemas (opt.)',ph_risks:'Riscos ou bloqueios identificados…',
+  sec_next:'Próxima reunião',
+  sec_sig:'Assinaturas',add_sig:'Adicionar assinatura',
+  ph_sig_name:'Nome completo',ph_sig_role:'Cargo / Função',
+  lbl_ai_notes:'Notas adicionais para a IA',ph_ai_notes:'Tom desejado, formato, contexto…',
+  prog_lbl:'A gerar com GPT-4o…',
+  step1:'A processar dados…',step2:'A construir prompt…',step3:'A ligar ao GPT-4o…',
+  step4:'A redigir conteúdo…',step5:'Estrutura ISO 15489…',step6:'Estilo corporativo…',step7:'A finalizar…',
+  btn_copy:'Copiar texto',btn_new:'Nova ata',btn_clear:'Limpar histórico',
+  btn_gen:'Gerar ata profissional com IA',
+  btn_insert:'Inserir no Word',
+  err_subject:'Preencha o assunto da reunião.',
+  err_key:'Introduza uma chave API OpenAI válida.',
+  ok_word:'✅ Ata inserida no Word com sucesso.',
+  ok_gen:'✦ Ata gerada com GPT-4o.',
+  err_word:'Erro Word: ',err_api:'Erro: ',
+  hist_empty:'Nenhuma ata gerada ainda.\nCrie a primeira agora!',
+  hist_loaded:'Ata carregada do histórico.',
+  confirm_clear:'Limpar todo o histórico?',
+  tpl_team:'Reunião de equipa',tpl_client:'Reunião com cliente',tpl_project:'Reunião de projeto',
+  tpl_board:'Conselho de administração',tpl_sales:'Reunião comercial',tpl_review:'Reunião de revisão',
+  tpl_crisis:'Reunião de crise',tpl_agm:'Assembleia Geral',
+},
+nl:{
+  hdr_sub:'Professionele notulen met AI',
+  tpl_label:'Sjabloon',tab_new:'Nieuwe notulen',tab_hist:'Geschiedenis',
+  iso_notice:'Structuur conform ISO 15489 en Robert\'s Rules of Order',
+  sec_identity:'Bedrijfsidentiteit',logo_loaded:'Logo geladen',
+  logo_txt:'Bedrijfslogo uploaden',logo_sub:'PNG · JPG · SVG — verschijnt in koptekst',
+  lbl_company:'Bedrijf / Organisatie',ph_company:'Acme Corp B.V.',
+  lbl_dept:'Afdeling (opt.)',ph_dept:'Operaties / Financiën…',
+  sec_meeting:'Vergaderdetails',
+  lbl_subject:'Onderwerp / Titel',ph_subject:'Bijv. Q2-evaluatie, Project Alpha kickoff…',
+  lbl_type:'Type vergadering',lbl_doc_lang:'Documenttaal',
+  lbl_date:'Datum',lbl_ref:'Referentienummer',ph_ref:'Automatisch',
+  lbl_start:'Aanvang',lbl_end:'Einde',lbl_dur:'Duur',ph_dur:'Auto',
+  lbl_location:'Locatie / Platform',ph_loc:'Vergaderzaal A / Teams / Zoom…',
+  lbl_chair:'Voorzitter',ph_chair:'Volledige naam',
+  lbl_secretary:'Notulist',ph_secretary:'Volledige naam',
+  sec_att:'Deelnemers',add_att:'Deelnemer toevoegen',
+  ph_att_name:'Voor- en achternaam',ph_att_role:'Functie / Rol',
+  lbl_apologies:'Afmeldingen / Afwezigen',ph_apologies:'Namen van afwezigen',
+  sec_agenda:'Agenda',ph_agenda:'1. Goedkeuring vorige notulen\n2. Openstaande punten\n3. Hoofdpunten\n4. Rondvraag\n5. Volgende vergadering',
+  sec_discussion:'Discussiesamenvatting',ph_discussion:'Beschrijf kort de besproken punten. De AI werkt ze professioneel uit.',
+  sec_actions:'Besluiten en acties',add_action:'Actie toevoegen',
+  ph_acc_desc:'Actie / Besluit',ph_acc_owner:'Verantwoordelijke',ph_acc_due:'Deadline',
+  lbl_risks:'Risico\'s / Problemen (opt.)',ph_risks:'Geïdentificeerde risico\'s of blokkades…',
+  sec_next:'Volgende vergadering',
+  sec_sig:'Handtekeningen',add_sig:'Handtekening toevoegen',
+  ph_sig_name:'Voor- en achternaam',ph_sig_role:'Functie / Rol',
+  lbl_ai_notes:'Aanvullende opmerkingen voor AI',ph_ai_notes:'Gewenste toon, formaat, context…',
+  prog_lbl:'Notulen genereren met GPT-4o…',
+  step1:'Gegevens verwerken…',step2:'Prompt bouwen…',step3:'Verbinding met GPT-4o…',
+  step4:'Professionele inhoud opstellen…',step5:'ISO-15489-structuur…',step6:'Bedrijfsstijl…',step7:'Afronden…',
+  btn_copy:'Tekst kopiëren',btn_new:'Nieuwe notulen',btn_clear:'Geschiedenis wissen',
+  btn_gen:'Professionele notulen genereren met AI',
+  btn_insert:'In Word invoegen',
+  err_subject:'Vul het onderwerp van de vergadering in.',
+  err_key:'Voer een geldige OpenAI API-sleutel in.',
+  ok_word:'✅ Notulen succesvol in Word ingevoegd.',
+  ok_gen:'✦ Notulen gegenereerd met GPT-4o.',
+  err_word:'Word-fout: ',err_api:'Fout: ',
+  hist_empty:'Nog geen notulen aangemaakt.\nMaak nu de eerste aan!',
+  hist_loaded:'Notulen geladen uit geschiedenis.',
+  confirm_clear:'Alle geschiedenis wissen?',
+  tpl_team:'Teamvergadering',tpl_client:'Klantenvergadering',tpl_project:'Projectvergadering',
+  tpl_board:'Bestuursvergadering',tpl_sales:'Salesvergadering',tpl_review:'Reviewvergadering',
+  tpl_crisis:'Crisisvergadering',tpl_agm:'Algemene Vergadering',
+},
+};
+
+// Fallback to English for langs without full translation
+['pl','ro','sv','no','da','fi','hu','cs','sk','hr','zh','ar'].forEach(function(c){
+  T[c] = Object.assign({}, T['en'], {
+    hdr_sub: {pl:'Profesjonalne protokoły spotkań z AI',ro:'Procese verbale profesionale cu IA',sv:'Professionella mötesprotokoll med AI',no:'Profesjonelle møtereferater med AI',da:'Professionelle mødereferater med AI',fi:'Ammattimaiset kokousmuistiot tekoälyllä',hu:'Professzionális meetingjegyzőkönyvek AI-val',cs:'Profesionální záznamy ze schůzek s AI',sk:'Profesionálne záznamy zo stretnutí s AI',hr:'Profesionalni zapisnici sa sastanaka s AI',zh:'专业会议纪要 · AI智能生成',ar:'محاضر الاجتماعات المهنية بالذكاء الاصطناعي'}[c] || T['en'].hdr_sub,
+  });
+});
+
+function tr(key) {
+  return (T[LANG] && T[LANG][key] != null ? T[LANG][key] : T['en'][key]) || key;
 }
 
-// ==================== COMPLIANCE ====================
-function togChk(el){
-  el.classList.toggle('ok');
-  el.querySelector('.chk-b').textContent=el.classList.contains('ok')?'✓':'';
-  updateCompliance();
-}
-function updateCompliance(){
-  var all=document.querySelectorAll('.chk').length;
-  var done=document.querySelectorAll('.chk.ok').length;
-  var pct=Math.round(done/all*100);
-  document.getElementById('comp-bar').style.width=pct+'%';
-  document.getElementById('comp-pct').textContent=pct+'%';
+// ═══════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════
+var TEMPLATES = [
+  {id:'team',   icon:'👥'},
+  {id:'client', icon:'🤝'},
+  {id:'project',icon:'📐'},
+  {id:'board',  icon:'🏛'},
+  {id:'sales',  icon:'💼'},
+  {id:'review', icon:'🔍'},
+  {id:'crisis', icon:'⚡'},
+  {id:'agm',    icon:'🏢'},
+];
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+if (typeof Office !== 'undefined') {
+  Office.onReady(function(info) {
+    IS_WORD = info.host === Office.HostType.Word;
+    bootstrap();
+  });
 }
 
-// ==================== PRODUCTS ====================
-function addProd(){prodId++;products.push({id:prodId,desc:'',qty:1,price:0});renderProds();}
-function renderProds(){
-  var el=document.getElementById('prod-list');
-  if(!products.length){
-    el.innerHTML='<div style="text-align:center;color:var(--ink3);font-size:11px;padding:10px 0">'+(L==='zh'?'暂无产品 — 点击上方添加':'No products yet — click Add above')+'</div>';
-    updateSummary();return;
-  }
-  el.innerHTML=products.map(function(p){
-    return '<div class="prow"><input type="text" placeholder="'+(L==='zh'?'产品描述':'Description')+'" value="'+p.desc+'" oninput="upP('+p.id+',\'desc\',this.value)" style="font-size:11px"><input type="number" placeholder="1" value="'+p.qty+'" min="1" oninput="upP('+p.id+',\'qty\',this.value)" style="font-size:11px"><input type="number" placeholder="0.00" value="'+(p.price||'')+'" step="0.01" oninput="upP('+p.id+',\'price\',this.value)" style="font-size:11px"><button class="pdel" onclick="delP('+p.id+')">✕</button></div>';
+function bootstrap() {
+  // Build lang selector
+  var sel = document.getElementById('ui-lang');
+  sel.innerHTML = LANGS.map(function(l) {
+    return '<option value="'+l.code+'">'+l.flag+' '+l.name+'</option>';
   }).join('');
-  updateSummary();
-}
-function upP(id,f,v){var p=products.filter(function(x){return x.id===id;})[0];if(p){p[f]=f==='desc'?v:(parseFloat(v)||0);}updateSummary();}
-function delP(id){products=products.filter(function(p){return p.id!==id;});renderProds();}
-function updateSummary(){
-  var tot=products.reduce(function(s,p){return s+(p.qty||0)*(p.price||0);},0);
-  var si=document.getElementById('s-items');var st=document.getElementById('s-total');
-  if(si)si.textContent=(L==='zh'?'商品：':'Items: ')+products.length;
-  if(st)st.textContent=(L==='zh'?'合计：':'Total: ')+'$'+tot.toFixed(2);
-}
-renderProds();
 
-// ==================== INSERT SHIPMENT ====================
-function doInsertShip(){
-  var co=document.getElementById('f-company').value;
-  var wb=document.getElementById('f-waybill').value;
-  var gd=document.getElementById('f-goods').value;
-  if(!co&&!wb&&!gd){toast(L==='zh'?'⚠️ 请先填写货运信息':'⚠️ Please fill in shipment details first');return;}
-  toast(L==='zh'?'✅ 货运数据已插入Word文档！':'✅ Shipment data inserted!');
+  // Restore lang
+  try { var sl = localStorage.getItem('actapro_lang'); if (sl) LANG = sl; } catch(e){}
+  sel.value = LANG;
+
+  applyI18n();
+  renderTpls();
+
+  // Defaults
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = today;
+  var now = new Date();
+  document.getElementById('f-start').value = pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('f-ref').value = 'MIN-'+now.getFullYear()+'-'+Date.now().toString().slice(-4);
+
+  document.getElementById('f-end').addEventListener('change', calcDur);
+  document.getElementById('f-start').addEventListener('change', calcDur);
+
+  // Default rows
+  addAtt(); addAtt(); addAtt();
+  addAcc(); addAcc();
+  addSig(); addSig();
+
+  // API key
+  try { var k = localStorage.getItem('actapro_key'); if (k) { document.getElementById('api-key').value = k; updateDot(k); } } catch(e){}
+
+  renderHist();
 }
 
-// ==================== PAYMENT ====================
-var PAY_INFO={
-  lc:{
-    zh:'<div class="alrt ag"><span>🏦</span><span><strong>信用证 L/C</strong>：银行信用背书，出口商收款最安全。提交单据后，开证行需在规定时间内付款。适合大额交易，手续费约0.5–1%。</span></div>',
-    en:'<div class="alrt ag"><span>🏦</span><span><strong>Letter of Credit</strong>: Bank-backed guarantee. Safest for exporter. Bank pays upon compliant document presentation. Best for large transactions. Fee ~0.5–1%.</span></div>'
-  },
-  tt:{
-    zh:'<div class="alrt ai"><span>💸</span><span><strong>电汇 T/T</strong>：最便捷，通常预付30–50%，发货后付余款。成本低，但对出口商有一定资金风险。需了解买方信用。</span></div>',
-    en:'<div class="alrt ai"><span>💸</span><span><strong>T/T (Wire Transfer)</strong>: Fastest method. Typically 30–50% advance, balance after shipment. Low cost but some credit risk for exporter. Know your buyer.</span></div>'
-  },
-  dp:{
-    zh:'<div class="alrt aw"><span>📋</span><span><strong>跟单托收 D/P</strong>：通过银行传递单据，买方付款后取单。比L/C风险稍高，但比赊销安全。适合有一定了解的买家。</span></div>',
-    en:'<div class="alrt aw"><span>📋</span><span><strong>D/P (Documents vs Payment)</strong>: Bank passes documents upon payment. Higher risk than L/C but safer than open account. Good for trusted buyers.</span></div>'
-  },
-  da:{
-    zh:'<div class="alrt ar"><span>📅</span><span><strong>跟单承兑 D/A</strong>：买方承兑汇票后取单，到期再付款。出口商承担最大信用风险，适合长期合作的可信买家。</span></div>',
-    en:'<div class="alrt ar"><span>📅</span><span><strong>D/A (Documents vs Acceptance)</strong>: Buyer accepts bill, pays at maturity. Highest credit risk for exporter. Only for very trusted, long-term partners.</span></div>'
-  }
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function calcDur() {
+  var s = document.getElementById('f-start').value;
+  var e = document.getElementById('f-end').value;
+  if (!s || !e) return;
+  var sm = parseInt(s.split(':')[0])*60+parseInt(s.split(':')[1]);
+  var em = parseInt(e.split(':')[0])*60+parseInt(e.split(':')[1]);
+  var d = em - sm;
+  if (d > 0) document.getElementById('f-dur').value = Math.floor(d/60)+'h '+(d%60>0?d%60+'min':'');
+}
+
+// ═══════════════════════════════════════════════════════════
+// I18N
+// ═══════════════════════════════════════════════════════════
+function setLang(lang) {
+  LANG = lang;
+  try { localStorage.setItem('actapro_lang', lang); } catch(e){}
+  applyI18n();
+  renderTpls();
+  updateSelectOptions();
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    el.textContent = tr(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-ph]').forEach(function(el) {
+    el.placeholder = tr(el.getAttribute('data-ph'));
+  });
+  // Dynamic rows
+  document.querySelectorAll('.att-name').forEach(function(el){ el.placeholder = tr('ph_att_name'); });
+  document.querySelectorAll('.att-role').forEach(function(el){ el.placeholder = tr('ph_att_role'); });
+  document.querySelectorAll('.acc-desc').forEach(function(el){ el.placeholder = tr('ph_acc_desc'); });
+  document.querySelectorAll('.acc-own').forEach(function(el){ el.placeholder = '👤 '+tr('ph_acc_owner'); });
+  document.querySelectorAll('.acc-due').forEach(function(el){ el.placeholder = '📅 '+tr('ph_acc_due'); });
+  document.querySelectorAll('.sig-name').forEach(function(el){ el.placeholder = tr('ph_sig_name'); });
+  document.querySelectorAll('.sig-role').forEach(function(el){ el.placeholder = tr('ph_sig_role'); });
+  // Gen button
+  document.getElementById('btn-gen').innerHTML = '✦ '+tr('btn_gen');
+  // Steps array
+  var steps = STEPS_KEYS.map(function(k){ return tr(k); });
+  window._STEPS = steps;
+}
+
+function updateSelectOptions() {
+  var ftype = document.getElementById('f-type');
+  var opts = ftype.querySelectorAll('option');
+  var optKeys = ['tpl_team','tpl_client','tpl_project','tpl_board','tpl_sales','tpl_review','tpl_crisis','tpl_agm'];
+  opts.forEach(function(o, i){ if(optKeys[i]) o.textContent = tr(optKeys[i]); });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════
+function renderTpls() {
+  var tplKeys = ['tpl_team','tpl_client','tpl_project','tpl_board','tpl_sales','tpl_review','tpl_crisis','tpl_agm'];
+  document.getElementById('tpl-chips').innerHTML = TEMPLATES.map(function(t, i) {
+    return '<div class="tpl-chip'+(t.id===TPL?' on':'')+'" onclick="selTpl(this,\''+t.id+'\')" title="'+tr(tplKeys[i])+'">'+t.icon+' '+tr(tplKeys[i])+'</div>';
+  }).join('');
+  document.getElementById('tpl-bar').classList.add('on');
+}
+
+function selTpl(el, id) {
+  document.querySelectorAll('.tpl-chip').forEach(function(c){ c.classList.remove('on'); });
+  el.classList.add('on');
+  TPL = id;
+  document.getElementById('f-type').value = id;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tpl-bar').classList.toggle('on', name==='nova');
+  if (name==='hist') renderHist();
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOGO
+// ═══════════════════════════════════════════════════════════
+function onLogo(inp) {
+  var f = inp.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    logoData = e.target.result;
+    document.getElementById('logo-img').src = logoData;
+    document.getElementById('logo-name').textContent = f.name;
+    document.getElementById('logo-zone').style.display = 'none';
+    document.getElementById('logo-prev').classList.add('on');
+  };
+  r.readAsDataURL(f);
+}
+function removeLogo() {
+  logoData = null;
+  document.getElementById('logo-file').value = '';
+  document.getElementById('logo-zone').style.display = 'block';
+  document.getElementById('logo-prev').classList.remove('on');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DYNAMIC ROWS
+// ═══════════════════════════════════════════════════════════
+function addAtt() {
+  attN++;
+  var id = 'att-'+attN;
+  var d = document.createElement('div');
+  d.className = 'att-row'; d.id = id;
+  d.innerHTML = '<input class="att-name" type="text" placeholder="'+tr('ph_att_name')+'"/>'+
+    '<div class="att-sep"></div>'+
+    '<input class="att-role" type="text" placeholder="'+tr('ph_att_role')+'"/>'+
+    '<button class="att-del" onclick="del(\''+id+'\')">×</button>';
+  document.getElementById('att-list').appendChild(d);
+}
+
+function addAcc() {
+  accN++;
+  var n = accN, id = 'acc-'+n;
+  var d = document.createElement('div');
+  d.className = 'acc-card'; d.id = id;
+  d.innerHTML =
+    '<div class="acc-head">'+
+      '<div class="acc-n">'+n+'</div>'+
+      '<input class="acc-desc" type="text" placeholder="'+tr('ph_acc_desc')+'"/>'+
+      '<button class="acc-del" onclick="del(\''+id+'\')">×</button>'+
+    '</div>'+
+    '<div class="acc-foot">'+
+      '<input class="acc-own" type="text" placeholder="👤 '+tr('ph_acc_owner')+'"/>'+
+      '<input class="acc-due" type="date"/>'+
+    '</div>';
+  document.getElementById('acc-list').appendChild(d);
+}
+
+function addSig() {
+  sigN++;
+  var id = 'sig-'+sigN;
+  var d = document.createElement('div');
+  d.className = 'sig-card'; d.id = id;
+  d.innerHTML =
+    '<input class="sig-name" type="text" placeholder="'+tr('ph_sig_name')+'"/>'+
+    '<input class="sig-role" type="text" placeholder="'+tr('ph_sig_role')+'"/>'+
+    '<div class="sig-line"></div>';
+  document.getElementById('sig-grid').appendChild(d);
+}
+
+function del(id) { var e = document.getElementById(id); if (e) e.remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════════════
+function getKey() { try { return localStorage.getItem('actapro_key')||''; } catch(e){ return ''; } }
+function onKey(v) { try { localStorage.setItem('actapro_key', v.trim()); } catch(e){} updateDot(v.trim()); }
+function updateDot(k) {
+  var dot = document.getElementById('api-st');
+  var inp = document.getElementById('api-key');
+  if (k.startsWith('sk-')) { dot.className='api-status ok'; inp.classList.add('ok'); }
+  else if (k.length>5) { dot.className='api-status err'; inp.classList.remove('ok'); }
+  else { dot.className='api-status'; inp.classList.remove('ok'); }
+}
+function toggleEye() { var i=document.getElementById('api-key'); i.type=i.type==='password'?'text':'password'; }
+
+// ═══════════════════════════════════════════════════════════
+// COLLECT FORM DATA
+// ═══════════════════════════════════════════════════════════
+function collect() {
+  var atts = [];
+  document.querySelectorAll('.att-row').forEach(function(r) {
+    var n = r.querySelector('.att-name').value.trim();
+    var role = r.querySelector('.att-role').value.trim();
+    if (n) atts.push(n + (role ? ' (' + role + ')' : ''));
+  });
+  var accs = [];
+  document.querySelectorAll('.acc-card').forEach(function(c) {
+    var desc = c.querySelector('.acc-desc').value.trim();
+    var own  = c.querySelector('.acc-own').value.trim();
+    var due  = c.querySelector('.acc-due').value.trim();
+    if (desc) accs.push({ desc:desc, own:own, due:due });
+  });
+  var sigs = [];
+  document.querySelectorAll('.sig-card').forEach(function(c) {
+    var n = c.querySelector('.sig-name').value.trim();
+    var r = c.querySelector('.sig-role').value.trim();
+    if (n) sigs.push({ name:n, role:r });
+  });
+  return {
+    company:   document.getElementById('f-company').value.trim(),
+    dept:      document.getElementById('f-dept').value.trim(),
+    subject:   document.getElementById('f-subject').value.trim(),
+    type:      document.getElementById('f-type').value,
+    docLang:   document.getElementById('f-doclang').value,
+    date:      document.getElementById('f-date').value,
+    ref:       document.getElementById('f-ref').value.trim(),
+    start:     document.getElementById('f-start').value,
+    end:       document.getElementById('f-end').value,
+    dur:       document.getElementById('f-dur').value,
+    loc:       document.getElementById('f-loc').value.trim(),
+    chair:     document.getElementById('f-chair').value.trim(),
+    secretary: document.getElementById('f-sec').value.trim(),
+    atts: atts,
+    apologies: document.getElementById('f-apologies').value.trim(),
+    agenda:    document.getElementById('f-agenda').value.trim(),
+    discussion:document.getElementById('f-discussion').value.trim(),
+    accs: accs,
+    risks:     document.getElementById('f-risks').value.trim(),
+    ndate:     document.getElementById('f-ndate').value,
+    ntime:     document.getElementById('f-ntime').value,
+    nloc:      document.getElementById('f-nloc').value.trim(),
+    sigs: sigs,
+    notes:     document.getElementById('f-notes').value.trim(),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROMPT — ISO 15489 + ROBERT'S RULES
+// ═══════════════════════════════════════════════════════════
+var TYPE_NAMES = {
+  team:'Team Meeting',client:'Client Meeting',project:'Project Meeting',
+  board:'Board Meeting',sales:'Sales Meeting',review:'Review Meeting',
+  crisis:'Crisis Meeting',agm:'Annual General Meeting'
 };
-var currentPay='lc';
-function selectPay(el,type){
-  document.querySelectorAll('.pay-box').forEach(function(b){b.classList.remove('on');});
-  el.classList.add('on');currentPay=type;showPayDetail();
-}
-function showPayDetail(){
-  var el=document.getElementById('pay-detail');
-  if(!el)return;
-  var info=PAY_INFO[currentPay];
-  if(info)el.innerHTML=info[L]||info.zh;
-}
-function insertLC(){
-  var no=document.getElementById('lc-no').value;
-  if(!no){toast(L==='zh'?'⚠️ 请填写信用证号':'⚠️ Please enter L/C number');return;}
-  toast(L==='zh'?'✅ 信用证条款已插入文档！':'✅ L/C terms inserted!');
+
+function buildPrompt(d) {
+  var timeRange = d.start ? d.start + (d.end ? ' – '+d.end : '') + (d.dur ? ' ('+d.dur+')' : '') : '';
+  var accsText = d.accs.length
+    ? d.accs.map(function(a,i){ return (i+1)+'. '+a.desc+(a.own?' [Responsible: '+a.own+']':'')+(a.due?' [Due: '+a.due+']':''); }).join('\n')
+    : 'No specific action items defined.';
+  var nextMeeting = d.ndate ? d.ndate + (d.ntime?' at '+d.ntime:'') + (d.nloc?' — '+d.nloc:'') : 'To be confirmed';
+
+  return 'You are a senior corporate secretary and expert in professional meeting documentation, ISO 15489 records management standards, and Robert\'s Rules of Order.\n\n'+
+'Generate a complete, formal and impeccable set of meeting minutes in '+d.docLang+'.\n\n'+
+'MEETING RECORD:\n'+
+'Type: '+(TYPE_NAMES[d.type]||d.type)+'\n'+
+'Organisation: '+(d.company||'Not specified')+(d.dept?' — '+d.dept:'')+'\n'+
+'Reference: '+(d.ref||'Auto')+'\n'+
+'Subject: '+(d.subject||'Regular meeting')+'\n'+
+'Date: '+d.date+'\n'+
+'Time: '+timeRange+'\n'+
+'Location: '+(d.loc||'Not specified')+'\n'+
+'Chair: '+(d.chair||'Not specified')+'\n'+
+'Secretary: '+(d.secretary||'Not specified')+'\n\n'+
+'ATTENDEES:\n'+(d.atts.length ? d.atts.join('\n') : 'Not specified')+'\n'+
+(d.apologies?'APOLOGIES: '+d.apologies+'\n':'')+'\n'+
+'AGENDA:\n'+(d.agenda||'Regular meeting')+'\n\n'+
+'DISCUSSION NOTES:\n'+(d.discussion||'Regular meeting held.')+'\n\n'+
+'ACTION ITEMS & DECISIONS:\n'+accsText+'\n\n'+
+(d.risks?'RISKS/ISSUES RAISED:\n'+d.risks+'\n\n':'')+
+'NEXT MEETING: '+nextMeeting+'\n'+
+(d.sigs.length?'SIGNATORIES: '+d.sigs.map(function(s){return s.name+(s.role?' ('+s.role+')':'');}).join(', ')+'\n':'')+
+(d.notes?'ADDITIONAL CONTEXT: '+d.notes+'\n':'')+'\n'+
+'DRAFTING REQUIREMENTS:\n'+
+'1. Write entirely in '+d.docLang+' using formal, precise corporate language\n'+
+'2. Structure strictly according to ISO 15489-1:2016 records management standard\n'+
+'3. Follow Robert\'s Rules of Order for motions, decisions, and voting where applicable\n'+
+'4. Develop all discussion points with substance — no generic filler phrases\n'+
+'5. Action items must be clearly numbered with owner and deadline\n'+
+'6. Include a formal declaration paragraph at the end\n'+
+'7. The document must be ready to sign and file as an official corporate record\n\n'+
+'Return ONLY valid JSON, no markdown, no backticks, no text outside JSON:\n\n'+
+'{\n'+
+'  "title": "MEETING MINUTES — '+((d.subject||'').toUpperCase())+'",\n'+
+'  "company": "'+d.company+'",\n'+
+'  "ref": "'+d.ref+'",\n'+
+'  "meta": "'+d.date+' · '+timeRange+' · '+(d.loc||'')+'",\n'+
+'  "sections": [\n'+
+'    { "title": "1. CALL TO ORDER & ATTENDEES", "body": "..." },\n'+
+'    { "title": "2. AGENDA", "body": "..." },\n'+
+'    { "title": "3. APPROVAL OF PREVIOUS MINUTES", "body": "..." },\n'+
+'    { "title": "4. MATTERS ARISING", "body": "..." },\n'+
+'    { "title": "5. DISCUSSION & DELIBERATIONS", "body": "..." },\n'+
+'    { "title": "6. DECISIONS & RESOLUTIONS", "body": "..." },\n'+
+'    { "title": "7. ACTION ITEMS", "body": "..." },\n'+
+(d.risks?'    { "title": "8. RISKS & ISSUES", "body": "..." },\n':'')+
+'    { "title": "'+(d.risks?'9':'8')+'. NEXT MEETING", "body": "..." },\n'+
+'    { "title": "'+(d.risks?'10':'9')+'. CLOSURE", "body": "..." }\n'+
+'  ],\n'+
+'  "declaration": "Formal declaration that these are accurate minutes...",\n'+
+'  "signature_block": "Signature lines for all signatories"\n'+
+'}';
 }
 
-// ==================== DOCUMENTS ====================
-var DOCS={
-  invoice:{zh:'商业发票 Commercial Invoice',en:'Commercial Invoice / 商业发票',
-    build:function(){
-      var co=document.getElementById('f-company').value||'[公司名称]';
-      var goods=document.getElementById('f-goods').value||'[货物描述]';
-      var val=parseFloat(document.getElementById('f-value').value)||0;
-      var wb=document.getElementById('f-waybill').value||'[运单号]';
-      var orig=document.getElementById('f-origin').value||'[起运港]';
-      var dest=document.getElementById('f-dest').value||'[目的港]';
-      var inco=document.getElementById('f-incoterm').value||'FOB';
-      var tot=products.reduce(function(s,p){return s+(p.qty||0)*(p.price||0);},0);
-      var rows=products.length?products.map(function(p){return '<tr><td>'+(p.desc||goods)+'</td><td>'+p.qty+'</td><td>$'+(p.price||0).toFixed(2)+'</td><td>$'+((p.qty||0)*(p.price||0)).toFixed(2)+'</td></tr>';}).join(''):('<tr><td>'+goods+'</td><td>1</td><td>$'+val.toFixed(2)+'</td><td>$'+val.toFixed(2)+'</td></tr>');
-      return '<div class="doc-prev"><div class="doc-tit">COMMERCIAL INVOICE / 商业发票</div><div class="doc-sub">China Export Pro · No. INV-'+Date.now().toString().slice(-6)+'</div><div class="doc-meta"><div><div class="doc-ml">发货人 Shipper</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">运单号 Waybill</div><div class="doc-mv">'+wb+'</div></div><div><div class="doc-ml">起运港 Origin</div><div class="doc-mv">'+orig+'</div></div><div><div class="doc-ml">目的港 Destination</div><div class="doc-mv">'+dest+'</div></div><div><div class="doc-ml">贸易术语 Incoterm</div><div class="doc-mv">'+inco+'</div></div><div><div class="doc-ml">日期 Date</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><table class="doc-t"><tr><th>货物描述</th><th>数量</th><th>单价</th><th>金额</th></tr>'+rows+'</table><div class="doc-tot">合计 TOTAL: $'+(tot>0?tot.toFixed(2):val.toFixed(2))+' USD</div></div>';
-    }},
-  packing:{zh:'装箱单 Packing List',en:'Packing List / 装箱单',
-    build:function(){
-      var co=document.getElementById('f-company').value||'[公司]';
-      var pkgs=document.getElementById('f-pkgs').value||'0';
-      var wgt=document.getElementById('f-weight').value||'0';
-      var cbm=document.getElementById('f-cbm').value||'0';
-      var goods=document.getElementById('f-goods').value||'[货物]';
-      var marks=document.getElementById('f-marks').value||'N/M';
-      var rows=products.length?products.map(function(p,i){return '<tr><td>'+(i+1)+'</td><td>'+(p.desc||goods)+'</td><td>'+p.qty+'</td><td>—</td></tr>';}).join(''):('<tr><td>1</td><td>'+goods+'</td><td>'+pkgs+'</td><td>'+wgt+' kg</td></tr>');
-      return '<div class="doc-prev"><div class="doc-tit">PACKING LIST / 装箱单</div><div class="doc-sub">'+co+' · '+new Date().toLocaleDateString()+'</div><div class="doc-meta"><div><div class="doc-ml">货物</div><div class="doc-mv">'+goods+'</div></div><div><div class="doc-ml">件数</div><div class="doc-mv">'+pkgs+' 件</div></div><div><div class="doc-ml">毛重</div><div class="doc-mv">'+wgt+' kg</div></div><div><div class="doc-ml">体积</div><div class="doc-mv">'+cbm+' CBM</div></div><div><div class="doc-ml">唛头</div><div class="doc-mv">'+marks+'</div></div><div><div class="doc-ml">箱型</div><div class="doc-mv">'+document.getElementById('f-container').value+'</div></div></div><table class="doc-t"><tr><th>包号</th><th>货物描述</th><th>数量</th><th>重量</th></tr>'+rows+'</table></div>';
-    }},
-  co:{zh:'原产地证书',en:'Certificate of Origin',
-    build:function(){
-      var co=document.getElementById('f-company').value||'[公司]';
-      var goods=document.getElementById('f-goods').value||'[货物]';
-      var hs=document.getElementById('hs-code').textContent||'—';
-      return '<div class="doc-prev"><div class="doc-tit">CERTIFICATE OF ORIGIN / 原产地证书</div><div class="doc-sub">中华人民共和国 People\'s Republic of China</div><div class="doc-meta"><div><div class="doc-ml">出口商 Exporter</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">原产地 Country of Origin</div><div class="doc-mv">中国 China</div></div><div><div class="doc-ml">货物 Goods</div><div class="doc-mv">'+goods+'</div></div><div><div class="doc-ml">HS编码</div><div class="doc-mv">'+hs+'</div></div><div><div class="doc-ml">证书号 Cert. No.</div><div class="doc-mv">CO-'+Date.now().toString().slice(-8)+'</div></div><div><div class="doc-ml">签发日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><div class="doc-sig"><p>兹证明上述货物原产于中华人民共和国。<br>This certifies that the goods described above originate in the People\'s Republic of China.</p><p style="margin-top:8px">签名/盖章 Signature/Stamp: ____________________</p></div></div>';
-    }},
-  customs_dec:{zh:'报关单',en:'Customs Declaration',
-    build:function(){
-      var co=document.getElementById('f-company').value||'[公司]';
-      return '<div class="doc-prev"><div class="doc-tit">CUSTOMS DECLARATION / 报关单</div><div class="doc-sub">中华人民共和国海关总署 GACC</div><div class="doc-meta"><div><div class="doc-ml">申报企业</div><div class="doc-mv">'+co+'</div></div><div><div class="doc-ml">统一社会信用代码</div><div class="doc-mv">'+(document.getElementById('f-uscc').value||'—')+'</div></div><div><div class="doc-ml">贸易方式</div><div class="doc-mv">一般贸易 (0110)</div></div><div><div class="doc-ml">出境口岸</div><div class="doc-mv">'+(document.getElementById('f-origin').value||'—')+'</div></div><div><div class="doc-ml">目的国/地区</div><div class="doc-mv">'+(document.getElementById('f-dest').value||'—')+'</div></div><div><div class="doc-ml">运输方式</div><div class="doc-mv">'+document.getElementById('f-carrier').value+'</div></div><div><div class="doc-ml">申报价值</div><div class="doc-mv">USD '+(document.getElementById('f-value').value||'0.00')+'</div></div><div><div class="doc-ml">毛重</div><div class="doc-mv">'+(document.getElementById('f-weight').value||'0')+' kg</div></div></div></div>';
-    }},
-  bl:{zh:'提单',en:'Bill of Lading',
-    build:function(){
-      return '<div class="doc-prev"><div class="doc-tit">BILL OF LADING / 提单</div><div class="doc-sub">'+document.getElementById('f-carrier').value+' · B/L No.: BL-'+Date.now().toString().slice(-8)+'</div><div class="doc-meta"><div><div class="doc-ml">发货人 Shipper</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[公司]')+'</div></div><div><div class="doc-ml">装货港</div><div class="doc-mv">'+(document.getElementById('f-origin').value||'—')+'</div></div><div><div class="doc-ml">卸货港</div><div class="doc-mv">'+(document.getElementById('f-dest').value||'—')+'</div></div><div><div class="doc-ml">预计发船</div><div class="doc-mv">'+(document.getElementById('f-etd').value||'—')+'</div></div><div><div class="doc-ml">预计到达</div><div class="doc-mv">'+(document.getElementById('f-eta').value||'—')+'</div></div><div><div class="doc-ml">箱型</div><div class="doc-mv">'+document.getElementById('f-container').value+'</div></div><div><div class="doc-ml">货物</div><div class="doc-mv">'+(document.getElementById('f-goods').value||'[货物]')+'</div></div><div><div class="doc-ml">重量/体积</div><div class="doc-mv">'+(document.getElementById('f-weight').value||'0')+' kg / '+(document.getElementById('f-cbm').value||'0')+' CBM</div></div></div></div>';
-    }},
-  inspection:{zh:'检验证书',en:'Inspection Certificate',
-    build:function(){
-      return '<div class="doc-prev"><div class="doc-tit">INSPECTION CERTIFICATE / 检验证书</div><div class="doc-sub">第三方检验 Third Party Inspection</div><div class="doc-meta"><div><div class="doc-ml">出口商</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[公司]')+'</div></div><div><div class="doc-ml">货物</div><div class="doc-mv">'+(document.getElementById('f-goods').value||'[货物]')+'</div></div><div><div class="doc-ml">证书号</div><div class="doc-mv">INSP-'+Date.now().toString().slice(-6)+'</div></div><div><div class="doc-ml">日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div><div><div class="doc-ml">检验结果</div><div class="doc-mv" style="color:green;font-weight:bold">合格 PASSED ✓</div></div><div><div class="doc-ml">适用标准</div><div class="doc-mv">GB / ISO / ASTM</div></div></div><div class="doc-sig">兹证明上述货物经检验符合规定标准要求。This certifies the goods conform to required standards.</div></div>';
-    }},
-  customs9610:{zh:'9610跨境电商申报单',en:'9610 Cross-Border E-Commerce Declaration',
-    build:function(){
-      return '<div class="doc-prev"><div class="doc-tit">9610跨境电商申报 / 9610 CBE DECLARATION</div><div class="doc-sub">贸易方式: 9610 (B2C网络零售)</div><div class="doc-meta"><div><div class="doc-ml">电商平台</div><div class="doc-mv">天猫国际 Tmall Global</div></div><div><div class="doc-ml">商家</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[商家]')+'</div></div><div><div class="doc-ml">监管仓</div><div class="doc-mv">上海自贸区 Shanghai FTZ</div></div><div><div class="doc-ml">适用税率</div><div class="doc-mv">行邮税（正面清单商品）</div></div><div><div class="doc-ml">单次交易限额</div><div class="doc-mv">人民币 5,000 元</div></div><div><div class="doc-ml">年度消费限额</div><div class="doc-mv">人民币 26,000 元</div></div></div><div style="margin-top:8px;padding:6px;background:#fff3cd;border-radius:4px;font-size:9.5px;color:#856404">⚠️ 9610模式适用正面清单商品，享受行邮税优惠，低于一般贸易综合税率。</div></div>';
-    }},
-  vat_refund:{zh:'出口退税申请函',en:'VAT Export Refund Application',
-    build:function(){
-      return '<div class="doc-prev"><div class="doc-tit">出口退税申请函 / VAT REFUND APPLICATION</div><div class="doc-sub">致主管税务局 To the Competent Tax Authority</div><div class="doc-meta"><div><div class="doc-ml">申请企业</div><div class="doc-mv">'+(document.getElementById('f-company').value||'[企业名称]')+'</div></div><div><div class="doc-ml">统一社会信用代码</div><div class="doc-mv">'+(document.getElementById('f-uscc').value||'—')+'</div></div><div><div class="doc-ml">退税率</div><div class="doc-mv">13%（一般商品标准退税率）</div></div><div><div class="doc-ml">出口货值</div><div class="doc-mv">USD '+(document.getElementById('f-value').value||'0.00')+'</div></div><div><div class="doc-ml">申请日期</div><div class="doc-mv">'+new Date().toLocaleDateString()+'</div></div></div><div class="doc-sig">根据《出口货物劳务增值税和消费税出口退（免）税管理办法》申请出口退税。We hereby apply for VAT refund pursuant to the applicable regulations.</div></div>';
-    }}
-};
+// ═══════════════════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════════════════
+var _lastContent = null;
+var _lastData = null;
 
-function openDoc(type){
-  currentDoc=type;
-  var t=DOCS[type];
-  if(!t)return;
-  document.getElementById('modal-title').textContent=L==='zh'?t.zh:t.en;
-  document.getElementById('modal-content').innerHTML=t.build();
-  document.getElementById('modal').classList.add('show');
-}
-function closeModal(){document.getElementById('modal').classList.remove('show');}
-function doInsertDoc(){closeModal();toast(L==='zh'?'✅ 文件已插入Word文档！':'✅ Document inserted into Word!');}
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===document.getElementById('modal'))closeModal();});
+async function generate() {
+  var d = collect();
+  var key = getKey();
 
-// ==================== FX ====================
-var FX={CNY:1,USD:7.2537,EUR:7.8214,GBP:9.1043,HKD:0.9296,JPY:0.0477,KRW:0.0052,AED:1.9753};
-function doFX(){
-  var amt=parseFloat(document.getElementById('fx-amt').value)||0;
-  var from=document.getElementById('fx-from').value;
-  var inCNY=amt*FX[from];
-  var toUSD=inCNY/FX.USD;
-  var sym={CNY:'¥',USD:'$',EUR:'€',GBP:'£',HKD:'HK$',JPY:'¥',KRW:'₩',AED:'د.إ'};
-  var res,lbl;
-  if(from==='CNY'){res='$'+toUSD.toFixed(2);lbl=amt.toLocaleString()+' CNY ≈ $'+toUSD.toFixed(2)+' USD';}
-  else{res='¥'+inCNY.toFixed(2);lbl=sym[from]+amt.toLocaleString()+' '+from+' ≈ ¥'+inCNY.toFixed(2)+' CNY';}
-  document.getElementById('fx-result').textContent=res;
-  document.getElementById('fx-lbl').textContent=lbl;
-}
-function doFXTo(to){
-  var from=document.getElementById('fx-from').value;
-  var amt=parseFloat(document.getElementById('fx-amt').value)||0;
-  var inCNY=amt*FX[from];
-  var res=inCNY/FX[to];
-  var sym={USD:'$',EUR:'€',GBP:'£',HKD:'HK$',JPY:'¥'};
-  document.getElementById('fx-result').textContent=(sym[to]||'')+res.toFixed(2);
-  document.getElementById('fx-lbl').textContent=amt+' '+from+' ≈ '+(sym[to]||'')+res.toFixed(2)+' '+to;
-}
-doFX();
+  if (!d.subject) { setSt('err', tr('err_subject')); return; }
+  if (!key.startsWith('sk-')) { setSt('err', tr('err_key')); return; }
 
-// ==================== CBM ====================
-function doCBM(){
-  var l=parseFloat(document.getElementById('cbm-l').value)||0;
-  var w=parseFloat(document.getElementById('cbm-w').value)||0;
-  var h=parseFloat(document.getElementById('cbm-h').value)||0;
-  var q=parseFloat(document.getElementById('cbm-qty').value)||1;
-  var wgt=parseFloat(document.getElementById('cbm-wgt').value)||0;
-  if(l&&w&&h){
-    var cbm=(l*w*h*q)/1e6;
-    var vw=cbm*167;
-    var bill=Math.max(vw,wgt*q);
-    document.getElementById('cbm-val').textContent=cbm.toFixed(4)+' m³';
-    document.getElementById('cbm-sub').textContent=q+'件 · '+l+'×'+w+'×'+h+' cm';
-    document.getElementById('cbm-detail').innerHTML=(L==='zh'?'体积重量:':'Vol weight:')+' '+vw.toFixed(1)+' kg<br>'+(L==='zh'?'计费重量:':'Billable:')+' <strong style="color:#5dade2">'+bill.toFixed(1)+' kg</strong>';
-  } else {
-    document.getElementById('cbm-val').textContent='— m³';
-    document.getElementById('cbm-sub').textContent=L==='zh'?'请输入尺寸数据':'Enter dimensions above';
-    document.getElementById('cbm-detail').textContent='—';
+  var btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin" style="border-color:rgba(15,17,23,.2);border-top-color:var(--bg)"></div> '+tr('prog_lbl');
+  setSt('','');
+  hideOut();
+
+  var prog = document.getElementById('prog');
+  prog.classList.add('on');
+
+  var steps = window._STEPS || STEPS_KEYS.map(function(k){ return tr(k); });
+  document.getElementById('prog-steps').innerHTML = steps.map(function(s,i){
+    return '<div class="prog-step" id="ps-'+i+'"><div class="prog-dot"></div>'+s+'</div>';
+  }).join('');
+
+  function step(i) {
+    if (i>0) { var p=document.getElementById('ps-'+(i-1)); if(p){p.classList.remove('active');p.classList.add('done');} }
+    var c=document.getElementById('ps-'+i); if(c) c.classList.add('active');
+    document.getElementById('prog-fill').style.width = ((i+1)/steps.length*80)+'%';
+  }
+
+  var content;
+  try {
+    step(0); await sleep(200);
+    step(1); await sleep(150);
+    step(2);
+
+    var res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'gpt-4o',
+        messages:[
+          {role:'system', content:'You are a world-class corporate secretary specialising in ISO 15489 compliant meeting minutes. You ALWAYS respond with valid JSON only — no markdown, no backticks, no text outside the JSON object.'},
+          {role:'user', content:buildPrompt(d)}
+        ],
+        temperature:0.2,
+        max_tokens:4000,
+      })
+    });
+
+    if (!res.ok) {
+      var err = await res.json().catch(function(){return{};});
+      throw new Error(err.error&&err.error.message ? err.error.message : 'HTTP '+res.status);
+    }
+
+    step(3);
+    var data = await res.json();
+    var txt = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
+
+    step(4);
+    try {
+      content = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    } catch(e) {
+      content = { title:'MEETING MINUTES', company:d.company, ref:d.ref, meta:d.date, sections:[{title:'',body:txt}], declaration:'', signature_block:'' };
+    }
+
+    step(5); await sleep(200);
+    step(6); await sleep(150);
+    step(7);
+    document.getElementById('prog-fill').style.width='100%';
+    await sleep(300);
+    steps.forEach(function(_,i){ var el=document.getElementById('ps-'+i); if(el){el.classList.remove('active');el.classList.add('done');} });
+
+  } catch(err) {
+    prog.classList.remove('on');
+    btn.disabled=false; btn.innerHTML='✦ '+tr('btn_gen');
+    setSt('err', tr('err_api')+err.message);
+    return;
+  }
+
+  _lastContent = content;
+  _lastData = d;
+  saveHist(d, content);
+  renderOut(content, d);
+  setSt('ok', tr('ok_gen'));
+  prog.classList.remove('on');
+  btn.disabled=false; btn.innerHTML='✦ '+tr('btn_gen');
+}
+
+// ═══════════════════════════════════════════════════════════
+// OUTPUT + WORD INSERTION
+// ═══════════════════════════════════════════════════════════
+function renderOut(c, d) {
+  var box = document.getElementById('out');
+  var html = '<div class="out-ref">'+esc(c.ref||'')+'</div>';
+  if (c.company) html += '<span class="out-company">'+esc(c.company)+'</span>';
+  html += '<span class="out-title">'+esc(c.title||'MEETING MINUTES')+'</span>';
+  html += '<span class="out-meta">'+esc(c.meta||'')+'</span>';
+  (c.sections||[]).forEach(function(s) {
+    if (s.title) html += '<span class="out-sec">'+esc(s.title)+'</span>';
+    if (s.body)  html += '<p style="margin-bottom:5px;white-space:pre-wrap;font-size:10.5px">'+esc(s.body)+'</p>';
+  });
+  if (c.declaration) html += '<p style="margin-top:8px;font-size:10px;color:var(--ink3);white-space:pre-wrap">'+esc(c.declaration)+'</p>';
+  box.innerHTML = html;
+  box.classList.add('on');
+
+  // Show insert + copy buttons
+  var act = document.getElementById('out-act');
+  act.innerHTML =
+    '<button class="btn btn-primary" onclick="insertWord()" style="flex:2">📄 '+tr('btn_insert')+'</button>'+
+    '<button class="btn btn-outline" onclick="copyOut()">📋 '+tr('btn_copy')+'</button>'+
+    '<button class="btn btn-outline" onclick="resetForm()">↩</button>';
+  act.classList.add('on');
+}
+
+function hideOut() {
+  document.getElementById('out').classList.remove('on');
+  document.getElementById('out-act').classList.remove('on');
+}
+
+async function insertWord() {
+  var c = _lastContent, d = _lastData;
+  if (!c) return;
+
+  if (!IS_WORD || typeof Word === 'undefined') {
+    setSt('inf', '⚠️ Open this add-in inside Microsoft Word to insert the document.');
+    return;
+  }
+
+  try {
+    await Word.run(async function(ctx) {
+      var body = ctx.document.body;
+      body.clear();
+
+      // Company name
+      if (c.company) {
+        var co = body.insertParagraph(c.company.toUpperCase(), Word.InsertLocation.end);
+        co.alignment = Word.Alignment.centered;
+        co.font.size = 8; co.font.color = '#5A5650'; co.font.allCaps = true;
+        co.spaceAfter = 2;
+      }
+
+      // Reference
+      if (c.ref) {
+        var ref = body.insertParagraph(c.ref, Word.InsertLocation.end);
+        ref.alignment = Word.Alignment.centered;
+        ref.font.size = 8; ref.font.color = '#5A5650'; ref.font.name = 'Courier New';
+        ref.spaceBefore = 0; ref.spaceAfter = 4;
+      }
+
+      // Title
+      var title = body.insertParagraph(c.title, Word.InsertLocation.end);
+      title.styleBuiltIn = Word.Style.heading1;
+      title.alignment = Word.Alignment.centered;
+      title.font.color = '#1A1A1A'; title.font.size = 16;
+      title.spaceAfter = 4;
+
+      // Meta
+      var meta = body.insertParagraph(c.meta, Word.InsertLocation.end);
+      meta.alignment = Word.Alignment.centered;
+      meta.font.size = 9; meta.font.color = '#9B9B9B';
+      meta.spaceAfter = 12;
+
+      // Horizontal rule substitute
+      body.insertParagraph('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', Word.InsertLocation.end).font.color = '#E8E4DC';
+
+      body.insertParagraph('', Word.InsertLocation.end);
+
+      // Sections
+      (c.sections||[]).forEach(function(sec) {
+        if (sec.title) {
+          var h = body.insertParagraph(sec.title, Word.InsertLocation.end);
+          h.styleBuiltIn = Word.Style.heading2;
+          h.font.color = '#1A3A5C'; h.font.size = 11;
+          h.spaceBefore = 10; h.spaceAfter = 4;
+        }
+        if (sec.body) {
+          var p = body.insertParagraph(sec.body, Word.InsertLocation.end);
+          p.font.size = 10.5; p.spaceAfter = 6;
+        }
+      });
+
+      // Declaration
+      if (c.declaration) {
+        body.insertParagraph('', Word.InsertLocation.end);
+        var decl = body.insertParagraph(c.declaration, Word.InsertLocation.end);
+        decl.font.size = 10; decl.font.italic = true; decl.font.color = '#4B4B4B';
+        decl.spaceBefore = 8;
+      }
+
+      // Signature block
+      body.insertParagraph('', Word.InsertLocation.end);
+      if (d && d.sigs && d.sigs.length) {
+        var sigH = body.insertParagraph(tr('sec_sig').toUpperCase(), Word.InsertLocation.end);
+        sigH.font.size = 9; sigH.font.bold = true; sigH.font.color = '#9B9B9B'; sigH.spaceBefore = 12;
+        d.sigs.forEach(function(s) {
+          body.insertParagraph('\n\n________________________\n'+s.name+(s.role?'\n'+s.role:''), Word.InsertLocation.end).font.size = 10;
+        });
+      }
+
+      // ISO footer
+      body.insertParagraph('', Word.InsertLocation.end);
+      var footer = body.insertParagraph('Document generated by ActaPro Elite · ISO 15489-1:2016 compliant · '+new Date().toISOString().split('T')[0], Word.InsertLocation.end);
+      footer.font.size = 7.5; footer.font.color = '#9B9B9B'; footer.alignment = Word.Alignment.centered;
+
+      await ctx.sync();
+    });
+    setSt('ok', tr('ok_word'));
+  } catch(e) {
+    setSt('err', tr('err_word')+e.message);
   }
 }
 
-// ==================== HOLIDAY COUNTDOWN ====================
-function renderHolCountdown(){
-  var holidays=[
-    {zh:'春节',en:'Spring Festival (CNY)',date:new Date('2026-01-28'),impact:'critical',zh_tip:'工厂停工约2–4周，务必提前备货！',en_tip:'Factories close ~2–4 weeks. Stock up in advance!'},
-    {zh:'劳动节',en:'Labour Day Golden Week',date:new Date('2026-05-01'),impact:'high',zh_tip:'停工约5天，注意安排生产计划。',en_tip:'~5 day closure. Plan production schedule accordingly.'},
-    {zh:'国庆节',en:'National Day Golden Week',date:new Date('2026-10-01'),impact:'critical',zh_tip:'工厂停工约7–10天，是全年第二大节假日。',en_tip:'~7–10 day closure. 2nd biggest holiday of the year.'},
-  ];
-  var now=new Date();
-  var next=null;var days=-1;
-  for(var i=0;i<holidays.length;i++){
-    var d=Math.ceil((holidays[i].date-now)/(86400000));
-    if(d>0&&(days<0||d<days)){days=d;next=holidays[i];}
-  }
-  var el=document.getElementById('hol-countdown-wrap');
-  if(!next||days>180){el.innerHTML='';return;}
-  var prog=Math.max(0,Math.min(100,100-(days/90)*100));
-  var urgColor=days<=30?'var(--red2)':days<=60?'var(--gold2)':'#5dade2';
-  el.innerHTML='<div class="hol-countdown"><div class="hol-left"><div class="hol-name">'+(L==='zh'?next.zh:next.en)+'</div><div class="hol-date">'+(L==='zh'?'⚠️ '+next.zh_tip:'⚠️ '+next.en_tip)+'</div><div class="hol-bar"><div class="hol-prog" style="width:'+prog+'%"></div></div></div><div class="hol-days"><div class="hol-num" style="color:'+urgColor+'">'+days+'</div><div class="hol-unit">'+(L==='zh'?'天后 DAYS':'DAYS')+'</div></div></div>';
+function copyOut() {
+  navigator.clipboard.writeText(document.getElementById('out').innerText)
+    .then(function(){ setSt('ok','✅ '+tr('btn_copy')); });
 }
-renderHolCountdown();
 
-// ==================== INIT ====================
-showInco();
-showPayDetail();
-var today=new Date().toISOString().split('T')[0];
-document.getElementById('f-etd').value=today;
-var etaD=new Date();etaD.setDate(etaD.getDate()+30);
-document.getElementById('f-eta').value=etaD.toISOString().split('T')[0];
-// Start with Chinese
-setLang('zh');
+function resetForm() {
+  hideOut(); setSt('','');
+  document.querySelectorAll('#panel-nova input[type=text],#panel-nova input[type=time],#panel-nova textarea').forEach(function(el){ el.value=''; });
+  document.getElementById('att-list').innerHTML='';
+  document.getElementById('acc-list').innerHTML='';
+  document.getElementById('sig-grid').innerHTML='';
+  attN=0; accN=0; sigN=0;
+  removeLogo();
+  addAtt(); addAtt(); addAtt();
+  addAcc(); addAcc();
+  addSig(); addSig();
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-ref').value = 'MIN-'+new Date().getFullYear()+'-'+Date.now().toString().slice(-4);
+}
+
+function esc(t){ return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════════════════════
+// STATUS / PROGRESS
+// ═══════════════════════════════════════════════════════════
+function setSt(type, msg) {
+  var el = document.getElementById('st');
+  if (!type) { el.className='st'; el.innerHTML=''; return; }
+  el.className='st '+type;
+  var icons={ok:'✅',err:'❌',inf:'ℹ️'};
+  el.innerHTML='<span>'+icons[type]+'</span><span>'+msg+'</span>';
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+var TPL_ICONS = {team:'👥',client:'🤝',project:'📐',board:'🏛',sales:'💼',review:'🔍',crisis:'⚡',agm:'🏢'};
+
+function saveHist(d, content) {
+  try {
+    var h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]');
+    h.unshift({ ts:Date.now(), subject:d.subject||'Minutes', type:d.type, date:d.date, lang:d.docLang, d:d, content:content });
+    localStorage.setItem('actapro_elite_hist', JSON.stringify(h.slice(0,50)));
+  } catch(e){}
+}
+
+function renderHist() {
+  var el = document.getElementById('hist-list');
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]'); } catch(e){}
+  if (!h.length) {
+    el.innerHTML = '<div class="hist-empty"><div class="hi">📂</div><p>'+tr('hist_empty').replace('\n','<br>')+'</p></div>';
+    return;
+  }
+  el.innerHTML = h.map(function(item,i){
+    return '<div class="hist-card" onclick="loadHist('+i+')">'+
+      '<div class="hist-ic">'+(TPL_ICONS[item.type]||'📋')+'</div>'+
+      '<div class="hist-info">'+
+        '<div class="hist-name">'+esc(item.subject)+'</div>'+
+        '<div class="hist-meta">'+item.date+' · '+new Date(item.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>'+
+      '</div>'+
+      '<span class="hist-lang">'+item.lang+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function loadHist(i) {
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]'); } catch(e){}
+  var item = h[i]; if (!item) return;
+  switchTab('nova', document.querySelectorAll('.tab')[0]);
+  if (item.content) {
+    _lastContent = item.content;
+    _lastData = item.d;
+    renderOut(item.content, item.d);
+    setSt('inf', tr('hist_loaded'));
+  }
+}
+
+function clearHist() {
+  if (!confirm(tr('confirm_clear'))) return;
+  localStorage.removeItem('actapro_elite_hist');
+  renderHist();
+}
+
+// ══ BOOTSTRAP ══
+if (typeof Office === 'undefined') { bootstrap(); }
 </script>
 </body>
 </html>
