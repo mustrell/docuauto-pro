@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ActaPro Elite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   ACTAPRO ELITE — DESIGN SYSTEM
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #0F1117;
+  --bg2:      #161B27;
+  --bg3:      #1E2436;
+  --surface:  #1A2035;
+  --surface2: #212840;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.12);
+  --ink:      #F0EDE8;
+  --ink2:     #A8A4A0;
+  --ink3:     #5A5650;
+  --gold:     #C9A84C;
+  --gold2:    #E8C96A;
+  --gold-lt:  rgba(201,168,76,.1);
+  --gold-gl:  rgba(201,168,76,.06);
+  --blue:     #4A90D9;
+  --blue-lt:  rgba(74,144,217,.1);
+  --green:    #3DAA72;
+  --green-lt: rgba(61,170,114,.1);
+  --red:      #E05252;
+  --red-lt:   rgba(224,82,82,.1);
+  --shadow:   0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.5);
+  --r:        8px;
+  --r-sm:     5px;
+  --serif:    'Cormorant Garamond', serif;
+  --sans:     'Outfit', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+}
+
+/* Subtle background texture */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 0%, rgba(201,168,76,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 0% 100%, rgba(74,144,217,.03) 0%, transparent 50%);
+}
+
+/* ═══ HEADER ═══ */
+header {
+  flex-shrink:0; position:relative; z-index:10;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px 8px;
+}
+.hdr-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.hdr-logo {
+  width:28px; height:28px; border-radius:6px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--gold) 0%, #A07830 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:15px; color:var(--bg); font-style:italic;
+  font-weight:600; box-shadow: 0 2px 8px rgba(201,168,76,.3);
+}
+.hdr-brand h1 {
+  font-family:var(--serif); font-size:16px; font-weight:500;
+  color:var(--ink); letter-spacing:.2px; line-height:1;
+}
+.hdr-brand p { font-size:9px; color:var(--ink3); margin-top:2px; letter-spacing:.3px; text-transform:uppercase; }
+.hdr-badges { margin-left:auto; display:flex; gap:5px; align-items:center; }
+.badge {
+  font-size:7.5px; font-weight:700; padding:2px 6px; border-radius:99px;
+  letter-spacing:.5px; text-transform:uppercase;
+}
+.badge-gold { background:var(--gold-lt); color:var(--gold); border:1px solid rgba(201,168,76,.2); }
+.badge-iso  { background:var(--blue-lt); color:var(--blue); border:1px solid rgba(74,144,217,.2); }
+
+/* API ROW */
+.api-row { display:flex; align-items:center; gap:6px; }
+.api-status {
+  width:6px; height:6px; border-radius:50%; flex-shrink:0;
+  background:var(--ink3); transition:all .3s;
+}
+.api-status.ok  { background:var(--green); box-shadow:0 0 6px rgba(61,170,114,.6); }
+.api-status.err { background:var(--red); }
+.api-field { flex:1; position:relative; }
+.api-field input {
+  width:100%; padding:5px 26px 5px 9px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--ink2);
+  font-size:10px; font-family:var(--mono); outline:none;
+  transition:all .2s;
+}
+.api-field input::placeholder { color:var(--ink3); }
+.api-field input:focus { border-color:rgba(201,168,76,.4); color:var(--ink); }
+.api-field input.ok { border-color:rgba(61,170,114,.3); color:var(--green); }
+.api-eye {
+  position:absolute; right:7px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; font-size:10px;
+  color:var(--ink3); padding:0; transition:color .2s;
+}
+.api-eye:hover { color:var(--ink2); }
+
+/* Lang selector */
+.lang-sel {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--ink2);
+  font-size:10px; font-family:var(--sans);
+  padding:4px 6px; outline:none; cursor:pointer;
+  -webkit-appearance:none; flex-shrink:0;
+}
+.lang-sel:focus { border-color:rgba(201,168,76,.4); }
+
+/* ═══ TABS ═══ */
+.tabs {
+  display:flex; flex-shrink:0; position:relative; z-index:10;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+}
+.tab {
+  flex:1; padding:7px 4px 6px; text-align:center;
+  font-size:9px; font-weight:600; color:var(--ink3);
+  cursor:pointer; border-bottom:2px solid transparent;
+  margin-bottom:-1px; transition:all .18s;
+  letter-spacing:.4px; text-transform:uppercase; user-select:none;
+}
+.tab .ti { font-size:11px; display:block; margin-bottom:2px; }
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab:hover:not(.active) { color:var(--ink2); }
+
+/* TEMPLATE BAR */
+.tpl-bar {
+  flex-shrink:0; background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:7px 14px; display:none; position:relative; z-index:9;
+}
+.tpl-bar.on { display:block; }
+.tpl-eyebrow {
+  font-size:8px; font-weight:700; color:var(--ink3);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;
+}
+.tpl-chips { display:flex; gap:5px; overflow-x:auto; scrollbar-width:none; }
+.tpl-chips::-webkit-scrollbar { display:none; }
+.tpl-chip {
+  flex-shrink:0; padding:4px 10px;
+  border:1px solid var(--border2); border-radius:99px;
+  font-size:9.5px; font-weight:600; color:var(--ink2);
+  cursor:pointer; transition:all .18s; white-space:nowrap;
+  background:var(--bg3);
+}
+.tpl-chip:hover { border-color:rgba(201,168,76,.4); color:var(--gold); }
+.tpl-chip.on { background:var(--gold-lt); color:var(--gold); border-color:rgba(201,168,76,.4); }
+
+/* ═══ SCROLL ═══ */
+.scroll {
+  flex:1; overflow-y:auto; overflow-x:hidden; position:relative; z-index:1;
+  scrollbar-width:thin; scrollbar-color:var(--bg3) transparent;
+}
+.scroll::-webkit-scrollbar { width:3px; }
+.scroll::-webkit-scrollbar-thumb { background:var(--bg3); border-radius:99px; }
+
+/* ═══ PANELS ═══ */
+.panel { display:none; padding:14px; animation:fadeIn .2s ease; }
+.panel.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+/* ═══ SECTION LABELS ═══ */
+.sec {
+  font-size:8px; font-weight:700; color:var(--gold);
+  text-transform:uppercase; letter-spacing:1.2px;
+  margin:16px 0 8px; display:flex; align-items:center; gap:8px;
+}
+.sec::after { content:''; flex:1; height:1px; background:var(--border); }
+.sec:first-child { margin-top:0; }
+
+/* ═══ LOGO UPLOAD ═══ */
+.logo-zone {
+  border:1px dashed var(--border2); border-radius:var(--r);
+  padding:10px 14px; cursor:pointer; text-align:center;
+  transition:all .2s; background:var(--bg3); margin-bottom:8px;
+  position:relative;
+}
+.logo-zone:hover { border-color:rgba(201,168,76,.4); background:var(--gold-gl); }
+.logo-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+.logo-zone .lz-ic { font-size:16px; margin-bottom:3px; }
+.logo-zone .lz-txt { font-size:10.5px; font-weight:600; color:var(--ink2); }
+.logo-zone .lz-sub { font-size:9px; color:var(--ink3); margin-top:1px; }
+.logo-prev {
+  display:none; align-items:center; gap:8px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r); padding:7px 10px; margin-bottom:8px;
+}
+.logo-prev.on { display:flex; }
+.logo-prev img { height:24px; max-width:70px; object-fit:contain; }
+.logo-prev span { font-size:10px; color:var(--ink2); flex:1; }
+.logo-prev button { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:14px; transition:color .2s; }
+.logo-prev button:hover { color:var(--red); }
+
+/* ═══ FIELDS ═══ */
+.field { margin-bottom:7px; }
+label {
+  display:block; font-size:10px; font-weight:600;
+  color:var(--ink2); margin-bottom:3px; letter-spacing:.1px;
+}
+input[type=text], input[type=date], input[type=time],
+input[type=email], input[type=number], select, textarea {
+  width:100%; padding:7px 10px;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r); font-size:11px; font-family:var(--sans);
+  color:var(--ink); outline:none;
+  transition:border-color .15s, box-shadow .15s;
+  -webkit-appearance:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:rgba(201,168,76,.5);
+  box-shadow:0 0 0 3px rgba(201,168,76,.08);
+}
+input::placeholder, textarea::placeholder { color:var(--ink3); }
+textarea { resize:vertical; min-height:52px; line-height:1.55; }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235A5650' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center;
+  padding-right:26px; cursor:pointer;
+}
+select option { background:var(--bg2); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+
+/* ═══ ATTENDEES ═══ */
+.att-list { display:flex; flex-direction:column; gap:4px; margin-bottom:6px; }
+.att-row {
+  display:grid; grid-template-columns:1fr 1px 1fr auto;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; transition:border-color .2s;
+}
+.att-row:focus-within { border-color:rgba(201,168,76,.3); }
+.att-row input {
+  border:none; background:transparent; padding:6px 9px;
+  font-size:11px; box-shadow:none; color:var(--ink);
+}
+.att-row input:focus { box-shadow:none; border:none; }
+.att-sep { background:var(--border); }
+.att-del {
+  background:none; border:none; cursor:pointer; color:var(--ink3);
+  font-size:14px; padding:0 9px; transition:all .18s;
+  border-left:1px solid var(--border);
+}
+.att-del:hover { color:var(--red); background:var(--red-lt); }
+
+/* ═══ ACTIONS ═══ */
+.acc-list { display:flex; flex-direction:column; gap:5px; margin-bottom:6px; }
+.acc-card {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; transition:border-color .2s;
+}
+.acc-card:focus-within { border-color:rgba(201,168,76,.3); }
+.acc-head {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 9px; border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+.acc-n {
+  width:16px; height:16px; border-radius:4px; flex-shrink:0;
+  background:var(--gold-lt); color:var(--gold);
+  font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(201,168,76,.2);
+}
+.acc-head input {
+  flex:1; border:none; background:transparent; font-size:11px;
+  padding:2px 6px; outline:none; color:var(--ink);
+}
+.acc-del { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:12px; transition:color .2s; padding:2px; }
+.acc-del:hover { color:var(--red); }
+.acc-foot { display:grid; grid-template-columns:1fr 1fr; }
+.acc-foot input { border:none; border-right:1px solid var(--border); background:transparent; font-size:10.5px; padding:6px 9px; color:var(--ink); outline:none; }
+.acc-foot input:last-child { border-right:none; }
+
+/* ═══ SIGNATURES ═══ */
+.sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px; }
+.sig-card {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+}
+.sig-card input {
+  width:100%; border:none; background:transparent; font-size:10.5px;
+  padding:6px 9px; color:var(--ink); outline:none;
+  border-bottom:1px solid var(--border);
+}
+.sig-card input:last-child { border-bottom:none; }
+.sig-line {
+  height:24px; margin:3px 9px 6px;
+  border-bottom:1px solid var(--border2); position:relative;
+}
+.sig-line::after {
+  content:'✍'; position:absolute; bottom:2px; right:0;
+  font-size:10px; color:var(--ink3);
+}
+
+/* ═══ ADD BTN ═══ */
+.btn-add {
+  width:100%; padding:6px; border:1px dashed var(--border2);
+  border-radius:var(--r); background:none; cursor:pointer;
+  font-size:10px; font-weight:600; color:var(--ink3);
+  font-family:var(--sans); transition:all .18s;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.btn-add:hover { border-color:rgba(201,168,76,.4); color:var(--gold); background:var(--gold-gl); }
+
+/* ═══ PROGRESS ═══ */
+.prog {
+  display:none; margin-top:12px; background:var(--bg3);
+  border:1px solid var(--border2); border-radius:var(--r); padding:12px;
+}
+.prog.on { display:block; }
+.prog-top {
+  display:flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px;
+}
+.prog-track { background:var(--bg); border-radius:99px; height:2px; overflow:hidden; }
+.prog-fill {
+  height:100%; width:0%; border-radius:99px;
+  background:linear-gradient(90deg, var(--gold) 0%, var(--gold2) 100%);
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 8px rgba(201,168,76,.4);
+}
+.prog-steps { margin-top:8px; display:flex; flex-direction:column; gap:3px; }
+.prog-step { display:flex; align-items:center; gap:6px; font-size:9.5px; color:var(--ink3); transition:color .3s; }
+.prog-step.done   { color:var(--green); }
+.prog-step.active { color:var(--gold); font-weight:600; }
+.prog-dot { width:4px; height:4px; border-radius:50%; background:var(--ink3); flex-shrink:0; transition:all .3s; }
+.prog-step.done   .prog-dot { background:var(--green); }
+.prog-step.active .prog-dot { background:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,.2); }
+
+/* ═══ OUTPUT ═══ */
+.out {
+  display:none; margin-top:12px; background:var(--surface);
+  border:1px solid var(--border2); border-radius:var(--r);
+  padding:14px; font-size:10.5px; line-height:1.7;
+  color:var(--ink2); max-height:240px; overflow-y:auto;
+}
+.out.on { display:block; animation:fadeIn .25s ease; }
+.out-ref {
+  font-family:var(--mono); font-size:8.5px; color:var(--ink3);
+  margin-bottom:3px; letter-spacing:.5px;
+}
+.out-title {
+  display:block; font-family:var(--serif); font-size:18px;
+  color:var(--gold); margin-bottom:2px; font-weight:500;
+}
+.out-company { display:block; font-size:10px; color:var(--ink3); margin-bottom:2px; }
+.out-meta { display:block; font-size:9.5px; color:var(--ink3); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.out-sec { display:block; font-size:8.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.8px; margin:10px 0 3px; }
+.out-actions { display:none; gap:5px; margin-top:8px; }
+.out-actions.on { display:flex; }
+
+/* ═══ STATUS ═══ */
+.st {
+  border-radius:var(--r); font-size:10.5px; padding:8px 10px;
+  margin-top:8px; display:none; gap:6px; animation:fadeIn .2s;
+  line-height:1.4;
+}
+.st.ok  { background:var(--green-lt); color:var(--green);  border:1px solid rgba(61,170,114,.2);  display:flex; }
+.st.err { background:var(--red-lt);   color:var(--red);    border:1px solid rgba(224,82,82,.2);   display:flex; }
+.st.inf { background:var(--gold-lt);  color:var(--gold);   border:1px solid rgba(201,168,76,.2);  display:flex; }
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  width:100%; padding:10px 14px; border:none; border-radius:var(--r);
+  font-size:12px; font-weight:600; font-family:var(--sans);
+  cursor:pointer; transition:all .18s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn+.btn { margin-top:6px; }
+.btn-primary {
+  background:linear-gradient(135deg, var(--gold) 0%, #A07830 100%);
+  color:var(--bg); box-shadow:0 3px 12px rgba(201,168,76,.25);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow:0 5px 20px rgba(201,168,76,.4); transform:translateY(-1px);
+}
+.btn-primary:active:not(:disabled) { transform:none; }
+.btn-primary:disabled { opacity:.3; cursor:not-allowed; }
+.btn-outline {
+  background:transparent; color:var(--ink2);
+  border:1px solid var(--border2); flex:1; width:auto;
+}
+.btn-outline:hover { border-color:var(--border2); color:var(--ink); background:var(--bg3); }
+
+/* ═══ SPINNER ═══ */
+.spin {
+  width:11px; height:11px; border-radius:50%; flex-shrink:0;
+  border:2px solid rgba(15,17,23,.2); border-top-color:var(--bg);
+  animation:rot .7s linear infinite;
+}
+@keyframes rot { to{transform:rotate(360deg)} }
+
+/* ═══ HISTORY ═══ */
+.hist-empty { text-align:center; padding:28px 14px; color:var(--ink3); }
+.hist-empty .hi { font-size:28px; margin-bottom:8px; opacity:.5; }
+.hist-empty p { font-size:10.5px; line-height:1.5; }
+.hist-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:9px 11px; margin-bottom:5px;
+  display:flex; align-items:center; gap:9px; cursor:pointer;
+  transition:all .18s;
+}
+.hist-card:hover { border-color:rgba(201,168,76,.3); transform:translateX(2px); }
+.hist-ic { font-size:18px; flex-shrink:0; opacity:.8; }
+.hist-info { flex:1; min-width:0; }
+.hist-name { font-size:11px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hist-meta { font-size:9px; color:var(--ink3); margin-top:1px; }
+.hist-lang { font-size:8px; background:var(--gold-lt); color:var(--gold); padding:1px 6px; border-radius:99px; font-weight:700; flex-shrink:0; letter-spacing:.3px; }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  flex-shrink:0; padding:10px 14px;
+  background:var(--bg2); border-top:1px solid var(--border);
+  position:relative; z-index:10;
+}
+
+/* ═══ ISO BADGE ═══ */
+.iso-notice {
+  background:var(--blue-lt); border:1px solid rgba(74,144,217,.15);
+  border-radius:var(--r-sm); padding:6px 9px; margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+  font-size:9px; color:rgba(74,144,217,.9);
+}
+.iso-notice .iso-icon { font-size:12px; flex-shrink:0; }
+
+hr.div { border:none; border-top:1px solid var(--border); margin:10px 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-top">
+    <div class="hdr-logo">A</div>
+    <div class="hdr-brand">
+      <h1>ActaPro <em style="font-style:italic;color:var(--gold)">Elite</em></h1>
+      <p data-i18n="hdr_sub">AI-powered meeting minutes</p>
+    </div>
+    <div class="hdr-badges">
+      <span class="badge badge-iso">ISO 15489</span>
+      <span class="badge badge-gold">GPT-4o</span>
+    </div>
+  </div>
+  <div class="api-row">
+    <div class="api-status" id="api-st"></div>
+    <div class="api-field">
+      <input type="password" id="api-key" placeholder="OpenAI API Key — sk-…" autocomplete="off" oninput="onKey(this.value)"/>
+      <button class="api-eye" onclick="toggleEye()">👁</button>
+    </div>
+    <select id="ui-lang" class="lang-sel" onchange="setLang(this.value)"></select>
+  </div>
+</header>
+
+<!-- TEMPLATE BAR -->
+<div class="tpl-bar" id="tpl-bar">
+  <div class="tpl-eyebrow" data-i18n="tpl_label">Template</div>
+  <div class="tpl-chips" id="tpl-chips"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('nova',this)">
+    <span class="ti">✦</span><span data-i18n="tab_new">New</span>
+  </div>
+  <div class="tab" onclick="switchTab('hist',this)">
+    <span class="ti">📂</span><span data-i18n="tab_hist">History</span>
+  </div>
+</div>
+
+<div class="scroll">
+
+<!-- ══════════════ PANEL: NEW MINUTES ══════════════ -->
+<div id="panel-nova" class="panel active">
+
+  <!-- ISO Notice -->
+  <div class="iso-notice">
+    <span class="iso-icon">🏛</span>
+    <span data-i18n="iso_notice">Structure compliant with ISO 15489 & Robert's Rules of Order</span>
+  </div>
+
+  <!-- CORPORATE IDENTITY -->
+  <div class="sec" data-i18n="sec_identity">Corporate identity</div>
+  <div class="logo-prev" id="logo-prev">
+    <img id="logo-img" src="" alt=""/>
+    <span id="logo-name" data-i18n="logo_loaded">Logo loaded</span>
+    <button onclick="removeLogo()">×</button>
+  </div>
+  <div class="logo-zone" id="logo-zone">
+    <input type="file" id="logo-file" accept="image/*" onchange="onLogo(this)"/>
+    <div class="lz-ic">🏢</div>
+    <div class="lz-txt" data-i18n="logo_txt">Upload company logo</div>
+    <div class="lz-sub" data-i18n="logo_sub">PNG · JPG · SVG — appears in document header</div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_company">Company / Organisation</label>
+      <input type="text" id="f-company" data-ph="ph_company"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_dept">Department (opt.)</label>
+      <input type="text" id="f-dept" data-ph="ph_dept"/>
+    </div>
+  </div>
+
+  <!-- MEETING INFO -->
+  <div class="sec" data-i18n="sec_meeting">Meeting information</div>
+  <div class="field">
+    <label data-i18n="lbl_subject">Subject / Title <span style="color:var(--red)">*</span></label>
+    <input type="text" id="f-subject" data-ph="ph_subject"/>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_type">Meeting type</label>
+      <select id="f-type">
+        <option value="team" data-i18n-opt="tpl_team">Team meeting</option>
+        <option value="client" data-i18n-opt="tpl_client">Client meeting</option>
+        <option value="project" data-i18n-opt="tpl_project">Project meeting</option>
+        <option value="board" data-i18n-opt="tpl_board">Board meeting</option>
+        <option value="sales" data-i18n-opt="tpl_sales">Sales meeting</option>
+        <option value="review" data-i18n-opt="tpl_review">Review meeting</option>
+        <option value="crisis" data-i18n-opt="tpl_crisis">Crisis meeting</option>
+        <option value="agm" data-i18n-opt="tpl_agm">AGM / General Assembly</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_doc_lang">Document language</label>
+      <select id="f-doclang">
+        <option value="English">🇬🇧 English</option>
+        <option value="Español">🇪🇸 Español</option>
+        <option value="Català">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+        <option value="Français">🇫🇷 Français</option>
+        <option value="Deutsch">🇩🇪 Deutsch</option>
+        <option value="Italiano">🇮🇹 Italiano</option>
+        <option value="Português">🇵🇹 Português</option>
+        <option value="Nederlands">🇳🇱 Nederlands</option>
+        <option value="Polski">🇵🇱 Polski</option>
+        <option value="Română">🇷🇴 Română</option>
+        <option value="Svenska">🇸🇪 Svenska</option>
+        <option value="Norsk">🇳🇴 Norsk</option>
+        <option value="Dansk">🇩🇰 Dansk</option>
+        <option value="Suomi">🇫🇮 Suomi</option>
+        <option value="Magyar">🇭🇺 Magyar</option>
+        <option value="Čeština">🇨🇿 Čeština</option>
+        <option value="Slovenčina">🇸🇰 Slovenčina</option>
+        <option value="Slovenščina">🇸🇮 Slovenščina</option>
+        <option value="Hrvatski">🇭🇷 Hrvatski</option>
+        <option value="العربية">🇸🇦 العربية</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_date">Date</label>
+      <input type="date" id="f-date"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_ref">Reference no.</label>
+      <input type="text" id="f-ref" data-ph="ph_ref"/>
+    </div>
+  </div>
+  <div class="row3">
+    <div class="field">
+      <label data-i18n="lbl_start">Start</label>
+      <input type="time" id="f-start"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_end">End</label>
+      <input type="time" id="f-end"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_dur">Duration</label>
+      <input type="text" id="f-dur" readonly data-ph="ph_dur"/>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label data-i18n="lbl_location">Location / Platform</label>
+      <input type="text" id="f-loc" data-ph="ph_loc"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_chair">Chair / Facilitator</label>
+      <input type="text" id="f-chair" data-ph="ph_chair"/>
+    </div>
+  </div>
+  <div class="field">
+    <label data-i18n="lbl_secretary">Secretary / Note-taker</label>
+    <input type="text" id="f-sec" data-ph="ph_secretary"/>
+  </div>
+
+  <!-- ATTENDEES -->
+  <div class="sec" data-i18n="sec_att">Attendees</div>
+  <div class="att-list" id="att-list"></div>
+  <button class="btn-add" onclick="addAtt()">＋ <span data-i18n="add_att">Add attendee</span></button>
+
+  <!-- APOLOGIES -->
+  <div class="field" style="margin-top:8px">
+    <label data-i18n="lbl_apologies">Apologies / Absent</label>
+    <input type="text" id="f-apologies" data-ph="ph_apologies"/>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="sec" data-i18n="sec_agenda">Agenda</div>
+  <div class="field">
+    <textarea id="f-agenda" rows="3" data-ph="ph_agenda"></textarea>
+  </div>
+
+  <!-- DISCUSSION -->
+  <div class="sec" data-i18n="sec_discussion">Discussion notes</div>
+  <div class="field">
+    <textarea id="f-discussion" rows="4" data-ph="ph_discussion"></textarea>
+  </div>
+
+  <!-- DECISIONS & ACTIONS -->
+  <div class="sec" data-i18n="sec_actions">Decisions &amp; action items</div>
+  <div class="acc-list" id="acc-list"></div>
+  <button class="btn-add" onclick="addAcc()">＋ <span data-i18n="add_action">Add action</span></button>
+
+  <!-- RISKS -->
+  <div class="field" style="margin-top:10px">
+    <label data-i18n="lbl_risks">Risks / Issues raised (opt.)</label>
+    <textarea id="f-risks" rows="2" data-ph="ph_risks"></textarea>
+  </div>
+
+  <!-- NEXT MEETING -->
+  <div class="sec" data-i18n="sec_next">Next meeting</div>
+  <div class="row3">
+    <div class="field">
+      <label data-i18n="lbl_date">Date</label>
+      <input type="date" id="f-ndate"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_start">Time</label>
+      <input type="time" id="f-ntime"/>
+    </div>
+    <div class="field">
+      <label data-i18n="lbl_location">Location</label>
+      <input type="text" id="f-nloc" data-ph="ph_loc"/>
+    </div>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="sec" data-i18n="sec_sig">Signatures</div>
+  <div class="sig-grid" id="sig-grid"></div>
+  <button class="btn-add" onclick="addSig()">＋ <span data-i18n="add_sig">Add signature</span></button>
+
+  <!-- AI NOTES -->
+  <div class="field" style="margin-top:12px">
+    <label data-i18n="lbl_ai_notes">Additional context for AI</label>
+    <textarea id="f-notes" rows="2" data-ph="ph_ai_notes"></textarea>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog" id="prog">
+    <div class="prog-top">
+      <div class="spin"></div>
+      <span id="prog-lbl" data-i18n="prog_lbl">Generating with GPT-4o…</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-steps" id="prog-steps"></div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="out" id="out"></div>
+  <div class="out-actions" id="out-act">
+    <button class="btn btn-outline" onclick="copyOut()">📋 <span data-i18n="btn_copy">Copy</span></button>
+    <button class="btn btn-outline" onclick="resetForm()">↩ <span data-i18n="btn_new">New</span></button>
+  </div>
+  <div id="st" class="st"></div>
+
+</div><!-- /panel-nova -->
+
+<!-- ══════════════ PANEL: HISTORY ══════════════ -->
+<div id="panel-hist" class="panel">
+  <div id="hist-list"></div>
+  <hr class="div"/>
+  <button class="btn btn-outline" style="width:100%" onclick="clearHist()">🗑 <span data-i18n="btn_clear">Clear history</span></button>
+</div>
+
+</div><!-- /scroll -->
+
+<div class="footer">
+  <button class="btn btn-primary" id="btn-gen" onclick="generate()">
+    ✦ <span data-i18n="btn_gen">Generate professional minutes with AI</span>
+  </button>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// ACTAPRO ELITE — ENGINE
+// ═══════════════════════════════════════════════════════════
+
+var IS_WORD = false;
+var LANG = 'en';
+var TPL = 'team';
+var logoData = null;
+var attN = 0, accN = 0, sigN = 0;
+
+var STEPS_KEYS = ['step1','step2','step3','step4','step5','step6','step7'];
+
+// ═══════════════════════════════════════════════════════════
+// I18N — 20 INTERFACE LANGUAGES
+// ═══════════════════════════════════════════════════════════
+var LANGS = [
+  {code:'en', flag:'🇬🇧', name:'English'},
+  {code:'es', flag:'🇪🇸', name:'Español'},
+  {code:'ca', flag:'🏴', name:'Català'},
+  {code:'fr', flag:'🇫🇷', name:'Français'},
+  {code:'de', flag:'🇩🇪', name:'Deutsch'},
+  {code:'it', flag:'🇮🇹', name:'Italiano'},
+  {code:'pt', flag:'🇵🇹', name:'Português'},
+  {code:'nl', flag:'🇳🇱', name:'Nederlands'},
+  {code:'pl', flag:'🇵🇱', name:'Polski'},
+  {code:'ro', flag:'🇷🇴', name:'Română'},
+  {code:'sv', flag:'🇸🇪', name:'Svenska'},
+  {code:'no', flag:'🇳🇴', name:'Norsk'},
+  {code:'da', flag:'🇩🇰', name:'Dansk'},
+  {code:'fi', flag:'🇫🇮', name:'Suomi'},
+  {code:'hu', flag:'🇭🇺', name:'Magyar'},
+  {code:'cs', flag:'🇨🇿', name:'Čeština'},
+  {code:'sk', flag:'🇸🇰', name:'Slovenčina'},
+  {code:'hr', flag:'🇭🇷', name:'Hrvatski'},
+  {code:'zh', flag:'🇨🇳', name:'中文'},
+  {code:'ar', flag:'🇸🇦', name:'العربية'},
+];
+
+var T = {
+en:{
+  hdr_sub:'AI-powered professional meeting minutes',
+  tpl_label:'Template',tab_new:'New minutes',tab_hist:'History',
+  iso_notice:'Structure compliant with ISO 15489 & Robert\'s Rules of Order',
+  sec_identity:'Corporate identity',logo_loaded:'Logo loaded',
+  logo_txt:'Upload company logo',logo_sub:'PNG · JPG · SVG — appears in header',
+  lbl_company:'Company / Organisation',ph_company:'Acme Corp Ltd.',
+  lbl_dept:'Department (opt.)',ph_dept:'Operations / Finance…',
+  sec_meeting:'Meeting information',
+  lbl_subject:'Subject / Title',ph_subject:'E.g. Q2 Review, Project Alpha Kick-off…',
+  lbl_type:'Meeting type',lbl_doc_lang:'Document language',
+  lbl_date:'Date',lbl_ref:'Reference no.',ph_ref:'Auto-generated',
+  lbl_start:'Start',lbl_end:'End',lbl_dur:'Duration',ph_dur:'Auto',
+  lbl_location:'Location / Platform',ph_loc:'Conference room A / Teams / Zoom…',
+  lbl_chair:'Chair / Facilitator',ph_chair:'Full name',
+  lbl_secretary:'Secretary / Note-taker',ph_secretary:'Full name',
+  sec_att:'Attendees',add_att:'Add attendee',
+  ph_att_name:'Full name',ph_att_role:'Title / Role',
+  lbl_apologies:'Apologies / Absent',ph_apologies:'Names of absent members',
+  sec_agenda:'Agenda',ph_agenda:'1. Previous minutes review\n2. Matters arising\n3. Main business items\n4. AOB\n5. Date of next meeting',
+  sec_discussion:'Discussion notes',ph_discussion:'Summarise the key discussion points. The AI will develop them into professional minutes.\n\nE.g. The sales KPIs were reviewed showing 12% growth vs. last quarter…',
+  sec_actions:'Decisions & action items',add_action:'Add action item',
+  ph_acc_desc:'Action item / Decision',ph_acc_owner:'Owner',ph_acc_due:'Due date',
+  lbl_risks:'Risks / Issues raised (opt.)',ph_risks:'Any risks, blockers or issues identified…',
+  sec_next:'Next meeting',
+  sec_sig:'Signatures',add_sig:'Add signature',
+  ph_sig_name:'Full name',ph_sig_role:'Title / Role',
+  lbl_ai_notes:'Additional context for AI',ph_ai_notes:'Desired tone, special formatting, additional context…',
+  prog_lbl:'Generating with GPT-4o…',
+  step1:'Processing form data…',step2:'Building prompt…',step3:'Connecting to GPT-4o…',
+  step4:'Drafting professional content…',step5:'Structuring sections (ISO 15489)…',step6:'Applying corporate style…',step7:'Finalising document…',
+  btn_copy:'Copy text',btn_new:'New minutes',btn_clear:'Clear history',
+  btn_gen:'Generate professional minutes with AI',
+  btn_insert:'Insert into Word document',
+  err_subject:'Please fill in the meeting subject.',
+  err_key:'Please enter a valid OpenAI API Key (sk-…).',
+  ok_word:'✅ Minutes inserted into Word successfully.',
+  ok_gen:'✦ Minutes generated with GPT-4o — click "Insert into Word" to add to your document.',
+  err_word:'Word error: ',err_api:'Error: ',
+  hist_empty:'No minutes generated yet.\nCreate your first one now!',
+  hist_loaded:'Minutes loaded from history.',
+  confirm_clear:'Clear all history?',
+  tpl_team:'Team meeting',tpl_client:'Client meeting',tpl_project:'Project meeting',
+  tpl_board:'Board meeting',tpl_sales:'Sales meeting',tpl_review:'Review meeting',
+  tpl_crisis:'Crisis meeting',tpl_agm:'AGM / General Assembly',
+},
+es:{
+  hdr_sub:'Actas de reunión profesionales con IA',
+  tpl_label:'Plantilla',tab_new:'Nueva acta',tab_hist:'Historial',
+  iso_notice:'Estructura conforme a ISO 15489 y Reglas de Orden de Robert',
+  sec_identity:'Identidad corporativa',logo_loaded:'Logo cargado',
+  logo_txt:'Subir logo de la empresa',logo_sub:'PNG · JPG · SVG — aparece en la cabecera',
+  lbl_company:'Empresa / Organización',ph_company:'Acme Corp S.L.',
+  lbl_dept:'Departamento (opt.)',ph_dept:'Operaciones / Finanzas…',
+  sec_meeting:'Datos de la reunión',
+  lbl_subject:'Asunto / Título',ph_subject:'Ej. Revisión Q2, Kick-off proyecto Alpha…',
+  lbl_type:'Tipo de reunión',lbl_doc_lang:'Idioma del documento',
+  lbl_date:'Fecha',lbl_ref:'Nº de referencia',ph_ref:'Auto-generado',
+  lbl_start:'Inicio',lbl_end:'Fin',lbl_dur:'Duración',ph_dur:'Auto',
+  lbl_location:'Lugar / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Moderador',ph_chair:'Nombre completo',
+  lbl_secretary:'Secretario/a',ph_secretary:'Nombre completo',
+  sec_att:'Asistentes',add_att:'Añadir asistente',
+  ph_att_name:'Nombre y apellidos',ph_att_role:'Cargo / Rol',
+  lbl_apologies:'Disculpas / Ausentes',ph_apologies:'Nombres de los ausentes',
+  sec_agenda:'Orden del día',ph_agenda:'1. Revisión del acta anterior\n2. Asuntos pendientes\n3. Puntos principales\n4. Ruegos y preguntas\n5. Próxima reunión',
+  sec_discussion:'Resumen de los puntos tratados',ph_discussion:'Describe brevemente los puntos discutidos. La IA los desarrollará profesionalmente.\n\nEj. Se han revisado los KPIs de ventas con crecimiento del 12%…',
+  sec_actions:'Acuerdos y acciones',add_action:'Añadir acción',
+  ph_acc_desc:'Acción / Acuerdo adoptado',ph_acc_owner:'Responsable',ph_acc_due:'Fecha límite',
+  lbl_risks:'Riesgos / Incidencias (opt.)',ph_risks:'Riesgos, bloqueos o problemas identificados…',
+  sec_next:'Próxima reunión',
+  sec_sig:'Firmas',add_sig:'Añadir firma',
+  ph_sig_name:'Nombre y apellidos',ph_sig_role:'Cargo / Rol',
+  lbl_ai_notes:'Notas adicionales para la IA',ph_ai_notes:'Tono deseado, formato especial, contexto adicional…',
+  prog_lbl:'Generando con GPT-4o…',
+  step1:'Procesando datos del formulario…',step2:'Construyendo prompt…',step3:'Conectando con GPT-4o…',
+  step4:'Redactando contenido profesional…',step5:'Estructurando secciones (ISO 15489)…',step6:'Aplicando estilo corporativo…',step7:'Finalizando documento…',
+  btn_copy:'Copiar texto',btn_new:'Nueva acta',btn_clear:'Borrar historial',
+  btn_gen:'Generar acta profesional con IA',
+  btn_insert:'Insertar en documento Word',
+  err_subject:'Rellena el asunto de la reunión.',
+  err_key:'Introduce una API Key de OpenAI válida (sk-…).',
+  ok_word:'✅ Acta insertada en Word correctamente.',
+  ok_gen:'✦ Acta generada con GPT-4o — pulsa "Insertar en Word" para añadirla al documento.',
+  err_word:'Error Word: ',err_api:'Error: ',
+  hist_empty:'Aún no has generado ningún acta.\n¡Crea la primera ahora!',
+  hist_loaded:'Acta cargada desde el historial.',
+  confirm_clear:'¿Borrar todo el historial?',
+  tpl_team:'Reunión de equipo',tpl_client:'Reunión con cliente',tpl_project:'Reunión de proyecto',
+  tpl_board:'Consejo / Junta',tpl_sales:'Reunión comercial',tpl_review:'Reunión de revisión',
+  tpl_crisis:'Reunión de crisis',tpl_agm:'Asamblea General',
+},
+ca:{
+  hdr_sub:'Actes de reunió professionals amb IA',
+  tpl_label:'Plantilla',tab_new:'Nova acta',tab_hist:'Historial',
+  iso_notice:'Estructura conforme a ISO 15489 i Regles d\'Ordre de Robert',
+  sec_identity:'Identitat corporativa',logo_loaded:'Logo carregat',
+  logo_txt:'Pujar logo de l\'empresa',logo_sub:'PNG · JPG · SVG — apareixerà a la capçalera',
+  lbl_company:'Empresa / Organització',ph_company:'Acme Corp S.L.',
+  lbl_dept:'Departament (opc.)',ph_dept:'Operacions / Finances…',
+  sec_meeting:'Dades de la reunió',
+  lbl_subject:'Assumpte / Títol',ph_subject:'Ex: Revisió Q2, Kick-off projecte Alpha…',
+  lbl_type:'Tipus de reunió',lbl_doc_lang:'Idioma del document',
+  lbl_date:'Data',lbl_ref:'Núm. referència',ph_ref:'Auto-generat',
+  lbl_start:'Inici',lbl_end:'Fi',lbl_dur:'Durada',ph_dur:'Auto',
+  lbl_location:'Lloc / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'President / Moderador',ph_chair:'Nom complet',
+  lbl_secretary:'Secretari/ària',ph_secretary:'Nom complet',
+  sec_att:'Assistents',add_att:'Afegir assistent',
+  ph_att_name:'Nom i cognoms',ph_att_role:'Càrrec / Rol',
+  lbl_apologies:'Absències disculpades',ph_apologies:'Noms dels absents',
+  sec_agenda:'Ordre del dia',ph_agenda:'1. Aprovació acta anterior\n2. Assumptes pendents\n3. Punts principals\n4. Precs i preguntes\n5. Propera reunió',
+  sec_discussion:'Resum dels punts tractats',ph_discussion:'Descriu els punts discutits. La IA els desenvoluparà professionalment.\n\nEx: S\'han revisat els KPIs de vendes amb creixement del 12%…',
+  sec_actions:'Acords i accions',add_action:'Afegir acció',
+  ph_acc_desc:'Acció / Acord adoptat',ph_acc_owner:'Responsable',ph_acc_due:'Data límit',
+  lbl_risks:'Riscos / Incidències (opc.)',ph_risks:'Riscos, bloquejos o problemes identificats…',
+  sec_next:'Propera reunió',
+  sec_sig:'Signatures',add_sig:'Afegir signatura',
+  ph_sig_name:'Nom i cognoms',ph_sig_role:'Càrrec / Rol',
+  lbl_ai_notes:'Notes addicionals per a la IA',ph_ai_notes:'To desitjat, format especial, context addicional…',
+  prog_lbl:'Generant amb GPT-4o…',
+  step1:'Processant dades del formulari…',step2:'Construint prompt…',step3:'Connectant amb GPT-4o…',
+  step4:'Redactant contingut professional…',step5:'Estructurant seccions (ISO 15489)…',step6:'Aplicant estil corporatiu…',step7:'Finalitzant document…',
+  btn_copy:'Copiar text',btn_new:'Nova acta',btn_clear:'Esborrar historial',
+  btn_gen:'Generar acta professional amb IA',
+  btn_insert:'Inserir al document Word',
+  err_subject:'Omple l\'assumpte de la reunió.',
+  err_key:'Introdueix una API Key d\'OpenAI vàlida (sk-…).',
+  ok_word:'✅ Acta inserida a Word correctament.',
+  ok_gen:'✦ Acta generada amb GPT-4o — prem "Inserir al Word" per afegir-la al document.',
+  err_word:'Error Word: ',err_api:'Error: ',
+  hist_empty:'Encara no has generat cap acta.\nCrea la primera ara!',
+  hist_loaded:'Acta carregada des de l\'historial.',
+  confirm_clear:'Esborrar tot l\'historial?',
+  tpl_team:'Reunió d\'equip',tpl_client:'Reunió amb client',tpl_project:'Reunió de projecte',
+  tpl_board:'Consell / Junta',tpl_sales:'Reunió comercial',tpl_review:'Reunió de revisió',
+  tpl_crisis:'Reunió de crisi',tpl_agm:'Assemblea General',
+},
+fr:{
+  hdr_sub:'Comptes rendus de réunion professionnels avec IA',
+  tpl_label:'Modèle',tab_new:'Nouveau CR',tab_hist:'Historique',
+  iso_notice:'Structure conforme à ISO 15489 et Règles de procédure Robert',
+  sec_identity:'Identité corporative',logo_loaded:'Logo chargé',
+  logo_txt:'Télécharger le logo',logo_sub:'PNG · JPG · SVG — apparaît dans l\'en-tête',
+  lbl_company:'Entreprise / Organisation',ph_company:'Acme Corp SAS',
+  lbl_dept:'Département (opt.)',ph_dept:'Opérations / Finance…',
+  sec_meeting:'Informations sur la réunion',
+  lbl_subject:'Objet / Titre',ph_subject:'Ex. Bilan Q2, Lancement projet Alpha…',
+  lbl_type:'Type de réunion',lbl_doc_lang:'Langue du document',
+  lbl_date:'Date',lbl_ref:'N° de référence',ph_ref:'Auto-généré',
+  lbl_start:'Début',lbl_end:'Fin',lbl_dur:'Durée',ph_dur:'Auto',
+  lbl_location:'Lieu / Plateforme',ph_loc:'Salle A / Teams / Zoom…',
+  lbl_chair:'Président / Animateur',ph_chair:'Nom complet',
+  lbl_secretary:'Secrétaire / Rapporteur',ph_secretary:'Nom complet',
+  sec_att:'Participants',add_att:'Ajouter un participant',
+  ph_att_name:'Nom et prénom',ph_att_role:'Poste / Rôle',
+  lbl_apologies:'Excusés / Absents',ph_apologies:'Noms des absents',
+  sec_agenda:'Ordre du jour',ph_agenda:'1. Approbation CR précédent\n2. Questions en suspens\n3. Points principaux\n4. Questions diverses\n5. Prochaine réunion',
+  sec_discussion:'Résumé des discussions',ph_discussion:'Décrivez brièvement les points discutés. L\'IA les développera professionnellement.',
+  sec_actions:'Décisions et actions',add_action:'Ajouter une action',
+  ph_acc_desc:'Action / Décision prise',ph_acc_owner:'Responsable',ph_acc_due:'Échéance',
+  lbl_risks:'Risques / Problèmes (opt.)',ph_risks:'Risques ou blocages identifiés…',
+  sec_next:'Prochaine réunion',
+  sec_sig:'Signatures',add_sig:'Ajouter une signature',
+  ph_sig_name:'Nom et prénom',ph_sig_role:'Poste / Rôle',
+  lbl_ai_notes:'Notes supplémentaires pour l\'IA',ph_ai_notes:'Ton souhaité, format spécial, contexte…',
+  prog_lbl:'Génération avec GPT-4o…',
+  step1:'Traitement des données…',step2:'Construction du prompt…',step3:'Connexion à GPT-4o…',
+  step4:'Rédaction du contenu…',step5:'Structuration ISO 15489…',step6:'Application du style…',step7:'Finalisation…',
+  btn_copy:'Copier',btn_new:'Nouveau CR',btn_clear:'Vider l\'historique',
+  btn_gen:'Générer un compte rendu professionnel avec IA',
+  btn_insert:'Insérer dans Word',
+  err_subject:'Veuillez renseigner l\'objet de la réunion.',
+  err_key:'Veuillez entrer une clé API OpenAI valide (sk-…).',
+  ok_word:'✅ CR inséré dans Word avec succès.',
+  ok_gen:'✦ CR généré avec GPT-4o.',
+  err_word:'Erreur Word : ',err_api:'Erreur : ',
+  hist_empty:'Aucun compte rendu généré.\nCréez le premier maintenant !',
+  hist_loaded:'CR chargé depuis l\'historique.',
+  confirm_clear:'Vider tout l\'historique ?',
+  tpl_team:'Réunion d\'équipe',tpl_client:'Réunion client',tpl_project:'Réunion de projet',
+  tpl_board:'Conseil d\'administration',tpl_sales:'Réunion commerciale',tpl_review:'Réunion de bilan',
+  tpl_crisis:'Réunion de crise',tpl_agm:'Assemblée Générale',
+},
+de:{
+  hdr_sub:'Professionelle Besprechungsprotokolle mit KI',
+  tpl_label:'Vorlage',tab_new:'Neues Protokoll',tab_hist:'Verlauf',
+  iso_notice:'Struktur gemäß ISO 15489 und Robert\'s Rules of Order',
+  sec_identity:'Unternehmensidentität',logo_loaded:'Logo geladen',
+  logo_txt:'Unternehmenslogo hochladen',logo_sub:'PNG · JPG · SVG — erscheint in der Kopfzeile',
+  lbl_company:'Unternehmen / Organisation',ph_company:'Acme Corp GmbH',
+  lbl_dept:'Abteilung (opt.)',ph_dept:'Betrieb / Finanzen…',
+  sec_meeting:'Besprechungsdetails',
+  lbl_subject:'Betreff / Titel',ph_subject:'Z.B. Q2-Review, Projekt-Kickoff…',
+  lbl_type:'Besprechungstyp',lbl_doc_lang:'Dokumentsprache',
+  lbl_date:'Datum',lbl_ref:'Referenznummer',ph_ref:'Automatisch',
+  lbl_start:'Beginn',lbl_end:'Ende',lbl_dur:'Dauer',ph_dur:'Auto',
+  lbl_location:'Ort / Plattform',ph_loc:'Konferenzraum A / Teams / Zoom…',
+  lbl_chair:'Vorsitzender / Moderator',ph_chair:'Vollständiger Name',
+  lbl_secretary:'Protokollführer',ph_secretary:'Vollständiger Name',
+  sec_att:'Teilnehmer',add_att:'Teilnehmer hinzufügen',
+  ph_att_name:'Vor- und Nachname',ph_att_role:'Position / Rolle',
+  lbl_apologies:'Entschuldigungen / Abwesende',ph_apologies:'Namen der Abwesenden',
+  sec_agenda:'Tagesordnung',ph_agenda:'1. Genehmigung des letzten Protokolls\n2. Offene Punkte\n3. Hauptpunkte\n4. Sonstiges\n5. Nächster Termin',
+  sec_discussion:'Diskussionszusammenfassung',ph_discussion:'Beschreiben Sie kurz die diskutierten Punkte. Die KI wird sie professionell ausarbeiten.',
+  sec_actions:'Beschlüsse und Maßnahmen',add_action:'Maßnahme hinzufügen',
+  ph_acc_desc:'Maßnahme / Beschluss',ph_acc_owner:'Verantwortlicher',ph_acc_due:'Fälligkeitsdatum',
+  lbl_risks:'Risiken / Probleme (opt.)',ph_risks:'Identifizierte Risiken oder Blocker…',
+  sec_next:'Nächste Besprechung',
+  sec_sig:'Unterschriften',add_sig:'Unterschrift hinzufügen',
+  ph_sig_name:'Vor- und Nachname',ph_sig_role:'Position / Rolle',
+  lbl_ai_notes:'Zusätzliche Hinweise für die KI',ph_ai_notes:'Gewünschter Ton, Format, zusätzlicher Kontext…',
+  prog_lbl:'Protokoll wird mit GPT-4o erstellt…',
+  step1:'Formulardaten verarbeiten…',step2:'Prompt erstellen…',step3:'Verbindung zu GPT-4o…',
+  step4:'Professionellen Inhalt verfassen…',step5:'ISO-15489-Struktur anwenden…',step6:'Unternehmensstil anwenden…',step7:'Dokument fertigstellen…',
+  btn_copy:'Text kopieren',btn_new:'Neues Protokoll',btn_clear:'Verlauf löschen',
+  btn_gen:'Professionelles Protokoll mit KI erstellen',
+  btn_insert:'In Word-Dokument einfügen',
+  err_subject:'Bitte Betreff ausfüllen.',
+  err_key:'Bitte gültigen OpenAI API-Schlüssel eingeben.',
+  ok_word:'✅ Protokoll erfolgreich in Word eingefügt.',
+  ok_gen:'✦ Protokoll mit GPT-4o erstellt.',
+  err_word:'Word-Fehler: ',err_api:'Fehler: ',
+  hist_empty:'Noch kein Protokoll erstellt.\nErstes jetzt anlegen!',
+  hist_loaded:'Protokoll aus dem Verlauf geladen.',
+  confirm_clear:'Gesamten Verlauf löschen?',
+  tpl_team:'Teammeeting',tpl_client:'Kundenbesprechung',tpl_project:'Projektbesprechung',
+  tpl_board:'Vorstandssitzung',tpl_sales:'Vertriebsbesprechung',tpl_review:'Review-Meeting',
+  tpl_crisis:'Krisensitzung',tpl_agm:'Hauptversammlung',
+},
+it:{
+  hdr_sub:'Verbali di riunione professionali con IA',
+  tpl_label:'Modello',tab_new:'Nuovo verbale',tab_hist:'Storico',
+  iso_notice:'Struttura conforme a ISO 15489 e Regole di Robert',
+  sec_identity:'Identità aziendale',logo_loaded:'Logo caricato',
+  logo_txt:'Carica logo aziendale',logo_sub:'PNG · JPG · SVG — appare nell\'intestazione',
+  lbl_company:'Azienda / Organizzazione',ph_company:'Acme Corp S.r.l.',
+  lbl_dept:'Dipartimento (opt.)',ph_dept:'Operazioni / Finanza…',
+  sec_meeting:'Dati della riunione',
+  lbl_subject:'Oggetto / Titolo',ph_subject:'Es. Revisione Q2, Kick-off progetto Alpha…',
+  lbl_type:'Tipo di riunione',lbl_doc_lang:'Lingua del documento',
+  lbl_date:'Data',lbl_ref:'N. di riferimento',ph_ref:'Auto-generato',
+  lbl_start:'Inizio',lbl_end:'Fine',lbl_dur:'Durata',ph_dur:'Auto',
+  lbl_location:'Luogo / Piattaforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Moderatore',ph_chair:'Nome completo',
+  lbl_secretary:'Segretario/a',ph_secretary:'Nome completo',
+  sec_att:'Partecipanti',add_att:'Aggiungi partecipante',
+  ph_att_name:'Nome e cognome',ph_att_role:'Ruolo / Qualifica',
+  lbl_apologies:'Assenti giustificati',ph_apologies:'Nomi degli assenti',
+  sec_agenda:'Ordine del giorno',ph_agenda:'1. Approvazione verbale precedente\n2. Argomenti in sospeso\n3. Punti principali\n4. Varie ed eventuali\n5. Prossima riunione',
+  sec_discussion:'Sintesi della discussione',ph_discussion:'Descrivi brevemente i punti discussi. L\'IA li svilupperà professionalmente.',
+  sec_actions:'Decisioni e azioni',add_action:'Aggiungi azione',
+  ph_acc_desc:'Azione / Decisione presa',ph_acc_owner:'Responsabile',ph_acc_due:'Scadenza',
+  lbl_risks:'Rischi / Problemi (opt.)',ph_risks:'Rischi o blocchi identificati…',
+  sec_next:'Prossima riunione',
+  sec_sig:'Firme',add_sig:'Aggiungi firma',
+  ph_sig_name:'Nome e cognome',ph_sig_role:'Ruolo / Qualifica',
+  lbl_ai_notes:'Note aggiuntive per l\'IA',ph_ai_notes:'Tono desiderato, formato, contesto…',
+  prog_lbl:'Generazione con GPT-4o…',
+  step1:'Elaborazione dati…',step2:'Costruzione prompt…',step3:'Connessione a GPT-4o…',
+  step4:'Redazione contenuto…',step5:'Strutturazione ISO 15489…',step6:'Stile aziendale…',step7:'Finalizzazione…',
+  btn_copy:'Copia testo',btn_new:'Nuovo verbale',btn_clear:'Cancella storico',
+  btn_gen:'Genera verbale professionale con IA',
+  btn_insert:'Inserisci in Word',
+  err_subject:'Inserisci l\'oggetto della riunione.',
+  err_key:'Inserisci una chiave API OpenAI valida.',
+  ok_word:'✅ Verbale inserito in Word con successo.',
+  ok_gen:'✦ Verbale generato con GPT-4o.',
+  err_word:'Errore Word: ',err_api:'Errore: ',
+  hist_empty:'Nessun verbale generato.\nCrea il primo adesso!',
+  hist_loaded:'Verbale caricato dallo storico.',
+  confirm_clear:'Cancellare tutto lo storico?',
+  tpl_team:'Riunione di team',tpl_client:'Riunione con cliente',tpl_project:'Riunione di progetto',
+  tpl_board:'Consiglio di amministrazione',tpl_sales:'Riunione commerciale',tpl_review:'Riunione di revisione',
+  tpl_crisis:'Riunione di crisi',tpl_agm:'Assemblea Generale',
+},
+pt:{
+  hdr_sub:'Atas de reunião profissionais com IA',
+  tpl_label:'Modelo',tab_new:'Nova ata',tab_hist:'Histórico',
+  iso_notice:'Estrutura em conformidade com ISO 15489',
+  sec_identity:'Identidade corporativa',logo_loaded:'Logo carregado',
+  logo_txt:'Carregar logo da empresa',logo_sub:'PNG · JPG · SVG — aparece no cabeçalho',
+  lbl_company:'Empresa / Organização',ph_company:'Acme Corp Lda.',
+  lbl_dept:'Departamento (opt.)',ph_dept:'Operações / Finanças…',
+  sec_meeting:'Detalhes da reunião',
+  lbl_subject:'Assunto / Título',ph_subject:'Ex. Revisão Q2, Arranque projeto Alpha…',
+  lbl_type:'Tipo de reunião',lbl_doc_lang:'Idioma do documento',
+  lbl_date:'Data',lbl_ref:'Nº de referência',ph_ref:'Auto-gerado',
+  lbl_start:'Início',lbl_end:'Fim',lbl_dur:'Duração',ph_dur:'Auto',
+  lbl_location:'Local / Plataforma',ph_loc:'Sala A / Teams / Zoom…',
+  lbl_chair:'Presidente / Facilitador',ph_chair:'Nome completo',
+  lbl_secretary:'Secretário/a',ph_secretary:'Nome completo',
+  sec_att:'Participantes',add_att:'Adicionar participante',
+  ph_att_name:'Nome completo',ph_att_role:'Cargo / Função',
+  lbl_apologies:'Ausências justificadas',ph_apologies:'Nomes dos ausentes',
+  sec_agenda:'Ordem do dia',ph_agenda:'1. Aprovação da ata anterior\n2. Assuntos pendentes\n3. Pontos principais\n4. Outros assuntos\n5. Próxima reunião',
+  sec_discussion:'Resumo da discussão',ph_discussion:'Descreva os pontos discutidos. A IA irá desenvolvê-los profissionalmente.',
+  sec_actions:'Decisões e ações',add_action:'Adicionar ação',
+  ph_acc_desc:'Ação / Decisão tomada',ph_acc_owner:'Responsável',ph_acc_due:'Prazo',
+  lbl_risks:'Riscos / Problemas (opt.)',ph_risks:'Riscos ou bloqueios identificados…',
+  sec_next:'Próxima reunião',
+  sec_sig:'Assinaturas',add_sig:'Adicionar assinatura',
+  ph_sig_name:'Nome completo',ph_sig_role:'Cargo / Função',
+  lbl_ai_notes:'Notas adicionais para a IA',ph_ai_notes:'Tom desejado, formato, contexto…',
+  prog_lbl:'A gerar com GPT-4o…',
+  step1:'A processar dados…',step2:'A construir prompt…',step3:'A ligar ao GPT-4o…',
+  step4:'A redigir conteúdo…',step5:'Estrutura ISO 15489…',step6:'Estilo corporativo…',step7:'A finalizar…',
+  btn_copy:'Copiar texto',btn_new:'Nova ata',btn_clear:'Limpar histórico',
+  btn_gen:'Gerar ata profissional com IA',
+  btn_insert:'Inserir no Word',
+  err_subject:'Preencha o assunto da reunião.',
+  err_key:'Introduza uma chave API OpenAI válida.',
+  ok_word:'✅ Ata inserida no Word com sucesso.',
+  ok_gen:'✦ Ata gerada com GPT-4o.',
+  err_word:'Erro Word: ',err_api:'Erro: ',
+  hist_empty:'Nenhuma ata gerada ainda.\nCrie a primeira agora!',
+  hist_loaded:'Ata carregada do histórico.',
+  confirm_clear:'Limpar todo o histórico?',
+  tpl_team:'Reunião de equipa',tpl_client:'Reunião com cliente',tpl_project:'Reunião de projeto',
+  tpl_board:'Conselho de administração',tpl_sales:'Reunião comercial',tpl_review:'Reunião de revisão',
+  tpl_crisis:'Reunião de crise',tpl_agm:'Assembleia Geral',
+},
+nl:{
+  hdr_sub:'Professionele notulen met AI',
+  tpl_label:'Sjabloon',tab_new:'Nieuwe notulen',tab_hist:'Geschiedenis',
+  iso_notice:'Structuur conform ISO 15489 en Robert\'s Rules of Order',
+  sec_identity:'Bedrijfsidentiteit',logo_loaded:'Logo geladen',
+  logo_txt:'Bedrijfslogo uploaden',logo_sub:'PNG · JPG · SVG — verschijnt in koptekst',
+  lbl_company:'Bedrijf / Organisatie',ph_company:'Acme Corp B.V.',
+  lbl_dept:'Afdeling (opt.)',ph_dept:'Operaties / Financiën…',
+  sec_meeting:'Vergaderdetails',
+  lbl_subject:'Onderwerp / Titel',ph_subject:'Bijv. Q2-evaluatie, Project Alpha kickoff…',
+  lbl_type:'Type vergadering',lbl_doc_lang:'Documenttaal',
+  lbl_date:'Datum',lbl_ref:'Referentienummer',ph_ref:'Automatisch',
+  lbl_start:'Aanvang',lbl_end:'Einde',lbl_dur:'Duur',ph_dur:'Auto',
+  lbl_location:'Locatie / Platform',ph_loc:'Vergaderzaal A / Teams / Zoom…',
+  lbl_chair:'Voorzitter',ph_chair:'Volledige naam',
+  lbl_secretary:'Notulist',ph_secretary:'Volledige naam',
+  sec_att:'Deelnemers',add_att:'Deelnemer toevoegen',
+  ph_att_name:'Voor- en achternaam',ph_att_role:'Functie / Rol',
+  lbl_apologies:'Afmeldingen / Afwezigen',ph_apologies:'Namen van afwezigen',
+  sec_agenda:'Agenda',ph_agenda:'1. Goedkeuring vorige notulen\n2. Openstaande punten\n3. Hoofdpunten\n4. Rondvraag\n5. Volgende vergadering',
+  sec_discussion:'Discussiesamenvatting',ph_discussion:'Beschrijf kort de besproken punten. De AI werkt ze professioneel uit.',
+  sec_actions:'Besluiten en acties',add_action:'Actie toevoegen',
+  ph_acc_desc:'Actie / Besluit',ph_acc_owner:'Verantwoordelijke',ph_acc_due:'Deadline',
+  lbl_risks:'Risico\'s / Problemen (opt.)',ph_risks:'Geïdentificeerde risico\'s of blokkades…',
+  sec_next:'Volgende vergadering',
+  sec_sig:'Handtekeningen',add_sig:'Handtekening toevoegen',
+  ph_sig_name:'Voor- en achternaam',ph_sig_role:'Functie / Rol',
+  lbl_ai_notes:'Aanvullende opmerkingen voor AI',ph_ai_notes:'Gewenste toon, formaat, context…',
+  prog_lbl:'Notulen genereren met GPT-4o…',
+  step1:'Gegevens verwerken…',step2:'Prompt bouwen…',step3:'Verbinding met GPT-4o…',
+  step4:'Professionele inhoud opstellen…',step5:'ISO-15489-structuur…',step6:'Bedrijfsstijl…',step7:'Afronden…',
+  btn_copy:'Tekst kopiëren',btn_new:'Nieuwe notulen',btn_clear:'Geschiedenis wissen',
+  btn_gen:'Professionele notulen genereren met AI',
+  btn_insert:'In Word invoegen',
+  err_subject:'Vul het onderwerp van de vergadering in.',
+  err_key:'Voer een geldige OpenAI API-sleutel in.',
+  ok_word:'✅ Notulen succesvol in Word ingevoegd.',
+  ok_gen:'✦ Notulen gegenereerd met GPT-4o.',
+  err_word:'Word-fout: ',err_api:'Fout: ',
+  hist_empty:'Nog geen notulen aangemaakt.\nMaak nu de eerste aan!',
+  hist_loaded:'Notulen geladen uit geschiedenis.',
+  confirm_clear:'Alle geschiedenis wissen?',
+  tpl_team:'Teamvergadering',tpl_client:'Klantenvergadering',tpl_project:'Projectvergadering',
+  tpl_board:'Bestuursvergadering',tpl_sales:'Salesvergadering',tpl_review:'Reviewvergadering',
+  tpl_crisis:'Crisisvergadering',tpl_agm:'Algemene Vergadering',
+},
+};
+
+// Fallback to English for langs without full translation
+['pl','ro','sv','no','da','fi','hu','cs','sk','hr','zh','ar'].forEach(function(c){
+  T[c] = Object.assign({}, T['en'], {
+    hdr_sub: {pl:'Profesjonalne protokoły spotkań z AI',ro:'Procese verbale profesionale cu IA',sv:'Professionella mötesprotokoll med AI',no:'Profesjonelle møtereferater med AI',da:'Professionelle mødereferater med AI',fi:'Ammattimaiset kokousmuistiot tekoälyllä',hu:'Professzionális meetingjegyzőkönyvek AI-val',cs:'Profesionální záznamy ze schůzek s AI',sk:'Profesionálne záznamy zo stretnutí s AI',hr:'Profesionalni zapisnici sa sastanaka s AI',zh:'专业会议纪要 · AI智能生成',ar:'محاضر الاجتماعات المهنية بالذكاء الاصطناعي'}[c] || T['en'].hdr_sub,
+  });
+});
+
+function tr(key) {
+  return (T[LANG] && T[LANG][key] != null ? T[LANG][key] : T['en'][key]) || key;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════
+var TEMPLATES = [
+  {id:'team',   icon:'👥'},
+  {id:'client', icon:'🤝'},
+  {id:'project',icon:'📐'},
+  {id:'board',  icon:'🏛'},
+  {id:'sales',  icon:'💼'},
+  {id:'review', icon:'🔍'},
+  {id:'crisis', icon:'⚡'},
+  {id:'agm',    icon:'🏢'},
+];
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+if (typeof Office !== 'undefined') {
+  Office.onReady(function(info) {
+    IS_WORD = info.host === Office.HostType.Word;
+    bootstrap();
+  });
+}
+
+function bootstrap() {
+  // Build lang selector
+  var sel = document.getElementById('ui-lang');
+  sel.innerHTML = LANGS.map(function(l) {
+    return '<option value="'+l.code+'">'+l.flag+' '+l.name+'</option>';
+  }).join('');
+
+  // Restore lang
+  try { var sl = localStorage.getItem('actapro_lang'); if (sl) LANG = sl; } catch(e){}
+  sel.value = LANG;
+
+  applyI18n();
+  renderTpls();
+
+  // Defaults
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = today;
+  var now = new Date();
+  document.getElementById('f-start').value = pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('f-ref').value = 'MIN-'+now.getFullYear()+'-'+Date.now().toString().slice(-4);
+
+  document.getElementById('f-end').addEventListener('change', calcDur);
+  document.getElementById('f-start').addEventListener('change', calcDur);
+
+  // Default rows
+  addAtt(); addAtt(); addAtt();
+  addAcc(); addAcc();
+  addSig(); addSig();
+
+  // API key
+  try { var k = localStorage.getItem('actapro_key'); if (k) { document.getElementById('api-key').value = k; updateDot(k); } } catch(e){}
+
+  renderHist();
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function calcDur() {
+  var s = document.getElementById('f-start').value;
+  var e = document.getElementById('f-end').value;
+  if (!s || !e) return;
+  var sm = parseInt(s.split(':')[0])*60+parseInt(s.split(':')[1]);
+  var em = parseInt(e.split(':')[0])*60+parseInt(e.split(':')[1]);
+  var d = em - sm;
+  if (d > 0) document.getElementById('f-dur').value = Math.floor(d/60)+'h '+(d%60>0?d%60+'min':'');
+}
+
+// ═══════════════════════════════════════════════════════════
+// I18N
+// ═══════════════════════════════════════════════════════════
+function setLang(lang) {
+  LANG = lang;
+  try { localStorage.setItem('actapro_lang', lang); } catch(e){}
+  applyI18n();
+  renderTpls();
+  updateSelectOptions();
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    el.textContent = tr(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-ph]').forEach(function(el) {
+    el.placeholder = tr(el.getAttribute('data-ph'));
+  });
+  // Dynamic rows
+  document.querySelectorAll('.att-name').forEach(function(el){ el.placeholder = tr('ph_att_name'); });
+  document.querySelectorAll('.att-role').forEach(function(el){ el.placeholder = tr('ph_att_role'); });
+  document.querySelectorAll('.acc-desc').forEach(function(el){ el.placeholder = tr('ph_acc_desc'); });
+  document.querySelectorAll('.acc-own').forEach(function(el){ el.placeholder = '👤 '+tr('ph_acc_owner'); });
+  document.querySelectorAll('.acc-due').forEach(function(el){ el.placeholder = '📅 '+tr('ph_acc_due'); });
+  document.querySelectorAll('.sig-name').forEach(function(el){ el.placeholder = tr('ph_sig_name'); });
+  document.querySelectorAll('.sig-role').forEach(function(el){ el.placeholder = tr('ph_sig_role'); });
+  // Gen button
+  document.getElementById('btn-gen').innerHTML = '✦ '+tr('btn_gen');
+  // Steps array
+  var steps = STEPS_KEYS.map(function(k){ return tr(k); });
+  window._STEPS = steps;
+}
+
+function updateSelectOptions() {
+  var ftype = document.getElementById('f-type');
+  var opts = ftype.querySelectorAll('option');
+  var optKeys = ['tpl_team','tpl_client','tpl_project','tpl_board','tpl_sales','tpl_review','tpl_crisis','tpl_agm'];
+  opts.forEach(function(o, i){ if(optKeys[i]) o.textContent = tr(optKeys[i]); });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════
+function renderTpls() {
+  var tplKeys = ['tpl_team','tpl_client','tpl_project','tpl_board','tpl_sales','tpl_review','tpl_crisis','tpl_agm'];
+  document.getElementById('tpl-chips').innerHTML = TEMPLATES.map(function(t, i) {
+    return '<div class="tpl-chip'+(t.id===TPL?' on':'')+'" onclick="selTpl(this,\''+t.id+'\')" title="'+tr(tplKeys[i])+'">'+t.icon+' '+tr(tplKeys[i])+'</div>';
+  }).join('');
+  document.getElementById('tpl-bar').classList.add('on');
+}
+
+function selTpl(el, id) {
+  document.querySelectorAll('.tpl-chip').forEach(function(c){ c.classList.remove('on'); });
+  el.classList.add('on');
+  TPL = id;
+  document.getElementById('f-type').value = id;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tpl-bar').classList.toggle('on', name==='nova');
+  if (name==='hist') renderHist();
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOGO
+// ═══════════════════════════════════════════════════════════
+function onLogo(inp) {
+  var f = inp.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    logoData = e.target.result;
+    document.getElementById('logo-img').src = logoData;
+    document.getElementById('logo-name').textContent = f.name;
+    document.getElementById('logo-zone').style.display = 'none';
+    document.getElementById('logo-prev').classList.add('on');
+  };
+  r.readAsDataURL(f);
+}
+function removeLogo() {
+  logoData = null;
+  document.getElementById('logo-file').value = '';
+  document.getElementById('logo-zone').style.display = 'block';
+  document.getElementById('logo-prev').classList.remove('on');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DYNAMIC ROWS
+// ═══════════════════════════════════════════════════════════
+function addAtt() {
+  attN++;
+  var id = 'att-'+attN;
+  var d = document.createElement('div');
+  d.className = 'att-row'; d.id = id;
+  d.innerHTML = '<input class="att-name" type="text" placeholder="'+tr('ph_att_name')+'"/>'+
+    '<div class="att-sep"></div>'+
+    '<input class="att-role" type="text" placeholder="'+tr('ph_att_role')+'"/>'+
+    '<button class="att-del" onclick="del(\''+id+'\')">×</button>';
+  document.getElementById('att-list').appendChild(d);
+}
+
+function addAcc() {
+  accN++;
+  var n = accN, id = 'acc-'+n;
+  var d = document.createElement('div');
+  d.className = 'acc-card'; d.id = id;
+  d.innerHTML =
+    '<div class="acc-head">'+
+      '<div class="acc-n">'+n+'</div>'+
+      '<input class="acc-desc" type="text" placeholder="'+tr('ph_acc_desc')+'"/>'+
+      '<button class="acc-del" onclick="del(\''+id+'\')">×</button>'+
+    '</div>'+
+    '<div class="acc-foot">'+
+      '<input class="acc-own" type="text" placeholder="👤 '+tr('ph_acc_owner')+'"/>'+
+      '<input class="acc-due" type="date"/>'+
+    '</div>';
+  document.getElementById('acc-list').appendChild(d);
+}
+
+function addSig() {
+  sigN++;
+  var id = 'sig-'+sigN;
+  var d = document.createElement('div');
+  d.className = 'sig-card'; d.id = id;
+  d.innerHTML =
+    '<input class="sig-name" type="text" placeholder="'+tr('ph_sig_name')+'"/>'+
+    '<input class="sig-role" type="text" placeholder="'+tr('ph_sig_role')+'"/>'+
+    '<div class="sig-line"></div>';
+  document.getElementById('sig-grid').appendChild(d);
+}
+
+function del(id) { var e = document.getElementById(id); if (e) e.remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════════════
+function getKey() { try { return localStorage.getItem('actapro_key')||''; } catch(e){ return ''; } }
+function onKey(v) { try { localStorage.setItem('actapro_key', v.trim()); } catch(e){} updateDot(v.trim()); }
+function updateDot(k) {
+  var dot = document.getElementById('api-st');
+  var inp = document.getElementById('api-key');
+  if (k.startsWith('sk-')) { dot.className='api-status ok'; inp.classList.add('ok'); }
+  else if (k.length>5) { dot.className='api-status err'; inp.classList.remove('ok'); }
+  else { dot.className='api-status'; inp.classList.remove('ok'); }
+}
+function toggleEye() { var i=document.getElementById('api-key'); i.type=i.type==='password'?'text':'password'; }
+
+// ═══════════════════════════════════════════════════════════
+// COLLECT FORM DATA
+// ═══════════════════════════════════════════════════════════
+function collect() {
+  var atts = [];
+  document.querySelectorAll('.att-row').forEach(function(r) {
+    var n = r.querySelector('.att-name').value.trim();
+    var role = r.querySelector('.att-role').value.trim();
+    if (n) atts.push(n + (role ? ' (' + role + ')' : ''));
+  });
+  var accs = [];
+  document.querySelectorAll('.acc-card').forEach(function(c) {
+    var desc = c.querySelector('.acc-desc').value.trim();
+    var own  = c.querySelector('.acc-own').value.trim();
+    var due  = c.querySelector('.acc-due').value.trim();
+    if (desc) accs.push({ desc:desc, own:own, due:due });
+  });
+  var sigs = [];
+  document.querySelectorAll('.sig-card').forEach(function(c) {
+    var n = c.querySelector('.sig-name').value.trim();
+    var r = c.querySelector('.sig-role').value.trim();
+    if (n) sigs.push({ name:n, role:r });
+  });
+  return {
+    company:   document.getElementById('f-company').value.trim(),
+    dept:      document.getElementById('f-dept').value.trim(),
+    subject:   document.getElementById('f-subject').value.trim(),
+    type:      document.getElementById('f-type').value,
+    docLang:   document.getElementById('f-doclang').value,
+    date:      document.getElementById('f-date').value,
+    ref:       document.getElementById('f-ref').value.trim(),
+    start:     document.getElementById('f-start').value,
+    end:       document.getElementById('f-end').value,
+    dur:       document.getElementById('f-dur').value,
+    loc:       document.getElementById('f-loc').value.trim(),
+    chair:     document.getElementById('f-chair').value.trim(),
+    secretary: document.getElementById('f-sec').value.trim(),
+    atts: atts,
+    apologies: document.getElementById('f-apologies').value.trim(),
+    agenda:    document.getElementById('f-agenda').value.trim(),
+    discussion:document.getElementById('f-discussion').value.trim(),
+    accs: accs,
+    risks:     document.getElementById('f-risks').value.trim(),
+    ndate:     document.getElementById('f-ndate').value,
+    ntime:     document.getElementById('f-ntime').value,
+    nloc:      document.getElementById('f-nloc').value.trim(),
+    sigs: sigs,
+    notes:     document.getElementById('f-notes').value.trim(),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROMPT — ISO 15489 + ROBERT'S RULES
+// ═══════════════════════════════════════════════════════════
+var TYPE_NAMES = {
+  team:'Team Meeting',client:'Client Meeting',project:'Project Meeting',
+  board:'Board Meeting',sales:'Sales Meeting',review:'Review Meeting',
+  crisis:'Crisis Meeting',agm:'Annual General Meeting'
+};
+
+function buildPrompt(d) {
+  var timeRange = d.start ? d.start + (d.end ? ' – '+d.end : '') + (d.dur ? ' ('+d.dur+')' : '') : '';
+  var accsText = d.accs.length
+    ? d.accs.map(function(a,i){ return (i+1)+'. '+a.desc+(a.own?' [Responsible: '+a.own+']':'')+(a.due?' [Due: '+a.due+']':''); }).join('\n')
+    : 'No specific action items defined.';
+  var nextMeeting = d.ndate ? d.ndate + (d.ntime?' at '+d.ntime:'') + (d.nloc?' — '+d.nloc:'') : 'To be confirmed';
+
+  return 'You are a senior corporate secretary and expert in professional meeting documentation, ISO 15489 records management standards, and Robert\'s Rules of Order.\n\n'+
+'Generate a complete, formal and impeccable set of meeting minutes in '+d.docLang+'.\n\n'+
+'MEETING RECORD:\n'+
+'Type: '+(TYPE_NAMES[d.type]||d.type)+'\n'+
+'Organisation: '+(d.company||'Not specified')+(d.dept?' — '+d.dept:'')+'\n'+
+'Reference: '+(d.ref||'Auto')+'\n'+
+'Subject: '+(d.subject||'Regular meeting')+'\n'+
+'Date: '+d.date+'\n'+
+'Time: '+timeRange+'\n'+
+'Location: '+(d.loc||'Not specified')+'\n'+
+'Chair: '+(d.chair||'Not specified')+'\n'+
+'Secretary: '+(d.secretary||'Not specified')+'\n\n'+
+'ATTENDEES:\n'+(d.atts.length ? d.atts.join('\n') : 'Not specified')+'\n'+
+(d.apologies?'APOLOGIES: '+d.apologies+'\n':'')+'\n'+
+'AGENDA:\n'+(d.agenda||'Regular meeting')+'\n\n'+
+'DISCUSSION NOTES:\n'+(d.discussion||'Regular meeting held.')+'\n\n'+
+'ACTION ITEMS & DECISIONS:\n'+accsText+'\n\n'+
+(d.risks?'RISKS/ISSUES RAISED:\n'+d.risks+'\n\n':'')+
+'NEXT MEETING: '+nextMeeting+'\n'+
+(d.sigs.length?'SIGNATORIES: '+d.sigs.map(function(s){return s.name+(s.role?' ('+s.role+')':'');}).join(', ')+'\n':'')+
+(d.notes?'ADDITIONAL CONTEXT: '+d.notes+'\n':'')+'\n'+
+'DRAFTING REQUIREMENTS:\n'+
+'1. Write entirely in '+d.docLang+' using formal, precise corporate language\n'+
+'2. Structure strictly according to ISO 15489-1:2016 records management standard\n'+
+'3. Follow Robert\'s Rules of Order for motions, decisions, and voting where applicable\n'+
+'4. Develop all discussion points with substance — no generic filler phrases\n'+
+'5. Action items must be clearly numbered with owner and deadline\n'+
+'6. Include a formal declaration paragraph at the end\n'+
+'7. The document must be ready to sign and file as an official corporate record\n\n'+
+'Return ONLY valid JSON, no markdown, no backticks, no text outside JSON:\n\n'+
+'{\n'+
+'  "title": "MEETING MINUTES — '+((d.subject||'').toUpperCase())+'",\n'+
+'  "company": "'+d.company+'",\n'+
+'  "ref": "'+d.ref+'",\n'+
+'  "meta": "'+d.date+' · '+timeRange+' · '+(d.loc||'')+'",\n'+
+'  "sections": [\n'+
+'    { "title": "1. CALL TO ORDER & ATTENDEES", "body": "..." },\n'+
+'    { "title": "2. AGENDA", "body": "..." },\n'+
+'    { "title": "3. APPROVAL OF PREVIOUS MINUTES", "body": "..." },\n'+
+'    { "title": "4. MATTERS ARISING", "body": "..." },\n'+
+'    { "title": "5. DISCUSSION & DELIBERATIONS", "body": "..." },\n'+
+'    { "title": "6. DECISIONS & RESOLUTIONS", "body": "..." },\n'+
+'    { "title": "7. ACTION ITEMS", "body": "..." },\n'+
+(d.risks?'    { "title": "8. RISKS & ISSUES", "body": "..." },\n':'')+
+'    { "title": "'+(d.risks?'9':'8')+'. NEXT MEETING", "body": "..." },\n'+
+'    { "title": "'+(d.risks?'10':'9')+'. CLOSURE", "body": "..." }\n'+
+'  ],\n'+
+'  "declaration": "Formal declaration that these are accurate minutes...",\n'+
+'  "signature_block": "Signature lines for all signatories"\n'+
+'}';
+}
+
+// ═══════════════════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════════════════
+var _lastContent = null;
+var _lastData = null;
+
+async function generate() {
+  var d = collect();
+  var key = getKey();
+
+  if (!d.subject) { setSt('err', tr('err_subject')); return; }
+  if (!key.startsWith('sk-')) { setSt('err', tr('err_key')); return; }
+
+  var btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin" style="border-color:rgba(15,17,23,.2);border-top-color:var(--bg)"></div> '+tr('prog_lbl');
+  setSt('','');
+  hideOut();
+
+  var prog = document.getElementById('prog');
+  prog.classList.add('on');
+
+  var steps = window._STEPS || STEPS_KEYS.map(function(k){ return tr(k); });
+  document.getElementById('prog-steps').innerHTML = steps.map(function(s,i){
+    return '<div class="prog-step" id="ps-'+i+'"><div class="prog-dot"></div>'+s+'</div>';
+  }).join('');
+
+  function step(i) {
+    if (i>0) { var p=document.getElementById('ps-'+(i-1)); if(p){p.classList.remove('active');p.classList.add('done');} }
+    var c=document.getElementById('ps-'+i); if(c) c.classList.add('active');
+    document.getElementById('prog-fill').style.width = ((i+1)/steps.length*80)+'%';
+  }
+
+  var content;
+  try {
+    step(0); await sleep(200);
+    step(1); await sleep(150);
+    step(2);
+
+    var res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'gpt-4o',
+        messages:[
+          {role:'system', content:'You are a world-class corporate secretary specialising in ISO 15489 compliant meeting minutes. You ALWAYS respond with valid JSON only — no markdown, no backticks, no text outside the JSON object.'},
+          {role:'user', content:buildPrompt(d)}
+        ],
+        temperature:0.2,
+        max_tokens:4000,
+      })
+    });
+
+    if (!res.ok) {
+      var err = await res.json().catch(function(){return{};});
+      throw new Error(err.error&&err.error.message ? err.error.message : 'HTTP '+res.status);
+    }
+
+    step(3);
+    var data = await res.json();
+    var txt = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
+
+    step(4);
+    try {
+      content = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    } catch(e) {
+      content = { title:'MEETING MINUTES', company:d.company, ref:d.ref, meta:d.date, sections:[{title:'',body:txt}], declaration:'', signature_block:'' };
+    }
+
+    step(5); await sleep(200);
+    step(6); await sleep(150);
+    step(7);
+    document.getElementById('prog-fill').style.width='100%';
+    await sleep(300);
+    steps.forEach(function(_,i){ var el=document.getElementById('ps-'+i); if(el){el.classList.remove('active');el.classList.add('done');} });
+
+  } catch(err) {
+    prog.classList.remove('on');
+    btn.disabled=false; btn.innerHTML='✦ '+tr('btn_gen');
+    setSt('err', tr('err_api')+err.message);
+    return;
+  }
+
+  _lastContent = content;
+  _lastData = d;
+  saveHist(d, content);
+  renderOut(content, d);
+  setSt('ok', tr('ok_gen'));
+  prog.classList.remove('on');
+  btn.disabled=false; btn.innerHTML='✦ '+tr('btn_gen');
+}
+
+// ═══════════════════════════════════════════════════════════
+// OUTPUT + WORD INSERTION
+// ═══════════════════════════════════════════════════════════
+function renderOut(c, d) {
+  var box = document.getElementById('out');
+  var html = '<div class="out-ref">'+esc(c.ref||'')+'</div>';
+  if (c.company) html += '<span class="out-company">'+esc(c.company)+'</span>';
+  html += '<span class="out-title">'+esc(c.title||'MEETING MINUTES')+'</span>';
+  html += '<span class="out-meta">'+esc(c.meta||'')+'</span>';
+  (c.sections||[]).forEach(function(s) {
+    if (s.title) html += '<span class="out-sec">'+esc(s.title)+'</span>';
+    if (s.body)  html += '<p style="margin-bottom:5px;white-space:pre-wrap;font-size:10.5px">'+esc(s.body)+'</p>';
+  });
+  if (c.declaration) html += '<p style="margin-top:8px;font-size:10px;color:var(--ink3);white-space:pre-wrap">'+esc(c.declaration)+'</p>';
+  box.innerHTML = html;
+  box.classList.add('on');
+
+  // Show insert + copy buttons
+  var act = document.getElementById('out-act');
+  act.innerHTML =
+    '<button class="btn btn-primary" onclick="insertWord()" style="flex:2">📄 '+tr('btn_insert')+'</button>'+
+    '<button class="btn btn-outline" onclick="copyOut()">📋 '+tr('btn_copy')+'</button>'+
+    '<button class="btn btn-outline" onclick="resetForm()">↩</button>';
+  act.classList.add('on');
+}
+
+function hideOut() {
+  document.getElementById('out').classList.remove('on');
+  document.getElementById('out-act').classList.remove('on');
+}
+
+async function insertWord() {
+  var c = _lastContent, d = _lastData;
+  if (!c) return;
+
+  if (!IS_WORD || typeof Word === 'undefined') {
+    setSt('inf', '⚠️ Open this add-in inside Microsoft Word to insert the document.');
+    return;
+  }
+
+  try {
+    await Word.run(async function(ctx) {
+      var body = ctx.document.body;
+      body.clear();
+
+      // Company name
+      if (c.company) {
+        var co = body.insertParagraph(c.company.toUpperCase(), Word.InsertLocation.end);
+        co.alignment = Word.Alignment.centered;
+        co.font.size = 8; co.font.color = '#5A5650'; co.font.allCaps = true;
+        co.spaceAfter = 2;
+      }
+
+      // Reference
+      if (c.ref) {
+        var ref = body.insertParagraph(c.ref, Word.InsertLocation.end);
+        ref.alignment = Word.Alignment.centered;
+        ref.font.size = 8; ref.font.color = '#5A5650'; ref.font.name = 'Courier New';
+        ref.spaceBefore = 0; ref.spaceAfter = 4;
+      }
+
+      // Title
+      var title = body.insertParagraph(c.title, Word.InsertLocation.end);
+      title.styleBuiltIn = Word.Style.heading1;
+      title.alignment = Word.Alignment.centered;
+      title.font.color = '#1A1A1A'; title.font.size = 16;
+      title.spaceAfter = 4;
+
+      // Meta
+      var meta = body.insertParagraph(c.meta, Word.InsertLocation.end);
+      meta.alignment = Word.Alignment.centered;
+      meta.font.size = 9; meta.font.color = '#9B9B9B';
+      meta.spaceAfter = 12;
+
+      // Horizontal rule substitute
+      body.insertParagraph('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', Word.InsertLocation.end).font.color = '#E8E4DC';
+
+      body.insertParagraph('', Word.InsertLocation.end);
+
+      // Sections
+      (c.sections||[]).forEach(function(sec) {
+        if (sec.title) {
+          var h = body.insertParagraph(sec.title, Word.InsertLocation.end);
+          h.styleBuiltIn = Word.Style.heading2;
+          h.font.color = '#1A3A5C'; h.font.size = 11;
+          h.spaceBefore = 10; h.spaceAfter = 4;
+        }
+        if (sec.body) {
+          var p = body.insertParagraph(sec.body, Word.InsertLocation.end);
+          p.font.size = 10.5; p.spaceAfter = 6;
+        }
+      });
+
+      // Declaration
+      if (c.declaration) {
+        body.insertParagraph('', Word.InsertLocation.end);
+        var decl = body.insertParagraph(c.declaration, Word.InsertLocation.end);
+        decl.font.size = 10; decl.font.italic = true; decl.font.color = '#4B4B4B';
+        decl.spaceBefore = 8;
+      }
+
+      // Signature block
+      body.insertParagraph('', Word.InsertLocation.end);
+      if (d && d.sigs && d.sigs.length) {
+        var sigH = body.insertParagraph(tr('sec_sig').toUpperCase(), Word.InsertLocation.end);
+        sigH.font.size = 9; sigH.font.bold = true; sigH.font.color = '#9B9B9B'; sigH.spaceBefore = 12;
+        d.sigs.forEach(function(s) {
+          body.insertParagraph('\n\n________________________\n'+s.name+(s.role?'\n'+s.role:''), Word.InsertLocation.end).font.size = 10;
+        });
+      }
+
+      // ISO footer
+      body.insertParagraph('', Word.InsertLocation.end);
+      var footer = body.insertParagraph('Document generated by ActaPro Elite · ISO 15489-1:2016 compliant · '+new Date().toISOString().split('T')[0], Word.InsertLocation.end);
+      footer.font.size = 7.5; footer.font.color = '#9B9B9B'; footer.alignment = Word.Alignment.centered;
+
+      await ctx.sync();
+    });
+    setSt('ok', tr('ok_word'));
+  } catch(e) {
+    setSt('err', tr('err_word')+e.message);
+  }
+}
+
+function copyOut() {
+  navigator.clipboard.writeText(document.getElementById('out').innerText)
+    .then(function(){ setSt('ok','✅ '+tr('btn_copy')); });
+}
+
+function resetForm() {
+  hideOut(); setSt('','');
+  document.querySelectorAll('#panel-nova input[type=text],#panel-nova input[type=time],#panel-nova textarea').forEach(function(el){ el.value=''; });
+  document.getElementById('att-list').innerHTML='';
+  document.getElementById('acc-list').innerHTML='';
+  document.getElementById('sig-grid').innerHTML='';
+  attN=0; accN=0; sigN=0;
+  removeLogo();
+  addAtt(); addAtt(); addAtt();
+  addAcc(); addAcc();
+  addSig(); addSig();
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-ref').value = 'MIN-'+new Date().getFullYear()+'-'+Date.now().toString().slice(-4);
+}
+
+function esc(t){ return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════════════════════
+// STATUS / PROGRESS
+// ═══════════════════════════════════════════════════════════
+function setSt(type, msg) {
+  var el = document.getElementById('st');
+  if (!type) { el.className='st'; el.innerHTML=''; return; }
+  el.className='st '+type;
+  var icons={ok:'✅',err:'❌',inf:'ℹ️'};
+  el.innerHTML='<span>'+icons[type]+'</span><span>'+msg+'</span>';
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+var TPL_ICONS = {team:'👥',client:'🤝',project:'📐',board:'🏛',sales:'💼',review:'🔍',crisis:'⚡',agm:'🏢'};
+
+function saveHist(d, content) {
+  try {
+    var h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]');
+    h.unshift({ ts:Date.now(), subject:d.subject||'Minutes', type:d.type, date:d.date, lang:d.docLang, d:d, content:content });
+    localStorage.setItem('actapro_elite_hist', JSON.stringify(h.slice(0,50)));
+  } catch(e){}
+}
+
+function renderHist() {
+  var el = document.getElementById('hist-list');
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]'); } catch(e){}
+  if (!h.length) {
+    el.innerHTML = '<div class="hist-empty"><div class="hi">📂</div><p>'+tr('hist_empty').replace('\n','<br>')+'</p></div>';
+    return;
+  }
+  el.innerHTML = h.map(function(item,i){
+    return '<div class="hist-card" onclick="loadHist('+i+')">'+
+      '<div class="hist-ic">'+(TPL_ICONS[item.type]||'📋')+'</div>'+
+      '<div class="hist-info">'+
+        '<div class="hist-name">'+esc(item.subject)+'</div>'+
+        '<div class="hist-meta">'+item.date+' · '+new Date(item.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>'+
+      '</div>'+
+      '<span class="hist-lang">'+item.lang+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function loadHist(i) {
+  var h = [];
+  try { h = JSON.parse(localStorage.getItem('actapro_elite_hist')||'[]'); } catch(e){}
+  var item = h[i]; if (!item) return;
+  switchTab('nova', document.querySelectorAll('.tab')[0]);
+  if (item.content) {
+    _lastContent = item.content;
+    _lastData = item.d;
+    renderOut(item.content, item.d);
+    setSt('inf', tr('hist_loaded'));
+  }
+}
+
+function clearHist() {
+  if (!confirm(tr('confirm_clear'))) return;
+  localStorage.removeItem('actapro_elite_hist');
+  renderHist();
+}
+
+// ══ BOOTSTRAP ══
+if (typeof Office === 'undefined') { bootstrap(); }
+</script>
+</body>
+</html>
