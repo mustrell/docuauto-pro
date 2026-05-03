@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+  xsi:type="TaskPaneApp">
+
+  <Id>b5c6d7e8-f9a0-1234-5678-9abcdef01234</Id>
+  <Version>4.0.0</Version>
+  <ProviderName>Accessibility Plugin</ProviderName>
+  <DefaultLocale>ca-ES</DefaultLocale>
+  <DisplayName DefaultValue="Accessibilitat Documental"/>
+  <Description DefaultValue="Assistent intel·ligent d'accessibilitat documental amb IA. Detecta títols, imatges sense alt text i tipografia no accessible mentre escrius."/>
+
+  <IconUrl DefaultValue="https://accessibility-plugin.onrender.com/icon-logo-80.png"/>
+  <HighResolutionIconUrl DefaultValue="https://accessibility-plugin.onrender.com/icon-logo-80.png"/>
+  <SupportUrl DefaultValue="https://accessibility-plugin.onrender.com"/>
+
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://accessibility-plugin.onrender.com/assistant.html"/>
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+
+          <FunctionFile resid="Commands.Url"/>
+
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <CustomTab id="TabAccessibilityV4">
+
+              <!-- GRUP: Assistent en viu -->
+              <Group id="GroupAssistant">
+                <Label resid="GroupAssistant.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.Logo.16"/>
+                  <bt:Image size="32" resid="Icon.Logo.32"/>
+                  <bt:Image size="80" resid="Icon.Logo.80"/>
+                </Icon>
+
+                <Control xsi:type="Button" id="ButtonAssistant">
+                  <Label resid="ButtonAssistant.Label"/>
+                  <Supertip>
+                    <Title resid="ButtonAssistant.Label"/>
+                    <Description resid="ButtonAssistant.Desc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.Assistant.16"/>
+                    <bt:Image size="32" resid="Icon.Assistant.32"/>
+                    <bt:Image size="80" resid="Icon.Assistant.80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>AssistantPane</TaskpaneId>
+                    <SourceLocation resid="Assistant.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+
+              <!-- GRUP: Eines puntuals -->
+              <Group id="GroupTools">
+                <Label resid="GroupTools.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.Logo.16"/>
+                  <bt:Image size="32" resid="Icon.Logo.32"/>
+                  <bt:Image size="80" resid="Icon.Logo.80"/>
+                </Icon>
+
+                <Control xsi:type="Button" id="ButtonInsertImage">
+                  <Label resid="ButtonInsertImage.Label"/>
+                  <Supertip>
+                    <Title resid="ButtonInsertImage.Label"/>
+                    <Description resid="ButtonInsertImage.Desc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.Image.16"/>
+                    <bt:Image size="32" resid="Icon.Image.32"/>
+                    <bt:Image size="80" resid="Icon.Image.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>openImageDialog</FunctionName>
+                  </Action>
+                </Control>
+
+                <Control xsi:type="Button" id="ButtonCheckDoc">
+                  <Label resid="ButtonCheckDoc.Label"/>
+                  <Supertip>
+                    <Title resid="ButtonCheckDoc.Label"/>
+                    <Description resid="ButtonCheckDoc.Desc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.Check.16"/>
+                    <bt:Image size="32" resid="Icon.Check.32"/>
+                    <bt:Image size="80" resid="Icon.Check.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>openCheckDialog</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+
+              <Label resid="TabAccessibility.Label"/>
+            </CustomTab>
+          </ExtensionPoint>
+
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.Logo.16"      DefaultValue="https://accessibility-plugin.onrender.com/icon-logo-16.png"/>
+        <bt:Image id="Icon.Logo.32"      DefaultValue="https://accessibility-plugin.onrender.com/icon-logo-32.png"/>
+        <bt:Image id="Icon.Logo.80"      DefaultValue="https://accessibility-plugin.onrender.com/icon-logo-80.png"/>
+        <bt:Image id="Icon.Assistant.16" DefaultValue="https://accessibility-plugin.onrender.com/icon-assistant-16.png"/>
+        <bt:Image id="Icon.Assistant.32" DefaultValue="https://accessibility-plugin.onrender.com/icon-assistant-32.png"/>
+        <bt:Image id="Icon.Assistant.80" DefaultValue="https://accessibility-plugin.onrender.com/icon-assistant-80.png"/>
+        <bt:Image id="Icon.Image.16"     DefaultValue="https://accessibility-plugin.onrender.com/icon-image-16.png"/>
+        <bt:Image id="Icon.Image.32"     DefaultValue="https://accessibility-plugin.onrender.com/icon-image-32.png"/>
+        <bt:Image id="Icon.Image.80"     DefaultValue="https://accessibility-plugin.onrender.com/icon-image-80.png"/>
+        <bt:Image id="Icon.Check.16"     DefaultValue="https://accessibility-plugin.onrender.com/icon-check-16.png"/>
+        <bt:Image id="Icon.Check.32"     DefaultValue="https://accessibility-plugin.onrender.com/icon-check-32.png"/>
+        <bt:Image id="Icon.Check.80"     DefaultValue="https://accessibility-plugin.onrender.com/icon-check-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Commands.Url"  DefaultValue="https://accessibility-plugin.onrender.com/commands.html"/>
+        <bt:Url id="Assistant.Url" DefaultValue="https://accessibility-plugin.onrender.com/assistant.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="TabAccessibility.Label"     DefaultValue="Accessibilitat"/>
+        <bt:String id="GroupAssistant.Label"       DefaultValue="Assistent en viu"/>
+        <bt:String id="GroupTools.Label"           DefaultValue="Eines"/>
+        <bt:String id="ButtonAssistant.Label"      DefaultValue="Activar Assistent"/>
+        <bt:String id="ButtonInsertImage.Label"    DefaultValue="Imatge Accessible"/>
+        <bt:String id="ButtonCheckDoc.Label"       DefaultValue="Comprovar Doc"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="ButtonAssistant.Desc"   DefaultValue="Obre l'assistent en viu. Detecta automàticament títols, imatges sense alt text i tipografia no accessible sense interrompre el flux d'escriptura."/>
+        <bt:String id="ButtonInsertImage.Desc" DefaultValue="Insereix una imatge amb text alternatiu generat automàticament per la IA."/>
+        <bt:String id="ButtonCheckDoc.Desc"    DefaultValue="Anàlisi complet d'accessibilitat del document amb informe detallat WCAG."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+
+</OfficeApp>
